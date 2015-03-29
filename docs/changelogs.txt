@@ -1,0 +1,3 @@
+
+[29.03.2015]  call of ialloc, balloc, ifree, bfree functions use 1 as first block/inode.
+[29.03.2015]  add bmap() function

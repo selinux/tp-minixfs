@@ -32,35 +32,54 @@ class minix_file_system(object):
             according to the inodes bitmap
         :return: the first free inode
         """
-        return self.inode_map.index(False)
+        # idondes start at 1
+        return self.inode_map.index(False)+1
 
-    # TODO choose the first inode number 0 or 1 do we return inode-1 and read inode+1 -- same problem for zones ??
 
     def ifree(self, inodnum):
         """ toggle an inode as available for the next ialloc()
         :param inodnum:
         :return: True if inodnum == False
         """
-        self.inode_map[inodnum] = False
-        return ~self.inode_map[inodnum]
+        # inodes start at 1
+        self.inode_map[inodnum-1] = False
+        return ~self.inode_map[inodnum-1]
 
     def balloc(self):
         """ return the first free bloc index in the volume.
         :return: the first free bloc
         """
-        return self.zone_map.index(False)
+        # data block start at 1
+        return self.zone_map.index(False)+1
     
     def bfree(self, blocnum):
         """ toggle a bloc as available for the next balloc()
         :param blocnum: blocnum is an index in the zone_map
-        :return:
+        :return: True if False
         """
-        self.zone_map[blocnum] = False
-        return ~self.zone_map[blocnum]
+        # data block start at 1
+        self.zone_map[blocnum-1] = False
+        return ~self.zone_map[blocnum-1]
     
     def bmap(self, inode, blk):
-        return
-    
+        """ Map a block number with his real block number on disk
+
+        :param inode: the inode
+        :param blk: the block number ( 0,.., n-1)
+        :return: the corresponding block number on disk
+        """
+        i = inode
+
+        if blk < 7:
+            return i.zone[blk]
+
+        elif blk < MINIX_INODE_PER_BLOCK+7:
+            return struct.unpack_from('H', self.bd.read_block(i.zone[7]), blk-7)
+
+        else:
+            return struct.unpack_from('H', self.bd.read_block(i.zone[8]), blk-7-MINIX_INODE_PER_BLOCK)
+
+
     def lookup_entry(self, dinode, name):
         """ lookup for a name in a directory, and return its inode number,
             given inode directory dinode
@@ -79,7 +98,34 @@ class minix_file_system(object):
         return
     
     def ialloc_bloc(self, inode, blk):
-        return
+        """ Add a new data block at pos blk and return its real position on disk
+
+        :param inode: the inode to add at
+        :param blk: the block number to add (0,...,n-1)
+        :return: the block address
+        """
+        i = inode
+
+        if blk < 7:
+            if not i.zone[blk]:
+                i.zone[blk] = self.balloc()
+            return i.zone[blk]
+
+        elif blk < MINIX_INODE_PER_BLOCK+7:
+            # if not already allowed write modified indirect block
+            if not struct.unpack_from('H', self.bd.read_block(i.zone[7]), blk-7):
+                self.bd.write_bloc(struct.pack_into('H', self.read_block(i.zone[7], blk-7), blk-7, self.balloc()))
+            # now we can return it
+            return struct.unpack_from('H', self.bd.read_block(i.zone[7]), blk-7)
+
+        else:
+            # if not already allowed write modified second indirect block
+            if not struct.unpack_from('H', self.bd.read_block(i.zone[8]), blk-7-MINIX_INODE_PER_BLOCK):
+                self.bd.write_bloc(struct.pack_into('H', self.read_block(i.zone[8], blk-7-MINIX_INODE_PER_BLOCK), \
+                                                    blk-7-MINIX_INODE_PER_BLOCK, self.balloc()))
+            # now we can return it
+            return struct.unpack_from('H', self.bd.read_block(i.zone[8]), blk-7-MINIX_INODE_PER_BLOCK)
+
 
     # TODO insert filename in dinode
 
