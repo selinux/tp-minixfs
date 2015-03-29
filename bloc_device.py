@@ -15,18 +15,19 @@ from minix_superbloc import *
 
 
 class bloc_device(object):
-    """ Class block device
+    """ Class block device """
 
-    """
     def __init__(self, blksize, pathname):
         """ Init a new block device """
         self.blksize = blksize
+
         try:
-            self.fd = os.open(pathname, os.O_RDWR)
+            self.fd = open(pathname, 'br')
         except OSError:
             sys.exit("Error unable to open file system")
 
-        self.super_block = minix_superbloc(self.fd)
+        self.super_block = minix_superbloc(self)
+        # TODO do we need bopck_offset ??
         self.block_offset = (2+self.super_block.s_imap_blocks+self.super_block.s_zmap_blocks)
 
     def read_bloc(self, bloc_num, numofblk=1):
@@ -36,8 +37,8 @@ class bloc_device(object):
         :return: the buffer
         """
         try:
-            os.lseek(self.fd, bloc_num*self.blksize, os.SEEK_SET)
-            buff = os.read(self.fd, numofblk*BLOCK_SIZE)
+            self.fd.seek(bloc_num*self.blksize)
+            buff = self.fd.read(numofblk*BLOCK_SIZE)
         except OSError:
             # TODO find a better way to rise error
             return -1
@@ -50,8 +51,8 @@ class bloc_device(object):
         :return: nb of bytes actually written
         """
         try:
-            os.lseek(self.fd, bloc_num*self.blksize, os.SEEK_SET)
-            n = os.write(self.fd, bloc)
+            self.fd.seek(bloc_num*self.blksize)
+            n = self.fd.write(bloc)
         except OSError:
             return -1
         return n

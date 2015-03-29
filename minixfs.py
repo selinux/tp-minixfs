@@ -18,11 +18,11 @@ from bloc_device import *
 class minix_file_system(object):
 
     def __init__(self, filename):
-        self.bd = bloc_device(BLOCK_SIZE, filename)
+        bd = bloc_device(BLOCK_SIZE, filename)
 
-        self.inode_map = bitarray(bytearray(self.db.read_block(2), self.bd.super_block.s_ninodes))
-        self.zone_map = bitarray((bytearray(self.db.read_block(2 + self.bd.super_block.s_ninodes), \
-                                  self.db.super_block.s_zmap_blocks)))
+        self.inode_map = bitarray(bytearray(bd.read_bloc(2, numofblk=bd.super_block.s_ninodes)))
+        self.zone_map = bitarray((bytearray(bd.read_bloc(2 + bd.super_block.s_ninodes, \
+                                  numofblk=bd.super_block.s_zmap_blocks))))
 
     def ialloc(self):
         """ return the first free inode number available
