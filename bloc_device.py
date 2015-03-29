@@ -38,7 +38,7 @@ class bloc_device(object):
         """
         try:
             self.fd.seek(bloc_num*self.blksize)
-            buff = self.fd.read(numofblk*BLOCK_SIZE)
+            buff = self.fd.read(int(numofblk*BLOCK_SIZE))
         except OSError:
             # TODO find a better way to rise error
             return -1

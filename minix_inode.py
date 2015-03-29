@@ -27,6 +27,13 @@ class minix_inode(object):
             self.i_zone = zone
             self.i_indir_zone = indir_zone
             self.i_dbl_indr_zone = dblr_indir_zone
+        else:
+            self.i_zone = []
+            self.i_ino, self.i_mode, self.i_uid, self.i_size, self.i_time, self.i_gid, self.i_nlinks = raw_inode[0:7]
+            self.i_zone.extend(raw_inode[7:14])
+            self.i_indir_zone = raw_inode[13]
+            self.i_dbl_indr_zone = raw_inode[14]
+
 
     # TODO initialyse inode(s)
 

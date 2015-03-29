@@ -20,9 +20,21 @@ class minix_file_system(object):
     def __init__(self, filename):
         bd = bloc_device(BLOCK_SIZE, filename)
 
-        self.inode_map = bitarray(bytearray(bd.read_bloc(2, numofblk=bd.super_block.s_ninodes)))
-        self.zone_map = bitarray((bytearray(bd.read_bloc(2 + bd.super_block.s_ninodes, \
+        self.inode_map = bitarray(bytearray(bd.read_bloc(2, numofblk=bd.super_block.s_imap_blocks)))
+        self.zone_map = bitarray((bytearray(bd.read_bloc(2 + bd.super_block.s_imap_blocks, \
                                   numofblk=bd.super_block.s_zmap_blocks))))
+        self.inodes_list = []
+        self.inodes_list.append(minix_inode())
+        buff = bd.read_bloc(2+bd.super_block.s_imap_blocks + \
+                bd.super_block.s_zmap_blocks, numofblk=bd.super_block.s_ninodes/MINIX_INODE_PER_BLOCK)
+
+        for nb in range(0, bd.super_block.s_ninodes):
+            if self.inodes_list[nb]:
+                i = [nb+1]
+                i.extend(struct.unpack_from('HHIIBBHHHHHHHHH', buff, nb))
+                self.inodes_list.append(minix_inode(raw_inode=i))
+
+        print(self.inodes_list[167])
 
     def ialloc(self):
         """ return the first free inode number available
