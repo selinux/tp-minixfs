@@ -17,18 +17,17 @@ from bloc_device import *
 
 class minix_file_system(object):
 
+    inode_map = [0]
+
     def __init__(self, filename):
         bd = bloc_device(BLOCK_SIZE, filename)
 
         self.inode_map = bitarray()
         self.zone_map = bitarray()
-        # for i in bd.read_bloc(2, numofblk=bd.super_block.s_imap_blocks):
-        self.inode_map.frombytes(struct.iter_unpackc
-                                 ('H', bd.read_bloc(2, numofblk=bd.super_block.s_imap_blocks)))
+        self.inode_map.frombytes(bd.read_bloc(2, numofblk=bd.super_block.s_imap_blocks))
         self.zone_map.frombytes(bd.read_bloc(2 + bd.super_block.s_imap_blocks, \
                                              numofblk=bd.super_block.s_zmap_blocks))
-        print(self.inode_map.length())
-        print(self.inode_map)
+        # TODO invert endianness u16 of inode_map
 
         self.inodes_list = []
         self.inodes_list.append(minix_inode())
@@ -36,8 +35,19 @@ class minix_file_system(object):
                 bd.super_block.s_zmap_blocks, numofblk=bd.super_block.s_ninodes/MINIX_INODE_PER_BLOCK)
 
         for nb in range(bd.super_block.s_ninodes):
-            i = nb+1, struct.unpack_from('HHIIBBHHHHHHHHH', buff, nb*32)
-            self.inodes_list.append(minix_inode(raw_inode=i))
+            i = minix_inode()
+            i.i_ino = nb+1
+            if self.inode_map[nb]:
+                s = struct.unpack_from('HHIIBBHHHHHHHHH', buff, nb*32)
+
+            print(s[0:7])
+            i.i_zone = []
+            i.i_zone = s[7:14]
+            i.i_mode, i.i_uid, i.i_size, i.i_time, i.i_gid, i.i_nlinks = s[0:6]
+            i.i_indir_zone = s[13]
+            i.i_dbl_indr_zone = s[14]
+            self.inode_map.append(i)
+            del(i)
 
         print(self.inodes_list[160:167])
 

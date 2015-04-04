@@ -15,6 +15,9 @@ from constantes import *
 
 class minix_inode(object):
     """ inodes can be initializted from given values or from raw bytes contents coming from the device """
+
+    inodes_list = []
+
     def __init__(self, raw_inode=None, num=0, mode=0, uid=0, size=0, time=0, gid=0, nlinks=0, zone=[], indir_zone=0, dblr_indir_zone=0):
         if raw_inode is None:
             self.i_ino = num
@@ -27,12 +30,6 @@ class minix_inode(object):
             self.i_zone = zone
             self.i_indir_zone = indir_zone
             self.i_dbl_indr_zone = dblr_indir_zone
-        else:
-            self.i_zone = raw_inode[0]
-            self.i_ino, self.i_mode, self.i_uid, self.i_size, self.i_time, self.i_gid, self.i_nlinks = raw_inode[1][0:7]
-            self.i_zone = raw_inode[1][7:14]
-            self.i_indir_zone = raw_inode[1][13]
-            self.i_dbl_indr_zone = raw_inode[1][14]
 
 
     # TODO initialyse inode(s)
@@ -62,3 +59,14 @@ class minix_inode(object):
                               ",indir_zone="+str(self.i_indir_zone)+\
                               ",dblr_indir_zone="+str(self.i_dbl_indr_zone)+\
                               ")"
+
+    @classmethod
+    def append_inodes(cls, i):
+        """ append a new inode to inode_list
+
+        :param i: new inode
+        :return: zero
+        """
+        cls.inodes_list.append(i)
+
+        return 0
