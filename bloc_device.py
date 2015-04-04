@@ -21,8 +21,9 @@ class bloc_device(object):
         """ Init a new block device """
         self.blksize = blksize
 
+        # with open(pathname, 'br') as self.fd:
         try:
-            self.fd = open(pathname, 'br')
+            self.fd = open(pathname, 'r+b')
         except OSError:
             sys.exit("Error unable to open file system")
 

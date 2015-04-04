@@ -20,21 +20,26 @@ class minix_file_system(object):
     def __init__(self, filename):
         bd = bloc_device(BLOCK_SIZE, filename)
 
-        self.inode_map = bitarray(bytearray(bd.read_bloc(2, numofblk=bd.super_block.s_imap_blocks)))
-        self.zone_map = bitarray((bytearray(bd.read_bloc(2 + bd.super_block.s_imap_blocks, \
-                                  numofblk=bd.super_block.s_zmap_blocks))))
+        self.inode_map = bitarray()
+        self.zone_map = bitarray()
+        # for i in bd.read_bloc(2, numofblk=bd.super_block.s_imap_blocks):
+        self.inode_map.frombytes(struct.iter_unpackc
+                                 ('H', bd.read_bloc(2, numofblk=bd.super_block.s_imap_blocks)))
+        self.zone_map.frombytes(bd.read_bloc(2 + bd.super_block.s_imap_blocks, \
+                                             numofblk=bd.super_block.s_zmap_blocks))
+        print(self.inode_map.length())
+        print(self.inode_map)
+
         self.inodes_list = []
         self.inodes_list.append(minix_inode())
         buff = bd.read_bloc(2+bd.super_block.s_imap_blocks + \
                 bd.super_block.s_zmap_blocks, numofblk=bd.super_block.s_ninodes/MINIX_INODE_PER_BLOCK)
 
-        for nb in range(0, bd.super_block.s_ninodes):
-            if self.inodes_list[nb]:
-                i = [nb+1]
-                i.extend(struct.unpack_from('HHIIBBHHHHHHHHH', buff, nb))
-                self.inodes_list.append(minix_inode(raw_inode=i))
+        for nb in range(bd.super_block.s_ninodes):
+            i = nb+1, struct.unpack_from('HHIIBBHHHHHHHHH', buff, nb*32)
+            self.inodes_list.append(minix_inode(raw_inode=i))
 
-        print(self.inodes_list[167])
+        print(self.inodes_list[160:167])
 
     def ialloc(self):
         """ return the first free inode number available
@@ -44,6 +49,8 @@ class minix_file_system(object):
             according to the inodes bitmap
         :return: the first free inode
         """
+        # TODO add index to inode map and modify inode table
+        # TODO call bmap if allowed
         # idondes start at 1
         return self.inode_map.index(False)+1
 
@@ -88,6 +95,8 @@ class minix_file_system(object):
         elif blk < MINIX_INODE_PER_BLOCK+7:
             return struct.unpack_from('H', self.bd.read_block(i.zone[7]), blk-7)
 
+        # TODO correct double indirection 512^2
+        # TODO elif blk < 513*512+7  sinon rise error
         else:
             return struct.unpack_from('H', self.bd.read_block(i.zone[8]), blk-7-MINIX_INODE_PER_BLOCK)
 
@@ -99,6 +108,7 @@ class minix_file_system(object):
         :param name: dirname to search
         :return: directory's inode
         """
+        # TODO use bmap on each dir (be sur look all block)
         return
 
     # TODO search directory and file
