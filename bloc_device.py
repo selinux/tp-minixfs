@@ -28,7 +28,7 @@ class bloc_device(object):
             sys.exit("Error unable to open file system")
 
         self.super_block = minix_superbloc(self)
-        # TODO do we need bopck_offset ??
+        # TODO do we need block_offset ??
         self.block_offset = (2+self.super_block.s_imap_blocks+self.super_block.s_zmap_blocks)
 
     def read_bloc(self, bloc_num, numofblk=1):
@@ -37,6 +37,7 @@ class bloc_device(object):
         :param numofblk: number of block to be read
         :return: the buffer
         """
+        # TODO test fs size and bloc_num comparison
         try:
             self.fd.seek(bloc_num*self.blksize)
             buff = self.fd.read(int(numofblk*BLOCK_SIZE))

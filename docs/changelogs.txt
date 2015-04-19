@@ -2,3 +2,7 @@
 [29.03.2015]  call of ialloc, balloc, ifree, bfree functions use 1 as first block/inode.
 [29.03.2015]  add bmap() function
 [29.03.2015]  remplaced os.open() by open(), read(), write()
+[06.04.2015]  add function write_inodes_list, write_imap, write_zone
+[19.04.2015]  correct bitarray endianness (little)
+[19.04.2015]  change function write_inodes,... to update_imap, update_bmap
+
