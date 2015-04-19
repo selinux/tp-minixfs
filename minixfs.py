@@ -106,19 +106,20 @@ class minix_file_system(object):
         if blk < 7:
             return inode.i_zone[blk]
 
-        elif blk < MINIX_INODE_PER_BLOCK + 7:
-            return int(struct.unpack_from('H', self.bd.read_bloc(inode.i_zone[7]), blk - 7)[0])
+        elif blk < (MINIX_INODE_PER_BLOCK + 7):
+            # print(struct.unpack_from('H', self.bd.read_bloc(inode.i_indir_zone), blk - 7).__str__())
+            return int(struct.unpack_from('H', self.bd.read_bloc(inode.i_indir_zone), blk - 7)[0])
 
         # TODO correct double indirection 512^2
         # TODO elif blk < 513*512+7  sinon rise error
         elif (blk < (MINIX_INODE_PER_BLOCK + 1) * MINIX_INODE_PER_BLOCK + 7):
-            indir = blk - (7 + MINIX_INODE_PER_BLOCK) / MINIX_INODE_PER_BLOCK # indirect bloc addr
-            off = blk - (7 + MINIX_INODE_PER_BLOCK) % MINIX_INODE_PER_BLOCK
+            indir = (blk - 7 - MINIX_INODE_PER_BLOCK) / MINIX_INODE_PER_BLOCK # indirect bloc addr
+            off = (blk - 7 - MINIX_INODE_PER_BLOCK) % MINIX_INODE_PER_BLOCK
 
             # read the second indirect block + read 'indirect' address and return 'offset' address
             return int(struct.unpack_from('H',
-                                          self.bd.read_bloc(struct.unpack_from('H',
-                                          self.bd.read_bloc(inode.zone[8]), indir)[0]), off)[0])
+                                           self.bd.read_bloc(struct.unpack_from('H',
+                                           self.bd.read_bloc(inode.i_dbl_indr_zone), indir)[0]), off)[0])
         else:
             return -1
 
