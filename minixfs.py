@@ -105,21 +105,18 @@ class minix_file_system(object):
         if blk < 7:
             return inode.i_zone[blk]
 
-        elif blk < (MINIX_INODE_PER_BLOCK + 7):
-            # debug=struct.unpack_from('H', self.bd.read_bloc(inode.i_indir_zone), (blk - 7)*2)
-            # offset need to be douled (skip 2*byte)
+        elif blk < ((BLOCK_SIZE/2) + 7):
             return int(struct.unpack_from('H', self.bd.read_bloc(inode.i_indir_zone), (blk - 7)*2)[0])
 
         # TODO correct double indirection 512^2
         # TODO elif blk < 513*512+7  sinon rise error
         elif (blk < (MINIX_INODE_PER_BLOCK + 1) * MINIX_INODE_PER_BLOCK + 7):
-            indir = (blk - 7 - MINIX_INODE_PER_BLOCK) / MINIX_INODE_PER_BLOCK # indirect bloc addr
-            off = (blk - 7 - MINIX_INODE_PER_BLOCK) % MINIX_INODE_PER_BLOCK
+            indir = (blk - 7 - (BLOCK_SIZE/2)) / BLOCK_SIZE # indirect bloc addr
+            off = blk - 7 - (BLOCK_SIZE/2)
 
-            print(int(struct.unpack_from('H', self.bd.read_bloc(struct.unpack_from('H', self.bd.read_bloc(inode.i_dbl_indr_zone), 2*indir)[0]), 2*off)[0]))
             # read the second indirect block + read 'indirect' address and return 'offset' address
             return int(struct.unpack_from('H', self.bd.read_bloc(struct.unpack_from(
-                                          'H', self.bd.read_bloc(inode.i_dbl_indr_zone), 2*indir)[0]), 2*off)[0])
+                                          'H', self.bd.read_bloc(inode.i_dbl_indr_zone), indir*2)[0]), off*2)[0])
         else:
             return None
 
@@ -132,18 +129,23 @@ class minix_file_system(object):
         """
         # TODO use bmap on each dir (be sure to look at every block)
 
-        blk=0
-        datas=self.bd.read_bloc(self.bmap(dinode,blk))
-        a=struct.unpack_from('HHHHHHHHHHHHHHHH', datas)
-        print(a.__str__())
+        self.blk = 0
+        datas = self.bd.read_bloc(self.bmap(dinode, self.blk))
+        d_entry = {'':''}
+        for i in range(MINIX_DIR_ENTRIES_PER_BLOCK):
+            off = i * MINIX_DIR_ENTRIES_PER_BLOCK
+            inode = struct.unpack_from('H', datas, i*16)[0]
+            name = datas[off+2:off+16].split('\x00')[0]
+            d_entry.update({inode: name})
+
+        print(d_entry.__str__())
 
         while datas:
-            blk = blk + 1
-            a=struct.unpack_from('HHHHHHHHHHHHHHHH', datas, blk)
-            print(a.__str__())
-            datas=self.bd.read_bloc(self.bmap(dinode,blk))
+            self.blk += 1
+            # print(datas.__str__())
+            datas = self.bd.read_bloc(self.bmap(dinode, self.blk))
 
-        return None
+        return d_entry[name]
 
     # TODO search directory and file
     #find an inode number according to its path

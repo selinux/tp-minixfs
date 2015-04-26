@@ -1,0 +1,4 @@
+[26.04.2015]  1ere indirection ne fonctionne pas
+         corrigé en doublant les offsets (struct('H') = 2 octets)
+         offset(addr blk) = 2*blk
+[26.04.2015]  2e indirection ne fonctionne pas

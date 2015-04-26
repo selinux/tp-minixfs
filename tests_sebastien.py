@@ -27,11 +27,13 @@ os.system(string)
 
 class TestStringMethods(unittest.TestCase):
 
-    def test_1(self):
+    def test_bmap(self):
         self.maxDiff = None
         minixfs=minix_file_system(workfile)
-        for i in range(7,519):
-            print(minixfs.bmap(minixfs.inodes_list[167],i).__str__())
+        # for i in range(7, 519):
+        #     print(minixfs.bmap(minixfs.inodes_list[167], i).__str__())
+        for i in range(520, 529):
+            print(minixfs.bmap(minixfs.inodes_list[167], i).__str__())
 
     # def test_upper(self):
     #     self.assertEqual('foo'.upper(), 'FOO')
