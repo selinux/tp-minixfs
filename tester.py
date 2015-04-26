@@ -89,11 +89,9 @@ class MinixTester(unittest.TestCase):
 
     #inode list content test
     def test_5_fs_inode_list(self):
+        self.maxDiff = None
         self.minixfs=minix_file_system(workfile)
-        # try:
         # self.assertEqual(self.minixfs.inodes_list,INODELIST);
-        # except e:
-
 
     #testing ialloc()/ifree()
     #calling ialloc()/ifree() several time and checking
@@ -128,6 +126,7 @@ class MinixTester(unittest.TestCase):
     #testing bmap function : just check that some bmaped
     #blocs have the right numbers.
     def test_8_fs_bmap(self):
+        self.maxDiff = None
         minixfs=minix_file_system(workfile)
         #bmap of inode 167, an inode with triple indirects 
         #containing linux-0.95.tgz. Get all blocs of the file

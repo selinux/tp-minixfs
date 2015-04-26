@@ -24,6 +24,7 @@ class minix_file_system(object):
         self.zone_map.frombytes(self.bd.read_bloc(2 + self.bd.super_block.s_imap_blocks,
                                                   numofblk=self.bd.super_block.s_zmap_blocks))
 
+        # initialising the list by an unused inode (inode start at indices 1)
         self.inodes_list = [minix_inode(num=0, mode=0, uid=0, size=0, time=0, gid=0, nlinks=0,
                                         zone=[], indir_zone=0, dblr_indir_zone=0)]
         buff = self.bd.read_bloc(2 + self.bd.super_block.s_imap_blocks +
@@ -41,8 +42,6 @@ class minix_file_system(object):
                 i.i_dbl_indr_zone = s[14]
 
             self.inodes_list.append(i)
-            del i
-
             # print(self.inodes_list[167])
 
     def ialloc(self):
@@ -107,8 +106,9 @@ class minix_file_system(object):
             return inode.i_zone[blk]
 
         elif blk < (MINIX_INODE_PER_BLOCK + 7):
-            # print(struct.unpack_from('H', self.bd.read_bloc(inode.i_indir_zone), blk - 7).__str__())
-            return int(struct.unpack_from('H', self.bd.read_bloc(inode.i_indir_zone), blk - 7)[0])
+            # debug=struct.unpack_from('H', self.bd.read_bloc(inode.i_indir_zone), (blk - 7)*2)
+            # offset need to be douled (skip 2*byte)
+            return int(struct.unpack_from('H', self.bd.read_bloc(inode.i_indir_zone), (blk - 7)*2)[0])
 
         # TODO correct double indirection 512^2
         # TODO elif blk < 513*512+7  sinon rise error
@@ -116,12 +116,12 @@ class minix_file_system(object):
             indir = (blk - 7 - MINIX_INODE_PER_BLOCK) / MINIX_INODE_PER_BLOCK # indirect bloc addr
             off = (blk - 7 - MINIX_INODE_PER_BLOCK) % MINIX_INODE_PER_BLOCK
 
+            print(int(struct.unpack_from('H', self.bd.read_bloc(struct.unpack_from('H', self.bd.read_bloc(inode.i_dbl_indr_zone), 2*indir)[0]), 2*off)[0]))
             # read the second indirect block + read 'indirect' address and return 'offset' address
-            return int(struct.unpack_from('H',
-                                           self.bd.read_bloc(struct.unpack_from('H',
-                                           self.bd.read_bloc(inode.i_dbl_indr_zone), indir)[0]), off)[0])
+            return int(struct.unpack_from('H', self.bd.read_bloc(struct.unpack_from(
+                                          'H', self.bd.read_bloc(inode.i_dbl_indr_zone), 2*indir)[0]), 2*off)[0])
         else:
-            return -1
+            return None
 
     def lookup_entry(self, dinode, name):
         """ lookup for a name in a directory, and return its inode number,
@@ -131,7 +131,19 @@ class minix_file_system(object):
         :return: directory's inode
         """
         # TODO use bmap on each dir (be sure to look at every block)
-        return
+
+        blk=0
+        datas=self.bd.read_bloc(self.bmap(dinode,blk))
+        a=struct.unpack_from('HHHHHHHHHHHHHHHH', datas)
+        print(a.__str__())
+
+        while datas:
+            blk = blk + 1
+            a=struct.unpack_from('HHHHHHHHHHHHHHHH', datas, blk)
+            print(a.__str__())
+            datas=self.bd.read_bloc(self.bmap(dinode,blk))
+
+        return None
 
     # TODO search directory and file
     #find an inode number according to its path
