@@ -21,7 +21,7 @@ class minix_superbloc(object):
 
         # TODO check if we can do this ? use read_block() while initializing
         try:
-            sb = struct.unpack_from('HHHHHHIHH', blk_device.read_bloc(1))
+            sb = struct.unpack_from('HHHHHHIHH', blk_device.read_bloc(MINIX_SUPER_BLOCK_NUM))
         except OSError:
             exit("Error unable to read super block")
 
