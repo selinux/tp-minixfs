@@ -42,7 +42,6 @@ class minix_file_system(object):
                 i.i_dbl_indr_zone = s[14]
 
             self.inodes_list.append(i)
-            # print(self.inodes_list[167])
 
     def ialloc(self):
         """ return the first free inode number available
@@ -71,7 +70,7 @@ class minix_file_system(object):
         """
         # inodes start at 1
         self.inode_map[inodnum] = False
-        return ~self.inode_map[inodnum]
+        return ~self.inode_map[inodnum]  # return 'not' state (true if false)
 
     def balloc(self):
         """ return the first free bloc index in the volume.
@@ -127,23 +126,24 @@ class minix_file_system(object):
         :param name: dirname to search
         :return: directory's inode
         """
-        # TODO use bmap on each dir (be sure to look at every block)
-
         self.blk = 0
         datas = self.bd.read_bloc(self.bmap(dinode, self.blk))
-        d_entry = {'':''}
+        d_entry = {}
         for i in range(MINIX_DIR_ENTRIES_PER_BLOCK):
-            off = i * MINIX_DIR_ENTRIES_PER_BLOCK
-            inode = struct.unpack_from('H', datas, i*16)[0]
-            name = datas[off+2:off+16].split('\x00')[0]
-            d_entry.update({inode: name})
+            off = i * DIRSIZE
+            self.inode = struct.unpack_from('H', datas, i*16)[0]
+            self.name = datas[off+2:off+16].split('\x00')[0]
+            if self.inode != 0:
+                d_entry.update({self.name: self.inode})
 
-        print(d_entry.__str__())
+        print(d_entry[name])
 
-        while datas:
-            self.blk += 1
-            # print(datas.__str__())
-            datas = self.bd.read_bloc(self.bmap(dinode, self.blk))
+        # TODO extend to other directory block
+
+        # while datas:
+        #     self.blk += 1
+        #     print(datas.__str__())
+            # datas = self.bd.read_bloc(self.bmap(dinode, self.blk))
 
         return d_entry[name]
 
@@ -153,7 +153,17 @@ class minix_file_system(object):
     #only works with absolute paths
 
     def namei(self, path):
-        return
+        self.path = path[1:].split('/')
+        self.inode = 1
+
+        # if path empty it's root. So return inode = 1
+        if not self.path[0]:
+            return self.inode
+
+        for i in self.path:
+            self.inode = self.lookup_entry(self.inodes_list[self.inode], i)
+
+        return self.inode
 
     def ialloc_bloc(self, inode, blk):
         """ Add a new data block at pos blk and return its real position on disk
@@ -163,27 +173,27 @@ class minix_file_system(object):
         :return: the block address
         """
         if blk < 7:
-            if not inode.zone[blk]:
-                inode.zone[blk] = self.balloc()
-            return inode.zone[blk]
+            if not inode.i_zone[blk]:
+                inode.i_zone[blk] = self.balloc()
+            return inode.i_zone[blk]
 
         elif blk < MINIX_INODE_PER_BLOCK + 7:
             # if not already allowed write modified indirect block
-            if not struct.unpack_from('H', self.bd.read_bloc(inode.zone[7]), blk - 7):
+            if not struct.unpack_from('H', self.bd.read_bloc(inode.i_zone[7]), blk - 7):
                 self.bd.write_bloc(2+self.bd.super_block.s_imap_blocks,
-                                   struct.pack_into('H', self.bd.read_bloc(inode.zone[7], blk - 7), blk - 7,
+                                   struct.pack_into('H', self.bd.read_bloc(inode.i_zone[7], blk - 7), blk - 7,
                                                     self.balloc()))
             # now we can return it
-            return struct.unpack_from('H', self.bd.read_bloc(inode.zone[7]), blk - 7)
+            return struct.unpack_from('H', self.bd.read_bloc(inode.i_zone[7]), blk - 7)
 
         else:
             # if not already allowed write modified second indirect block
-            if not struct.unpack_from('H', self.bd.read_bloc(inode.zone[8]), blk - 7 - MINIX_INODE_PER_BLOCK):
-                self.bd.write_bloc(2+self.bd.super_block.s_imap_blocks, struct.pack_into('H', self.bd.read_bloc(inode.zone[8],
+            if not struct.unpack_from('H', self.bd.read_bloc(inode.i_zone[8]), blk - 7 - MINIX_INODE_PER_BLOCK):
+                self.bd.write_bloc(2+self.bd.super_block.s_imap_blocks, struct.pack_into('H', self.bd.read_bloc(inode.i_zone[8],
                                                     blk - 7 - MINIX_INODE_PER_BLOCK),
                                                     blk - 7 - MINIX_INODE_PER_BLOCK, self.balloc()))
             # now we can return it
-            return struct.unpack_from('H', self.bd.read_bloc(inode.zone[8]), blk - 7 - MINIX_INODE_PER_BLOCK)
+            return struct.unpack_from('H', self.bd.read_bloc(inode.i_zone[8]), blk - 7 - MINIX_INODE_PER_BLOCK)
 
     # TODO insert filename in dinode
 
@@ -231,3 +241,46 @@ class minix_file_system(object):
             self.bd.write_bloc(2 + self.bd.super_block.s_imap_blocks + i, \
                                self.zone_map.tobytes()[i * BLOCK_SIZE:(i + 1) * BLOCK_SIZE])
         return
+
+    def is_dir(self, inode):
+        """ Test if inode is a dir
+        :param inode:
+        :return: True if inode is a dir
+        """
+        return True if (self.inodes_list[self.inode].i_mode >> 12) == 4 else False
+
+    def is_file(self, inode):
+        """ Test if inode is a file
+        :param inode:
+        :return: True if inode is a file
+        """
+        return True if (self.inodes_list[self.inode].i_mode >> 12) == 8 else False
+
+    def is_device(self, inode):
+        """ Test if inode is a device
+        :param inode:
+        :return: True if inode is a device
+        """
+        return True if (self.inodes_list[self.inode].i_mode >> 12) == 2 else False
+
+    def is_pipe(self, inode):
+        """ Test if inode is a pipe
+        :param inode:
+        :return: True if inode is a pipe
+        """
+        return True if (self.inodes_list[self.inode].i_mode >> 12) == 1 else False
+
+    def is_device_bloc(self, inode):
+        """ Test if inode is a device bloc
+        :param inode:
+        :return: True if inode is a device block
+        """
+        return True if (self.inodes_list[self.inode].i_mode >> 12) == 6 else False
+
+    def is_link(self, inode):
+        """ Test if inode is a device link
+        :param inode:
+        :return: True if inode is a link
+        """
+        return True if (self.inodes_list[self.inode].i_mode >> 12) == 10 else False
+
