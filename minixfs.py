@@ -76,7 +76,11 @@ class minix_file_system(object):
         """ return the first free bloc index in the volume.
         :return: the first free bloc
         """
-        pos = self.zone_map.index(False)
+        try:
+            pos = self.zone_map.index(False)
+        except ValueError:
+            sys.exit('Error no space left on device')
+
         self.zone_map[pos] = True
         self.update_bmap()
         # data block start at 1
@@ -101,14 +105,15 @@ class minix_file_system(object):
         :param blk: the block number ( 0,.., n-1)
         :return: the corresponding block number on disk
         """
+        # direct blocks
         if blk < 7:
             return inode.i_zone[blk]
 
+        # indirect blocks
         elif blk < ((BLOCK_SIZE/2) + 7):
             return int(struct.unpack_from('H', self.bd.read_bloc(inode.i_indir_zone), (blk - 7)*2)[0])
 
-        # TODO correct double indirection 512^2
-        # TODO elif blk < 513*512+7  sinon rise error
+        # double indirect blocks
         elif (blk < (MINIX_INODE_PER_BLOCK + 1) * MINIX_INODE_PER_BLOCK + 7):
             indir = (blk - 7 - (BLOCK_SIZE/2)) / BLOCK_SIZE # indirect bloc addr
             off = blk - 7 - (BLOCK_SIZE/2)
@@ -116,8 +121,9 @@ class minix_file_system(object):
             # read the second indirect block + read 'indirect' address and return 'offset' address
             return int(struct.unpack_from('H', self.bd.read_bloc(struct.unpack_from(
                                           'H', self.bd.read_bloc(inode.i_dbl_indr_zone), indir*2)[0]), off*2)[0])
+
         else:
-            return None
+            raise OutboundError('Error Block is out of bound')
 
     def lookup_entry(self, dinode, name):
         """ lookup for a name in a directory, and return its inode number,
@@ -126,31 +132,25 @@ class minix_file_system(object):
         :param name: dirname to search
         :return: directory's inode
         """
-        self.blk = 0
-        datas = self.bd.read_bloc(self.bmap(dinode, self.blk))
+        blk = 0
+        data_block = self.bmap(dinode, blk)
         d_entry = {}
-        for i in range(MINIX_DIR_ENTRIES_PER_BLOCK):
-            off = i * DIRSIZE
-            self.inode = struct.unpack_from('H', datas, i*16)[0]
-            self.name = datas[off+2:off+16].split('\x00')[0]
-            if self.inode != 0:
-                d_entry.update({self.name: self.inode})
 
-        print(d_entry[name])
+        while data_block:
+            content = self.bd.read_bloc(data_block)
+            for i in range(MINIX_DIR_ENTRIES_PER_BLOCK):
+                off = i * DIRSIZE
+                self.inode = struct.unpack_from('H', content, i*16)[0]
+                self.name = content[off+2:off+16].split('\x00')[0]
+                if self.inode != 0:
+                    # add entry to dictionary
+                    d_entry.update({self.name: self.inode})
 
-        # TODO extend to other directory block
-
-        # while datas:
-        #     self.blk += 1
-        #     print(datas.__str__())
-            # datas = self.bd.read_bloc(self.bmap(dinode, self.blk))
+            # pick next data block
+            blk += 1
+            data_block = self.bmap(dinode, blk)
 
         return d_entry[name]
-
-    # TODO search directory and file
-    #find an inode number according to its path
-    #ex : '/usr/bin/cat'
-    #only works with absolute paths
 
     def namei(self, path):
         self.path = path[1:].split('/')
@@ -160,8 +160,12 @@ class minix_file_system(object):
         if not self.path[0]:
             return self.inode
 
+        # TODO add raise exception in lookup_entry
         for i in self.path:
-            self.inode = self.lookup_entry(self.inodes_list[self.inode], i)
+            try:
+                self.inode = self.lookup_entry(self.inodes_list[self.inode], i)
+            except KeyError:
+                raise FileNotFoundError('Error file not found')
 
         return self.inode
 
