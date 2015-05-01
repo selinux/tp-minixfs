@@ -16,22 +16,22 @@ from bloc_device import *
 
 class minix_file_system(object):
     def __init__(self, filename):
-        self.bd = bloc_device(BLOCK_SIZE, filename)
+        self.disk = bloc_device(BLOCK_SIZE, filename)
 
         self.inode_map = bitarray(endian='little')
         self.zone_map = bitarray(endian='little')
-        self.inode_map.frombytes(self.bd.read_bloc(2, numofblk=self.bd.super_block.s_imap_blocks))
-        self.zone_map.frombytes(self.bd.read_bloc(2 + self.bd.super_block.s_imap_blocks,
-                                                  numofblk=self.bd.super_block.s_zmap_blocks))
+        self.inode_map.frombytes(self.disk.read_bloc(2, numofblk=self.disk.super_block.s_imap_blocks))
+        self.zone_map.frombytes(self.disk.read_bloc(2 + self.disk.super_block.s_imap_blocks,
+                                                  numofblk=self.disk.super_block.s_zmap_blocks))
 
         # initialising the list by an unused inode (inode start at indices 1)
         self.inodes_list = [minix_inode(num=0, mode=0, uid=0, size=0, time=0, gid=0, nlinks=0,
                                         zone=[], indir_zone=0, dblr_indir_zone=0)]
-        buff = self.bd.read_bloc(2 + self.bd.super_block.s_imap_blocks +
-                                 self.bd.super_block.s_zmap_blocks,
-                                 numofblk=self.bd.super_block.s_ninodes / MINIX_INODE_PER_BLOCK)
+        buff = self.disk.read_bloc(2 + self.disk.super_block.s_imap_blocks +
+                                 self.disk.super_block.s_zmap_blocks,
+                                 numofblk=self.disk.super_block.s_ninodes / MINIX_INODE_PER_BLOCK)
 
-        for nb in range(self.bd.super_block.s_ninodes):
+        for nb in range(self.disk.super_block.s_ninodes):
             i = minix_inode()
             i.i_ino = nb + 1
             if self.inode_map[nb]:
@@ -84,7 +84,7 @@ class minix_file_system(object):
         self.zone_map[pos] = True
         self.update_bmap()
         # data block start at 1
-        return int(pos + self.bd.super_block.s_firstdatazone)
+        return int(pos + self.disk.super_block.s_firstdatazone)
 
     def bfree(self, blocnum):
         """ toggle a bloc as available for the next balloc()
@@ -111,7 +111,7 @@ class minix_file_system(object):
 
         # indirect blocks
         elif blk < ((BLOCK_SIZE/2) + 7):
-            return int(struct.unpack_from('H', self.bd.read_bloc(inode.i_indir_zone), (blk - 7)*2)[0])
+            return int(struct.unpack_from('H', self.disk.read_bloc(inode.i_indir_zone), (blk - 7)*2)[0])
 
         # double indirect blocks
         elif (blk < (MINIX_INODE_PER_BLOCK + 1) * MINIX_INODE_PER_BLOCK + 7):
@@ -119,8 +119,8 @@ class minix_file_system(object):
             off = blk - 7 - (BLOCK_SIZE/2)
 
             # read the second indirect block + read 'indirect' address and return 'offset' address
-            return int(struct.unpack_from('H', self.bd.read_bloc(struct.unpack_from(
-                                          'H', self.bd.read_bloc(inode.i_dbl_indr_zone), indir*2)[0]), off*2)[0])
+            return int(struct.unpack_from('H', self.disk.read_bloc(struct.unpack_from(
+                                          'H', self.disk.read_bloc(inode.i_dbl_indr_zone), indir*2)[0]), off*2)[0])
 
         else:
             raise OutboundError('Error Block is out of bound')
@@ -137,7 +137,7 @@ class minix_file_system(object):
         d_entry = {}
 
         while data_block:
-            content = self.bd.read_bloc(data_block)
+            content = self.disk.read_bloc(data_block)
             for i in range(MINIX_DIR_ENTRIES_PER_BLOCK):
                 off = i * DIRSIZE
                 self.inode = struct.unpack_from('H', content, i*16)[0]
@@ -164,6 +164,7 @@ class minix_file_system(object):
         for i in self.path:
             try:
                 self.inode = self.lookup_entry(self.inodes_list[self.inode], i)
+                if __debug__: print(self.inode.__str__())
             except KeyError:
                 raise FileNotFoundError('Error file not found')
 
@@ -183,21 +184,21 @@ class minix_file_system(object):
 
         elif blk < MINIX_INODE_PER_BLOCK + 7:
             # if not already allowed write modified indirect block
-            if not struct.unpack_from('H', self.bd.read_bloc(inode.i_zone[7]), blk - 7):
-                self.bd.write_bloc(2+self.bd.super_block.s_imap_blocks,
-                                   struct.pack_into('H', self.bd.read_bloc(inode.i_zone[7], blk - 7), blk - 7,
+            if not struct.unpack_from('H', self.disk.read_bloc(inode.i_zone[7]), blk - 7):
+                self.disk.write_bloc(2+self.disk.super_block.s_imap_blocks,
+                                   struct.pack_into('H', self.disk.read_bloc(inode.i_zone[7], blk - 7), blk - 7,
                                                     self.balloc()))
             # now we can return it
-            return struct.unpack_from('H', self.bd.read_bloc(inode.i_zone[7]), blk - 7)
+            return struct.unpack_from('H', self.disk.read_bloc(inode.i_zone[7]), blk - 7)
 
         else:
             # if not already allowed write modified second indirect block
-            if not struct.unpack_from('H', self.bd.read_bloc(inode.i_zone[8]), blk - 7 - MINIX_INODE_PER_BLOCK):
-                self.bd.write_bloc(2+self.bd.super_block.s_imap_blocks, struct.pack_into('H', self.bd.read_bloc(inode.i_zone[8],
+            if not struct.unpack_from('H', self.disk.read_bloc(inode.i_zone[8]), blk - 7 - MINIX_INODE_PER_BLOCK):
+                self.disk.write_bloc(2+self.disk.super_block.s_imap_blocks, struct.pack_into('H', self.disk.read_bloc(inode.i_zone[8],
                                                     blk - 7 - MINIX_INODE_PER_BLOCK),
                                                     blk - 7 - MINIX_INODE_PER_BLOCK, self.balloc()))
             # now we can return it
-            return struct.unpack_from('H', self.bd.read_bloc(inode.i_zone[8]), blk - 7 - MINIX_INODE_PER_BLOCK)
+            return struct.unpack_from('H', self.disk.read_bloc(inode.i_zone[8]), blk - 7 - MINIX_INODE_PER_BLOCK)
 
     # TODO insert filename in dinode
 
@@ -206,7 +207,18 @@ class minix_file_system(object):
     #name is an unicode string
     #parameters : directory inode, name, inode number
     def add_entry(self, dinode, name, new_node_num):
-        return
+        data_block = self.bmap(dinode, 0)
+        content = bytearray(self.disk.read_bloc(data_block))
+        if len(name) > (DIRSIZE-2): raise FileNameError('Error Filename too long')
+
+        for offset in xrange(0, BLOCK_SIZE, DIRSIZE):
+            if not struct.unpack_from('H', content, offset)[0]:
+                struct.pack_into('H', content, offset, new_node_num-1)
+                content[offset+2:offset+16] = name.ljust(14, '\x00')
+                if __debug__: print(content[offset:offset+DIRSIZE])
+                self.disk.write_bloc(data_block, content)
+                break
+        # return
 
     #delete an entry named "name" 
     def del_entry(self, inode, name):
@@ -219,9 +231,9 @@ class minix_file_system(object):
         """
         offset = 2
         # Write can only handle 1024 byte so need to slice (just in case)
-        for i in range(self.bd.super_block.s_imap_blocks):
+        for i in range(self.disk.super_block.s_imap_blocks):
             # write inode bitmap starting at bloc 2
-            self.bd.write_bloc(offset+i, self.inode_map[i*(8*BLOCK_SIZE):(i+1)*(8*BLOCK_SIZE)-1].tobytes())
+            self.disk.write_bloc(offset+i, self.inode_map[i*(8*BLOCK_SIZE):(i+1)*(8*BLOCK_SIZE)-1].tobytes())
 
         return 0
 
@@ -230,19 +242,19 @@ class minix_file_system(object):
             cos we need a consistent filesystem
         :return: 0
         """
-        offset = 2 + self.bd.super_block.s_imap_blocks
+        offset = 2 + self.disk.super_block.s_imap_blocks
         # Write can only handle 1024 byte so need to slice (just in case)
-        for i in range(self.bd.super_block.s_zmap_blocks):
+        for i in range(self.disk.super_block.s_zmap_blocks):
             # write inode bitmap starting at bloc 2
-            self.bd.write_bloc(offset+i, self.inode_map[i*(8*BLOCK_SIZE):(i+1)*(8*BLOCK_SIZE)-1].tobytes())
+            self.disk.write_bloc(offset+i, self.inode_map[i*(8*BLOCK_SIZE):(i+1)*(8*BLOCK_SIZE)-1].tobytes())
 
         return 0
 
     def write_bloc_list(self):
 
-        for i in range(self.bd.super_block.s_zmap_blocks):
+        for i in range(self.disk.super_block.s_zmap_blocks):
             # start at bloc 2
-            self.bd.write_bloc(2 + self.bd.super_block.s_imap_blocks + i, \
+            self.disk.write_bloc(2 + self.disk.super_block.s_imap_blocks + i, \
                                self.zone_map.tobytes()[i * BLOCK_SIZE:(i + 1) * BLOCK_SIZE])
         return
 
