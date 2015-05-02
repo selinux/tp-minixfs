@@ -138,10 +138,11 @@ class minix_file_system(object):
 
         while data_block:
             content = self.disk.read_bloc(data_block)
+            # TODO replace range by xrange 0 1024 16
             for i in range(MINIX_DIR_ENTRIES_PER_BLOCK):
                 off = i * DIRSIZE
-                self.inode = struct.unpack_from('H', content, i*16)[0]
-                self.name = content[off+2:off+16].split('\x00')[0]
+                self.inode = struct.unpack_from('H', content, i*DIRSIZE)[0]
+                self.name = content[off+2:off+DIRSIZE].split('\x00')[0]
                 if self.inode != 0:
                     # add entry to dictionary
                     d_entry.update({self.name: self.inode})
@@ -227,7 +228,7 @@ class minix_file_system(object):
             for offset in xrange(0, BLOCK_SIZE, DIRSIZE):
                 if not struct.unpack_from('H', content, offset)[0]:
                     struct.pack_into('H', content, offset, new_node_num-1)
-                    content[offset+2:offset+16] = name.ljust(14, '\x00')
+                    content[offset+2:offset+DIRSIZE] = name.ljust(DIRSIZE-2, '\x00')
                     if __debug__: print(content[offset:offset+DIRSIZE])
                     done = True
                     break
@@ -238,8 +239,27 @@ class minix_file_system(object):
             raise AddError('Unable to add entry')
 
     #delete an entry named "name" 
-    def del_entry(self, inode, name):
-        return
+    def del_entry(self, dinode, name):
+        blk = -1
+        inode = self.lookup_entry(dinode, name)
+        if not self.ifree(inode):
+            raise DelEntryError('Error deleting entry')
+
+        data_block = 1
+
+        while data_block:
+            blk += 1
+            data_block = self.bmap(dinode, blk)
+            content = bytearray(self.disk.read_bloc(data_block))
+            for i in xrange(0, BLOCK_SIZE, DIRSIZE):
+                # remove entry
+                if inode == struct.unpack_from('H', content, i)[0]:
+                    content[i:i+2] = "".ljust(2, '\x00')
+                    self.bfree(data_block)
+                    data_block = 0 # break
+
+        self.disk.write_bloc(dinode.i_zone[blk], content)
+
 
     def update_imap(self):
         """ Write bitarray and inodes_list to disk
