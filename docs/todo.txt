@@ -1,2 +1,5 @@
 # TODO if blk is not < 513*512+7  rise error
 [01.05.2015] Done
+# TODO insert filename in dinode
+[01.05.2015] Done
+

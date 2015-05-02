@@ -200,25 +200,42 @@ class minix_file_system(object):
             # now we can return it
             return struct.unpack_from('H', self.disk.read_bloc(inode.i_zone[8]), blk - 7 - MINIX_INODE_PER_BLOCK)
 
-    # TODO insert filename in dinode
 
     # TODO add a dinode if dir is full
-    #create a new entry in the node
-    #name is an unicode string
-    #parameters : directory inode, name, inode number
     def add_entry(self, dinode, name, new_node_num):
-        data_block = self.bmap(dinode, 0)
-        content = bytearray(self.disk.read_bloc(data_block))
+        done = False
+        block = -1
+
         if len(name) > (DIRSIZE-2): raise FileNameError('Error Filename too long')
 
-        for offset in xrange(0, BLOCK_SIZE, DIRSIZE):
-            if not struct.unpack_from('H', content, offset)[0]:
-                struct.pack_into('H', content, offset, new_node_num-1)
-                content[offset+2:offset+16] = name.ljust(14, '\x00')
-                if __debug__: print(content[offset:offset+DIRSIZE])
-                self.disk.write_bloc(data_block, content)
-                break
-        # return
+        while not done:
+
+            block += 1
+            data_block = self.bmap(dinode, block)
+
+            # TODO increase dir capacity with indir and double indir
+            if data_block:
+                content = bytearray(self.disk.read_bloc(data_block))
+            else:
+                if data_block < 7:
+                    dinode.i_zone[data_block+1] = self.balloc()
+                else:
+                    raise DirFullError('Error too many file in dir')
+
+                content = bytearray("".ljust(1024, '\x00'))
+
+            for offset in xrange(0, BLOCK_SIZE, DIRSIZE):
+                if not struct.unpack_from('H', content, offset)[0]:
+                    struct.pack_into('H', content, offset, new_node_num-1)
+                    content[offset+2:offset+16] = name.ljust(14, '\x00')
+                    if __debug__: print(content[offset:offset+DIRSIZE])
+                    done = True
+                    break
+
+        if done:
+            self.disk.write_bloc(dinode.i_zone[block], content)
+        else:
+            raise AddError('Unable to add entry')
 
     #delete an entry named "name" 
     def del_entry(self, inode, name):
