@@ -123,6 +123,7 @@ class minix_file_system(object):
                                           'H', self.disk.read_bloc(inode.i_dbl_indr_zone), indir*2)[0]), off*2)[0])
 
         else:
+            log.error('Error bmap, block is out of bound')
             raise OutboundError('Error Block is out of bound')
 
     def lookup_entry(self, dinode, name):
@@ -165,8 +166,9 @@ class minix_file_system(object):
         for i in self.path:
             try:
                 self.inode = self.lookup_entry(self.inodes_list[self.inode], i)
-                if __debug__: print(self.inode.__str__())
+                # if __debug__: print(self.inode.__str__())
             except KeyError:
+                log.error('Error lookup_entry, '+os.strerror(errno.ENODEV))
                 raise FileNotFoundError('Error file not found')
 
         return self.inode
@@ -221,6 +223,7 @@ class minix_file_system(object):
                 if data_block < 7:
                     dinode.i_zone[data_block+1] = self.balloc()
                 else:
+                    log.error('Error unable to add new entry in dir')
                     raise DirFullError('Error too many file in dir')
 
                 content = bytearray("".ljust(1024, '\x00'))
@@ -229,13 +232,14 @@ class minix_file_system(object):
                 if not struct.unpack_from('H', content, offset)[0]:
                     struct.pack_into('H', content, offset, new_node_num-1)
                     content[offset+2:offset+DIRSIZE] = name.ljust(DIRSIZE-2, '\x00')
-                    if __debug__: print(content[offset:offset+DIRSIZE])
+                    # if __debug__: print(content[offset:offset+DIRSIZE])
                     done = True
                     break
 
         if done:
             self.disk.write_bloc(dinode.i_zone[block], content)
         else:
+            log.error('Error unable to add new entry in dir')
             raise AddError('Unable to add entry')
 
     #delete an entry named "name" 

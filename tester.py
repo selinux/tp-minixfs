@@ -11,6 +11,7 @@ from tester_answers import *
 import unittest
 import os
 import sys
+import logging as log
 
 # Test requirements : 
 # - bloc_device class : modeling a disk drive with the following methods
@@ -29,6 +30,7 @@ workfile=testfile+".gen"
 workfilewrite=testfile+".genwrite"
 string="dd if="+testfile+" of="+workfile+" bs=1024 2>/dev/null"
 os.system(string)
+log.basicConfig(format='%(asctime)s %(levelname)s:  %(message)s', level=log.DEBUG)
 
 class MinixTester(unittest.TestCase):
 

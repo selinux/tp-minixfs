@@ -12,6 +12,10 @@ __status__ = "TP minix fs"
 
 from constantes import *
 from minix_superbloc import *
+import socket
+import random as rand
+import errno
+
 
 
 class bloc_device(object):
@@ -28,8 +32,20 @@ class bloc_device(object):
             sys.exit("Error unable to open file system")
 
         self.super_block = minix_superbloc(self)
-        # TODO do we need block_offset ??
-        self.block_offset = (2+self.super_block.s_imap_blocks+self.super_block.s_zmap_blocks)
+        log.info("file system opened successfully")
+
+    def __del__(self):
+        """ Close properly the block device """
+        new_sb = bytearray("".ljust(1024, '\x00'))
+        clean_state = 1
+        sb = struct.pack('HHHHHHIHH', self.super_block.s_ninodes, self.super_block.s_nzones, self.super_block.s_imap_blocks, \
+                    self.super_block.s_zmap_blocks, self.super_block.s_firstdatazone, self.super_block.s_log_zone_size,
+                    self.super_block.s_max_size, self.super_block.s_magic, clean_state)
+        new_sb[:sb.__len__()] = sb
+        log.info("file system cleanly closed")
+        # self.write_bloc(MINIX_SUPER_BLOCK_NUM, new_sb)
+        self.fd.close()
+
 
     def read_bloc(self, bloc_num, numofblk=1):
         """ Read n block from block device
@@ -41,9 +57,9 @@ class bloc_device(object):
         try:
             self.fd.seek(bloc_num*self.blksize)
             buff = self.fd.read(int(numofblk*BLOCK_SIZE))
-        except OSError:
-            # TODO find a better way to rise error
-            return -1
+        except OSError, err:
+            print(err)
+
         return buff
 
     def write_bloc(self, bloc_num, bloc):
@@ -55,6 +71,64 @@ class bloc_device(object):
         try:
             self.fd.seek(bloc_num*self.blksize)
             n = self.fd.write(bloc)
-        except OSError:
-            return -1
+        except OSError, err:
+            print(err)
+
         return n
+
+class remote_bloc_device(object):
+    """ Class remote block device
+
+        This class connect to a remote bloc server and
+        read/write commands are passed through a
+        TCP socket
+    """
+    def __init__(self):
+        self.requests = []
+        self.responses = []
+        return
+
+    def read_block(self, bloc_num, numofbloc=1):
+        """ Read n block from block device server
+
+        :param bloc_num: the bloc number
+        :param numofbloc: number of block to be read
+        :return: the response
+        """
+        magic = int('76767676', 16)
+        type = 0
+        rand.seed(None) # None = current system time
+        handle = rand.randint(0,2**32)
+        offset = bloc_num*self.blksize
+        length = numofbloc*self.blksize
+
+        self.requests.insert(struct.pack('!IIIII', magic, type, handle, offset, length), 0)
+
+        buffer = 'hello'
+
+        return buffer
+
+    def write_block(self, bloc_num, bloc):
+        """ Write block from block device server
+
+        :param bloc_num: the bloc number
+        :param bloc: buffer to be written
+        """
+        magic = int('76767676', 16)
+        type = 1
+        rand.seed(None) # None = current system time
+        handle = rand.randint(0,2**32)
+        offset = bloc_num*self.blksize
+        length = self.blksize+20 # always write a full bloc at a time
+
+        # Add padding to clean end of block
+        if bloc.__len__() < BLOCK_SIZE:
+            bloc += "".ljust(BLOCK_SIZE - bloc.__len__(), '\x00')
+        # Can't write more than BLOCK_SIZE
+        if bloc.__len__() > BLOCK_SIZE:
+            log.error("Block too long to be written")
+            raise BlockSizeError('Block too long to be written')
+
+        header = struct.pack('!IIIII', magic, type, handle, offset, length)
+        request = header+bloc
+        self.requests.insert(request, 0)

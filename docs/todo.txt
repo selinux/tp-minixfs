@@ -1,5 +1,8 @@
+# TODO check if we can do this ? use read_block() while initializing
+[26.04.2015]  yes we can ;-)
 # TODO if blk is not < 513*512+7  rise error
 [01.05.2015] Done
 # TODO insert filename in dinode
 [01.05.2015] Done
-
+# TODO in remote_bloc_device.write_bloc; if bloc < 1024 add padding
+[03.05.2015]  Added with raise error if too long

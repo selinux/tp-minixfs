@@ -14,6 +14,7 @@ import os
 import time
 from stat import *
 from bitarray import *
+import logging as log
 
 #block size in bytes
 BLOCK_SIZE=1024

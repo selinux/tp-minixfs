@@ -18,8 +18,6 @@ class minix_superbloc(object):
         """ Init the super block
         :param blk_device: the block device
         """
-
-        # TODO check if we can do this ? use read_block() while initializing
         try:
             sb = struct.unpack_from('HHHHHHIHH', blk_device.read_bloc(MINIX_SUPER_BLOCK_NUM))
         except OSError:

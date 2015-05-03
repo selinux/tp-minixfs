@@ -7,4 +7,4 @@
 [19.04.2015]  change function write_inodes,... to update_imap, update_bmap
 [26.04.2015]  add function lookup_entry and namei
 [26.04.2015]  extend lookup_entry to any number of indir/double indir blocks
-
+[01.05.2015]  All tests passed successfully
