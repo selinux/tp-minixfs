@@ -209,6 +209,8 @@ class minix_file_system(object):
         done = False
         block = -1
 
+        # TODO update link
+        # TODO update file size
         if len(name) > (DIRSIZE-2): raise FileNameError('Error Filename too long')
 
         while not done:

@@ -16,7 +16,7 @@ from constantes import *
 class minix_inode(object):
     """ inodes can be initializted from given values or from raw bytes contents coming from the device """
 
-    def __init__(self, raw_inode=None, num=0, mode=0, uid=0, size=0, time=0, gid=0, nlinks=0, zone=[], indir_zone=0, dblr_indir_zone=0):
+    def __init__(self, raw_inode=None, num=0, mode=0, uid=0, size=0, time=0, gid=0, nlinks=0, zone=[0, 0, 0, 0, 0, 0, 0], indir_zone=0, dblr_indir_zone=0):
         if raw_inode is None:
             self.i_ino = num
             self.i_mode = mode

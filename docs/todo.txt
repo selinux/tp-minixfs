@@ -6,3 +6,9 @@
 [01.05.2015] Done
 # TODO in remote_bloc_device.write_bloc; if bloc < 1024 add padding
 [03.05.2015]  Added with raise error if too long
+# TODO update link in add_entry
+# TODO update file size in add_entry
+# TODO add size somewhere (when? write or balloc or ...?) and when add_entry ? what's the new size of dinode ?
+# TODO add symlink struct ?
+
+

@@ -3,3 +3,5 @@
         offset(addr blk) = 2*blk
 [26.04.2015] bmap 2e indirection ne fonctionne pas
         Corrigé erreur inode number
+
+[05.05.2015]  test2.test_c fail (addn_entry) there is a decalage of 1 with filename and inode new_dir1= inode 0 shall be 1

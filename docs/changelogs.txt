@@ -8,3 +8,5 @@
 [26.04.2015]  add function lookup_entry and namei
 [26.04.2015]  extend lookup_entry to any number of indir/double indir blocks
 [01.05.2015]  All tests passed successfully
+[05.05.2015]  test2 failure. It came from zone = [] when instenciate new inode
+

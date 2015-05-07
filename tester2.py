@@ -7,7 +7,7 @@ from constantes import *
 from bloc_device import *
 from minixfs import *
 from bitarray import *
-from tester_answers import *
+from tester_answers2 import *
 import unittest
 import os
 import sys
@@ -24,7 +24,7 @@ import sys
 # - bitarray class : used to store and manipulated inode and zone bitmaps in memory
 #   member ofs minix_filesystem class
 
-testfile="minixfs_lab1.img"
+testfile="minixfs_lab2.img"
 workfile=testfile+".gen"
 workfilewrite=testfile+".genwrite"
 string="dd if="+testfile+" of="+workfile+" bs=1024 2>/dev/null"
@@ -72,11 +72,11 @@ class MinixTester(unittest.TestCase):
         self.disk=bloc_device(BLOCK_SIZE,workfile)
         sb=minix_superbloc(self.disk)
         
-        self.assertEqual(sb.s_ninodes,6848)
-        self.assertEqual(sb.s_nzones,20480)
+        self.assertEqual(sb.s_ninodes,704)
+        self.assertEqual(sb.s_nzones,2048)
         self.assertEqual(sb.s_imap_blocks,1)
-        self.assertEqual(sb.s_zmap_blocks,3)
-        self.assertEqual(sb.s_firstdatazone,220)
+        self.assertEqual(sb.s_zmap_blocks,1)
+        self.assertEqual(sb.s_firstdatazone,26)
         self.assertEqual(sb.s_max_size,268966912)
 
     #inode and zone map tests
@@ -88,9 +88,9 @@ class MinixTester(unittest.TestCase):
         self.assertEqual(self.minixfs.zone_map,ZONEBITMAP1);
 
     #inode list content test
-    def test_5_fs_inode_list(self):
-        self.minixfs=minix_file_system(workfile)
-        self.assertEqual(self.minixfs.inodes_list,INODELIST);
+#    def test_5_fs_inode_list(self):
+#        self.minixfs=minix_file_system(workfile)
+#        self.assertEqual(self.minixfs.inodes_list,INODELIST);
 
 
     #testing ialloc()/ifree()
@@ -155,11 +155,9 @@ class MinixTester(unittest.TestCase):
     #do a few lookups
     def test_9_fs_lookup_entry(self):
         minixfs=minix_file_system(workfile)
-        #lookup_entry, inode 798 ("/usr/src/ps-0.97"), lookup for ps.c 
-        inode=minixfs.lookup_entry(minixfs.inodes_list[798],"ps.c")
+        inode=minixfs.lookup_entry(minixfs.inodes_list[19],"data")
         self.assertEqual(inode,LOOKUPINODE1)
-        #lookup_entry, inode 212 ("/usr/src/linux/fs/minix"), lookup for namei.c 
-        inode=minixfs.lookup_entry(minixfs.inodes_list[212],"namei.c")
+        inode=minixfs.lookup_entry(minixfs.inodes_list[36],"group")
         self.assertEqual(inode,LOOKUPINODE2)
 
 
@@ -167,7 +165,7 @@ class MinixTester(unittest.TestCase):
     #the expected inode number.
     def test_a_fs_namei(self):
         minixfs=minix_file_system(workfile)
-        paths=["/usr/src/linux/fs/open.c","/bin/bash","/","/usr/include/assert.h"]
+        paths=["/hepia/iti/etc/config","/hepia/iti/etc/disktab","/","/hepia/iti/etc/rc"]
         namedinodelist=[]
         for p in paths:
             namedinode=minixfs.namei(p)
@@ -229,8 +227,8 @@ class MinixTester(unittest.TestCase):
     
     #testing bloc contents and inode maps before and after del_entry
     def test_d_fs_delentry(self):
-        NODENUM=798
-        names_to_del=["attime.c","cmdline.c","free","free.c","Makefile","makelog","ps","ps.0","ps.1","ps.c","psdata.c","psdata.h","ps.h","pwcache.c"]
+        NODENUM=36
+        names_to_del=["config","disktab","group","magic","mtab","mtools","passwd","profile","rc","termcap"]
         string="dd if="+workfile+" of="+workfilewrite+" bs=1024 2>/dev/null"
         os.system(string)
         minixfs=minix_file_system(workfilewrite)
