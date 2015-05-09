@@ -28,11 +28,18 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
+#include <string.h>
+#include <errno.h>
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <netinet/ip.h>
 #include <arpa/inet.h>
+#include <sys/stat.h>
+#include <fcntl.h>
+#include <stdbool.h>
+#include <inttypes.h>
+#include <netdb.h>
 
 #define MAX_CONNEXIONS 1
 #define BUFF_SIZE 70000
@@ -57,13 +64,19 @@ struct __attribute__((packed)) query_header_st
     uint32_t length;    // length reading
 };
 
+typedef struct __attribute__((packed)) query_header_st query_header_t;
+
+
 struct __attribute__((packed)) response_header_st
 {
     uint32_t sign;      // message signature
-    uint32_t ernum;     // return value
+    uint32_t errnum;     // return value
     uint32_t handle;    // message handle
     uint32_t length;    // payload length
 };
+
+typedef struct __attribute__((packed)) response_header_st response_header_t;
+
 
 struct __attribute__((packed)) query_st
 {
@@ -71,12 +84,20 @@ struct __attribute__((packed)) query_st
     uint8_t *payload;   // attached payload
 };
 
+typedef struct __attribute__((packed)) query_st query_t;
 
 struct __attribute__((packed)) request_st
 {
     struct query_header_st  *head;      // header
     uint8_t *payload;   // attached payload
 };
+typedef struct __attribute__((packed)) request_st request_t;
 
 
 int translate_string(char *str, char *pos, int len);
+
+int read_header(query_header_t ** header, int socket);
+
+int read_payload(char ** buff, uint32_t length, int socket);
+
+int write_payload(int fd, char ** buff, uint32_t offset, uint32_t length);

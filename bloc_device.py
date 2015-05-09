@@ -105,13 +105,13 @@ class remote_bloc_device(object):
         :return: the response
         """
         magic = int('76767676', 16)
-        type = 0
+        rw_type = 0
         rand.seed(None) # None = current system time
         handle = rand.randint(0,2**32)
         offset = bloc_num*self.blksize
         length = numofbloc*self.blksize
 
-        self.requests.insert(struct.pack('!IIIII', magic, type, handle, offset, length), 0)
+        self.requests.insert(struct.pack('!IIIII', magic, rw_type, handle, offset, length), 0)
 
         buffer = 'hello'
 
@@ -124,7 +124,7 @@ class remote_bloc_device(object):
         :param bloc: buffer to be written
         """
         magic = int('76767676', 16)
-        type = 1
+        rw_type = 1
         rand.seed(None) # None = current system time
         handle = rand.randint(0,2**32)
         offset = bloc_num*self.blksize
@@ -138,7 +138,7 @@ class remote_bloc_device(object):
             log.error("Block too long to be written")
             raise BlockSizeError('Block too long to be written')
 
-        header = struct.pack('!IIIII', magic, type, handle, offset, length)
+        header = struct.pack('!IIIII', magic, rw_type, handle, offset, length)
         print(header+bloc)
         request = header+bloc
         self.requests.insert(0, request)
