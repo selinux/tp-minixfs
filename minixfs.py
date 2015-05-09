@@ -17,6 +17,7 @@ from bloc_device import *
 class minix_file_system(object):
     def __init__(self, filename):
         self.disk = bloc_device(BLOCK_SIZE, filename)
+        self.disk1 = remote_bloc_device(BLOCK_SIZE, 'localhost', 1234)
 
         self.inode_map = bitarray(endian='little')
         self.zone_map = bitarray(endian='little')
@@ -42,6 +43,8 @@ class minix_file_system(object):
                 i.i_dbl_indr_zone = s[14]
 
             self.inodes_list.append(i)
+
+        self.disk1.write_block(2, "Datas to be transmitted")
 
     def ialloc(self):
         """ return the first free inode number available
@@ -155,6 +158,11 @@ class minix_file_system(object):
         return d_entry[name]
 
     def namei(self, path):
+        """  take a path as input and return it's inode number
+
+        :param path: path to search
+        :return: inode of the file
+        """
         self.path = path[1:].split('/')
         self.inode = 1
 
@@ -206,6 +214,12 @@ class minix_file_system(object):
 
     # TODO add a dinode if dir is full
     def add_entry(self, dinode, name, new_node_num):
+        """ add a new entry in a dinode (dir)
+
+        :param dinode: inode number of the dir
+        :param name: name of the file to be added
+        :param new_node_num: inode of the new file
+        """
         done = False
         block = -1
 
@@ -234,12 +248,13 @@ class minix_file_system(object):
                 if not struct.unpack_from('H', content, offset)[0]:
                     struct.pack_into('H', content, offset, new_node_num-1)
                     content[offset+2:offset+DIRSIZE] = name.ljust(DIRSIZE-2, '\x00')
-                    # if __debug__: print(content[offset:offset+DIRSIZE])
+                    dinode.i_size += DIRSIZE
                     done = True
                     break
 
         if done:
             self.disk.write_bloc(dinode.i_zone[block], content)
+            self.update_imap()
         else:
             log.error('Error unable to add new entry in dir')
             raise AddError('Unable to add entry')
@@ -262,7 +277,11 @@ class minix_file_system(object):
                 if inode == struct.unpack_from('H', content, i)[0]:
                     content[i:i+2] = "".ljust(2, '\x00')
                     self.bfree(data_block)
-                    data_block = 0 # break
+                    data_block = 0
+                    dinode.i_size -= DIRSIZE
+                    self.update_bmap()
+                    self.update_imap()
+                    break
 
         self.disk.write_bloc(dinode.i_zone[blk], content)
 

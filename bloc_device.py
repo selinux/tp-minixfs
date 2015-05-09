@@ -83,10 +83,19 @@ class remote_bloc_device(object):
         read/write commands are passed through a
         TCP socket
     """
-    def __init__(self):
+    def __init__(self, blksize, host="localhost", port=1234):
+        self.blksize = blksize
         self.requests = []
         self.responses = []
-        return
+        self.fd = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        try:
+            self.fd.connect((socket.gethostbyname(host), port))
+        except socket.error:
+            print("Couldnt connect to the block server")
+            sys.exit("Error unable to connect to block server")
+
+    def __del__(self):
+        self.fd.close()
 
     def read_block(self, bloc_num, numofbloc=1):
         """ Read n block from block device server
@@ -130,5 +139,7 @@ class remote_bloc_device(object):
             raise BlockSizeError('Block too long to be written')
 
         header = struct.pack('!IIIII', magic, type, handle, offset, length)
+        print(header+bloc)
         request = header+bloc
-        self.requests.insert(request, 0)
+        self.requests.insert(0, request)
+        self.fd.send(self.requests.__str__())
