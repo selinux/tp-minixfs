@@ -110,13 +110,47 @@ class remote_bloc_device(object):
         handle = rand.randint(0,2**32)
         offset = bloc_num*self.blksize
         length = numofbloc*self.blksize
-
+        to_send = 0
+        sent = 0
         self.requests.insert(0, struct.pack('!IIIII', magic, rw_type, handle, offset, length))
-        self.fd.send(bytearray(self.requests[0]))
 
-        buffer = 'hello'
+        while to_send < length:
+            sent = self.fd.send(bytearray(self.requests[0]))
+            if sent == 0:
+                raise RuntimeError("socket connection broken")
+            to_send += sent
 
-        return buffer
+        # read response 
+        header = []
+        to_recv = 0
+        while to_recv < 12:
+             b = self.fd.recv(12-to_recv)
+             if b == '':
+                 raise RuntimeError("socket connection broken")
+             header.append(b)
+             to_recv += len(b)
+
+        h = struct.unpack('!III', header)
+        if h[0] == int('87878787', 16) and h[1] == 0 and h[2] == handle:
+            
+            buff = []
+            to_recv = 0
+            while to_recv < length:
+                b = self.fd.recv(length-to_recv)
+                if b == '':
+                    raise RuntimeError("socket connection broken")
+                buff.append(b)
+                to_recv += len(b)
+
+            # remove request from fifo
+            self.requests.pop[0]
+
+        else:
+            return h[1]
+
+        print(buff.__str__())
+
+        return buff
 
     def write_block(self, bloc_num, bloc):
         """ Write block from block device server

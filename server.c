@@ -87,7 +87,6 @@ int main(int argc, char* argv[])
             response.errnum = 0x0;
             response.handle = htonl(header->handle);
 
-//            char buff[header.length];
             char * buff;
 
             if (header->type == 0x0) {
@@ -121,7 +120,7 @@ int main(int argc, char* argv[])
                     response.errnum = errno;
                 }
 
-                if( write_payload(fd, buff, header->offset, header->length) < 0)
+                if( write_payload(fd, &buff, header->offset, header->length) < 0)
                 {
                     perror("Error lseek failure");
                     response.errnum = errno;
@@ -135,8 +134,8 @@ int main(int argc, char* argv[])
                 #endif
             }
 
-//            free(buff);
-//            free(header);
+            free(buff);
+            free(header);
         }
 
     } while( !exit_prog );
@@ -216,7 +215,9 @@ int read_header(int socket, query_header_t ** header)
 
 int read_request(int fd, char ** buff, uint32_t offset, uint32_t length)
 {
-    char b[length];
+
+    char *b = calloc(sizeof(char), length);
+    uint32_t n = 0;
 
     if( lseek(fd, offset, SEEK_SET) < 0)
     {
@@ -224,13 +225,19 @@ int read_request(int fd, char ** buff, uint32_t offset, uint32_t length)
         return -1;
     }
 
-    if( read(fd, &b, length ))
-    {
-        perror("Error unable to read file");
-        return -1;
-    }
+    do {
 
-    *buff = strndup(b, length);
+        n += read(fd, b, length-n);
+        if(n < 0)
+        {
+            perror("Error unable to read file");
+            free(b);
+            return -1;
+        }
+
+    }while( n < length);
+
+    *buff = b;
 
     return 0;
 }
@@ -238,28 +245,27 @@ int read_request(int fd, char ** buff, uint32_t offset, uint32_t length)
 
 int read_payload(int socket, char ** buff, uint32_t length)
 {
-    char b[length];
+    char *b = calloc(sizeof(char), length);
     uint32_t n = 0;
 
     do {
-        read(socket, &b, n);
-        n = length;
-//        n += read(socket, &b, n);
-//        if(n < 0)
-//        {
-//            perror("Unable to read payload");
-//            return -1;
-//        }
-//
+        n += read(socket, b, length-n);
+        if(n < 0)
+        {
+            perror("Unable to read payload");
+            free(b);
+            return -1;
+        }
+
     } while (n < length);
 
-    *buff = strndup(b, length);
+    *buff = b;
 
     return 0;
 }
 
 
-int write_payload(int fd, const char * buff, uint32_t offset, uint32_t length)
+int write_payload(int fd, void* buff, uint32_t offset, uint32_t length)
 {
 
     if( lseek(fd, offset, SEEK_SET) < 0 )
@@ -268,7 +274,7 @@ int write_payload(int fd, const char * buff, uint32_t offset, uint32_t length)
         return -1;
     }
 
-    if( write(fd, buff, length))
+    if( write(fd, buff, length) < 0)
     {
         perror("Error unable to write payload to file");
         return -1;

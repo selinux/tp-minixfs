@@ -102,4 +102,4 @@ int read_request(int fd, char ** buff, uint32_t offset, uint32_t length);
 
 int read_payload(int socket, char ** buff, uint32_t length);
 
-int write_payload(int fd, const char * buff, uint32_t offset, uint32_t length);
+int write_payload(int fd, void* buff, uint32_t offset, uint32_t length);
