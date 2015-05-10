@@ -111,7 +111,8 @@ class remote_bloc_device(object):
         offset = bloc_num*self.blksize
         length = numofbloc*self.blksize
 
-        self.requests.insert(struct.pack('!IIIII', magic, rw_type, handle, offset, length), 0)
+        self.requests.insert(0, struct.pack('!IIIII', magic, rw_type, handle, offset, length))
+        self.fd.send(self.requests[0].__str__())
 
         buffer = 'hello'
 
@@ -142,4 +143,4 @@ class remote_bloc_device(object):
         print(header+bloc)
         request = header+bloc
         self.requests.insert(0, request)
-        self.fd.send(self.requests.__str__())
+        self.fd.send(self.requests[0].__str__())
