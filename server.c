@@ -26,6 +26,7 @@
 
 #include "server.h"
 
+#define DEBUG
 
 int main(int argc, char* argv[])
 {
@@ -73,45 +74,54 @@ int main(int argc, char* argv[])
         /* Start the job */
 
         while ( client ) {
-            query_header_t header;
-            query_header_t * header_p = &header;
-            response_header_t response;
-            response.sign = htonl(SIGN_RESPONSE);
-            response.errnum = 0x0;
-            response.handle = htonl(header.handle);
 
-            if (read_header(&header_p, client) < 0) {
+            query_header_t * header = calloc(sizeof(query_header_t), 1);
+            response_header_t response;
+
+            if (read_header(client, &header) < 0) {
                 perror("Unable to read header request");
                 continue;
             }
 
+            response.sign = htonl(SIGN_RESPONSE);
+            response.errnum = 0x0;
+            response.handle = htonl(header->handle);
+
 //            char buff[header.length];
             char * buff;
 
-            if (header.type == 0x0) {
-                if (read_payload(&buff, header.length, client) < 0) {
-                    perror("Error reading client request");
+            if (header->type == 0x0) {
+
+                if( read_request(fd, &buff, header->offset, header->length) < 0 )
+                {
+                    perror("Error unable to read request ");
                     response.errnum = errno;
                 }
+
                 if( write(client, (char *)&response, sizeof(response_header_t)) < 0 )
                     ERR_FATALE("Error lost client connexion")
 
-                if( write(client, &buff, header.length) < 0 )
+                if( write(client, &buff, header->length) < 0 )
                     ERR_FATALE("Error lost client connexion")
+
+                #ifdef DEBUG
+                write(1, (char *)&response, sizeof(response_header_t));
+                write(1, &buff, header->length);
+                #endif
 
             } else {
 
-                if (header.type != 0x1) {
+                if (header->type != 0x1) {
                     perror("Error unknown client request type");
                     response.errnum = EBADE; // invalide exchange
                 }
 
-                if( read_payload(&buff, header.length, client) < 0){
+                if( read_payload(client, &buff, header->length) < 0){
                     perror("Error reading payload");
                     response.errnum = errno;
                 }
 
-                if( write_payload(fd, &buff, header.offset, header.length) < 0)
+                if( write_payload(fd, buff, header->offset, header->length) < 0)
                 {
                     perror("Error lseek failure");
                     response.errnum = errno;
@@ -119,7 +129,14 @@ int main(int argc, char* argv[])
 
                 if( write(client, (char *)&response, sizeof(response_header_t)) < 0 )
                     ERR_FATALE("Error lost client connexion")
+
+                #ifdef DEBUG
+                write(1, (char *)&response, sizeof(response_header_t));
+                #endif
             }
+
+//            free(buff);
+//            free(header);
         }
 
     } while( !exit_prog );
@@ -140,13 +157,15 @@ int main(int argc, char* argv[])
 * @parm
 * @return always 0 (unused)
 */
-int translate_string(char *str, char *position, int length)
+int translate_string(char **buff, int offset)
 {
     int i = 0;
+    int length = strlen(*buff);
 
-    printf("l'offset est de %d et len = %d\n", (int)(str-position), length);
-    while(i < length)
-        *(str+i)=*(position+i++);    /* translate char */
+    while(i < length-offset) {
+        *(buff + i) = *(buff + offset + i);    /* translate char */
+        i++;
+    }
 
     return 0;
 }
@@ -158,12 +177,12 @@ int translate_string(char *str, char *position, int length)
  *  @parm socket: the socket to be read
  *  @return: success 0  -1 in case of failure
  */
-int read_header(query_header_t ** header, int socket)
+int read_header(int socket, query_header_t ** header)
 {
-    char * begin;
 
     int header_length = sizeof(query_header_t);
     char buff[header_length];
+    char * begin;
     query_header_t * tmp_header;
 
     int n = 0, offset = 0;
@@ -176,6 +195,7 @@ int read_header(query_header_t ** header, int socket)
         {
             // distance between pointers
             offset = begin-buff;
+//            translate_string(&buff, offset);
 //            strncpy(buff, begin, n);
             n -= offset;
         }
@@ -193,20 +213,22 @@ int read_header(query_header_t ** header, int socket)
     return 0;
 }
 
-int read_payload(char ** buff, uint32_t length, int socket)
+
+int read_request(int fd, char ** buff, uint32_t offset, uint32_t length)
 {
     char b[length];
-    uint32_t n = length;
 
-    do {
-        n -= read(socket, b, n);
-        if(n < 0)
-        {
-            perror("Unable to read payload");
-            return -1;
-        }
+    if( lseek(fd, offset, SEEK_SET) < 0)
+    {
+        perror("Error lseek failure");
+        return -1;
+    }
 
-    } while (n > 0);
+    if( read(fd, &b, length ))
+    {
+        perror("Error unable to read file");
+        return -1;
+    }
 
     *buff = strndup(b, length);
 
@@ -214,10 +236,33 @@ int read_payload(char ** buff, uint32_t length, int socket)
 }
 
 
-int write_payload(int fd, char ** buff, uint32_t offset, uint32_t length)
+int read_payload(int socket, char ** buff, uint32_t length)
+{
+    char b[length];
+    uint32_t n = 0;
+
+    do {
+        read(socket, &b, n);
+        n = length;
+//        n += read(socket, &b, n);
+//        if(n < 0)
+//        {
+//            perror("Unable to read payload");
+//            return -1;
+//        }
+//
+    } while (n < length);
+
+    *buff = strndup(b, length);
+
+    return 0;
+}
+
+
+int write_payload(int fd, const char * buff, uint32_t offset, uint32_t length)
 {
 
-    if( lseek(fd, offset, length  ) < 0 )
+    if( lseek(fd, offset, SEEK_SET) < 0 )
     {
         perror("Error lseek failure");
         return -1;

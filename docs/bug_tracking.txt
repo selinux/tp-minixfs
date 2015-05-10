@@ -5,3 +5,5 @@
         Corrigé erreur inode number
 
 [05.05.2015]  test2.test_c fail (addn_entry) there is a decalage of 1 with filename and inode new_dir1= inode 0 shall be 1
+
+[10.05.2015]  buffer received by server might have \x00 (null char) but we need to write them anyway. Buffer need to be managed as mem not string.

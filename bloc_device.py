@@ -112,7 +112,7 @@ class remote_bloc_device(object):
         length = numofbloc*self.blksize
 
         self.requests.insert(0, struct.pack('!IIIII', magic, rw_type, handle, offset, length))
-        self.fd.send(self.requests[0].__str__())
+        self.fd.send(bytearray(self.requests[0]))
 
         buffer = 'hello'
 
@@ -129,7 +129,7 @@ class remote_bloc_device(object):
         rand.seed(None) # None = current system time
         handle = rand.randint(0,2**32)
         offset = bloc_num*self.blksize
-        length = self.blksize+20 # always write a full bloc at a time
+        length = self.blksize # always write a full bloc at a time
 
         # Add padding to clean end of block
         if bloc.__len__() < BLOCK_SIZE:
