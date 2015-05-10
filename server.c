@@ -100,7 +100,7 @@ int main(int argc, char* argv[])
                 if( write(client, (char *)&response, sizeof(response_header_t)) < 0 )
                     ERR_FATALE("Error lost client connexion")
 
-                if( write(client, &buff, header->length) < 0 )
+                if( write(client, buff, header->length) < 0 )
                     ERR_FATALE("Error lost client connexion")
 
                 #ifdef DEBUG

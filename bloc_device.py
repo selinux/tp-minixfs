@@ -112,43 +112,44 @@ class remote_bloc_device(object):
         length = numofbloc*self.blksize
         to_send = 0
         sent = 0
+        header_size = struct.calcsize('!IIIII')
         self.requests.insert(0, struct.pack('!IIIII', magic, rw_type, handle, offset, length))
 
-        while to_send < length:
-            sent = self.fd.send(bytearray(self.requests[0]))
+        while to_send < header_size:
+            sent = self.fd.send(self.requests[0])
             if sent == 0:
                 raise RuntimeError("socket connection broken")
             to_send += sent
 
         # read response 
-        header = []
+        responce = ""
+        response_size = struct.calcsize('!III')
         to_recv = 0
-        while to_recv < 12:
-             b = self.fd.recv(12-to_recv)
+
+        while to_recv < response_size:
+             b = self.fd.recv(response_size-to_recv)
              if b == '':
                  raise RuntimeError("socket connection broken")
-             header.append(b)
+             responce += b
              to_recv += len(b)
 
-        h = struct.unpack('!III', header)
+        h = struct.unpack('!III', responce)
         if h[0] == int('87878787', 16) and h[1] == 0 and h[2] == handle:
             
-            buff = []
+            buff = ""
             to_recv = 0
             while to_recv < length:
                 b = self.fd.recv(length-to_recv)
                 if b == '':
                     raise RuntimeError("socket connection broken")
-                buff.append(b)
+                buff += b
                 to_recv += len(b)
 
             # remove request from fifo
-            self.requests.pop[0]
+            # self.requests.pop[0]
 
         else:
             return h[1]
-
-        print(buff.__str__())
 
         return buff
 

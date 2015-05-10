@@ -45,7 +45,8 @@ class minix_file_system(object):
             self.inodes_list.append(i)
 
 #        self.disk1.write_block(2, "Datas to be transmitted")
-        self.disk1.read_block(1)
+        hexdump.hexdump(self.disk1.read_block(220, 2))
+        pass
 
     def ialloc(self):
         """ return the first free inode number available

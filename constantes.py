@@ -15,6 +15,7 @@ import time
 from stat import *
 from bitarray import *
 import logging as log
+import hexdump
 
 #block size in bytes
 BLOCK_SIZE=1024
