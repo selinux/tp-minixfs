@@ -17,7 +17,7 @@ from bloc_device import *
 class minix_file_system(object):
     def __init__(self, filename):
         self.disk = bloc_device(BLOCK_SIZE, filename)
-        self.disk1 = remote_bloc_device(BLOCK_SIZE, 'localhost', 1234)
+        # self.disk1 = remote_bloc_device(BLOCK_SIZE, 'localhost', 1234)
 
         self.inode_map = bitarray(endian='little')
         self.zone_map = bitarray(endian='little')
@@ -34,20 +34,16 @@ class minix_file_system(object):
         for nb in range(self.disk.super_block.s_ninodes):
             i = minix_inode()
             i.i_ino = nb + 1
-            # TODO remove if read directly
-            if self.inode_map[nb]:
-                s = struct.unpack_from('HHIIBBHHHHHHHHH', buff, nb * INODE_SIZE)
-                i.i_zone = list(s[6:13])
-                i.i_mode, i.i_uid, i.i_size, i.i_time, i.i_gid, i.i_nlinks = s[0:6]
-                i.i_indir_zone = s[13]
-                i.i_dbl_indr_zone = s[14]
+            s = struct.unpack_from('HHIIBBHHHHHHHHH', buff, nb * INODE_SIZE)
+            i.i_zone = list(s[6:13])
+            i.i_mode, i.i_uid, i.i_size, i.i_time, i.i_gid, i.i_nlinks = s[0:6]
+            i.i_indir_zone = s[13]
+            i.i_dbl_indr_zone = s[14]
 
             self.inodes_list.append(i)
 
 #        self.disk1.write_block(2, "Datas to be transmitted")
-        hexdump.hexdump(self.disk1.read_block(220, 2))
-        # TODO remove pass (test)
-        pass
+#         hexdump.hexdump(self.disk1.read_block(220, 1))
 
     def ialloc(self):
         """ return the first free inode number available
