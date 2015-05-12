@@ -112,11 +112,6 @@ int main(int argc, char* argv[])
                     if (write(client, buff, header->length) < 0)
                         ERR_FATALE("Error lost client connexion")
 
-                    #ifdef DEBUG
-                    write(1, (char *) &response, sizeof(response_header_t));
-                    write(1, &buff, header->length);
-                    #endif
-
                     break;
 
                 case 1 :  /* write case */
@@ -246,7 +241,6 @@ int read_request(int fd, void ** buff, uint32_t offset, uint32_t length)
         if(n < 0)
         {
             perror("Error unable to read file");
-            free(*buff);
             return -1;
         }
 
@@ -258,21 +252,17 @@ int read_request(int fd, void ** buff, uint32_t offset, uint32_t length)
 
 int read_payload(int socket, void ** buff, uint32_t length)
 {
-    char *b = calloc(sizeof(char), length);
     uint32_t n = 0;
 
     do {
-        n += read(socket, b, length-n);
+        n += read(socket, *buff, length-n);
         if(n < 0)
         {
             perror("Unable to read payload");
-            free(b);
             return -1;
         }
 
     } while (n < length);
-
-    *buff = b;
 
     return 0;
 }
@@ -287,6 +277,7 @@ int write_payload(int fd, void * buff, uint32_t offset, uint32_t length)
         return -1;
     }
 
+    // TODO transform in do while loop (write safely)
     if( write(fd, buff, length) < 0)
     {
         perror("Error unable to write payload to file");
