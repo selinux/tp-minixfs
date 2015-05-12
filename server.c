@@ -232,7 +232,6 @@ int read_header(int socket, query_header_t ** header)
 int read_request(int fd, void ** buff, uint32_t offset, uint32_t length)
 {
 
-    char *b = calloc(sizeof(char), length);
     uint32_t n = 0;
 
     if( lseek(fd, offset, SEEK_SET) < 0)
@@ -243,17 +242,15 @@ int read_request(int fd, void ** buff, uint32_t offset, uint32_t length)
 
     do {
 
-        n += read(fd, b, length-n);
+        n += read(fd, *buff, length-n);
         if(n < 0)
         {
             perror("Error unable to read file");
-            free(b);
+            free(*buff);
             return -1;
         }
 
     }while( n < length);
-
-    *buff = b;
 
     return 0;
 }
