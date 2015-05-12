@@ -16,20 +16,21 @@ from bloc_device import *
 
 class minix_file_system(object):
     def __init__(self, filename):
+        # TODO add host, port and filename=None
         self.disk = bloc_device(BLOCK_SIZE, filename)
-        # self.disk1 = remote_bloc_device(BLOCK_SIZE, 'localhost', 1234)
+        # self.disk = remote_bloc_device(BLOCK_SIZE, 'localhost', 1234)
 
         self.inode_map = bitarray(endian='little')
         self.zone_map = bitarray(endian='little')
-        self.inode_map.frombytes(self.disk.read_bloc(2, numofblk=self.disk.super_block.s_imap_blocks))
+        self.inode_map.frombytes(self.disk.read_bloc(2, self.disk.super_block.s_imap_blocks))
         self.zone_map.frombytes(self.disk.read_bloc(2 + self.disk.super_block.s_imap_blocks,
-                                                  numofblk=self.disk.super_block.s_zmap_blocks))
+                                                  self.disk.super_block.s_zmap_blocks))
 
         # initialising the list by an unused inode (inode start at indices 1)
         self.inodes_list = [minix_inode()]
         buff = self.disk.read_bloc(2 + self.disk.super_block.s_imap_blocks +
                                  self.disk.super_block.s_zmap_blocks,
-                                 numofblk=self.disk.super_block.s_ninodes / MINIX_INODE_PER_BLOCK)
+                                 self.disk.super_block.s_ninodes / MINIX_INODE_PER_BLOCK)
 
         for nb in range(self.disk.super_block.s_ninodes):
             i = minix_inode()
@@ -41,9 +42,6 @@ class minix_file_system(object):
             i.i_dbl_indr_zone = s[14]
 
             self.inodes_list.append(i)
-
-#        self.disk1.write_block(2, "Datas to be transmitted")
-#         hexdump.hexdump(self.disk1.read_block(220, 1))
 
     def ialloc(self):
         """ return the first free inode number available

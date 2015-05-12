@@ -94,10 +94,13 @@ class remote_bloc_device(object):
             print("Couldnt connect to the block server")
             sys.exit("Error unable to connect to block server")
 
+        self.super_block = minix_superbloc(self)
+        log.info("remote file system opened successfully")
+
     def __del__(self):
         self.fd.close()
 
-    def read_block(self, bloc_num, numofbloc=1):
+    def read_bloc(self, bloc_num, numofbloc=1):
         """ Read n block from block device server
 
         :param bloc_num: the bloc number
@@ -151,9 +154,12 @@ class remote_bloc_device(object):
         else:
             return h[1]
 
+        hexdump.hexdump(buff)
         return buff
 
-    def write_block(self, bloc_num, bloc):
+    # TODO add __del__ methode
+
+    def write_bloc(self, bloc_num, bloc):
         """ Write block from block device server
 
         :param bloc_num: the bloc number
