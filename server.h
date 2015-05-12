@@ -94,12 +94,12 @@ struct __attribute__((packed)) request_st
 typedef struct __attribute__((packed)) request_st request_t;
 
 
-int translate_string(char **buff, int offset);
+int translate_string(void **buff, int offset);
 
 int read_header(int socket, query_header_t ** header);
 
-int read_request(int fd, char ** buff, uint32_t offset, uint32_t length);
+int read_request(int fd, void ** buff, uint32_t offset, uint32_t length);
 
-int read_payload(int socket, char ** buff, uint32_t length);
+int read_payload(int socket, void ** buff, uint32_t length);
 
-int write_payload(int fd, void* buff, uint32_t offset, uint32_t length);
+int write_payload(int fd, void * buff, uint32_t offset, uint32_t length);

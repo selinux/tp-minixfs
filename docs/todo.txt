@@ -10,5 +10,6 @@
 # TODO update file size in add_entry
 # TODO add size somewhere (when? write or balloc or ...?) and when add_entry ? what's the new size of dinode ?
 # TODO add symlink struct ?
-
+# TODO dans le C éviter les read(offset, size) en dehor des blocks
+[12.05.2015]  Pas besoin le read du fd va generer une error que l'on remonte
 

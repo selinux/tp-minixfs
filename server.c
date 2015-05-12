@@ -78,64 +78,79 @@ int main(int argc, char* argv[])
             query_header_t * header = calloc(sizeof(query_header_t), 1);
             response_header_t response;
 
+            /* read a new request */
             if (read_header(client, &header) < 0) {
                 perror("Unable to read header request");
                 continue;
             }
 
+            /* prepare the response */
             response.sign = htonl(SIGN_RESPONSE);
             response.errnum = 0x0;
             response.handle = htonl(header->handle);
 
-            char * buff;
 
-            if (header->type == 0x0) {
+            /* need a buffer for the response */
+            void * buff = calloc(sizeof(char), header->length);
 
-                if( read_request(fd, &buff, header->offset, header->length) < 0 )
-                {
-                    perror("Error unable to read request ");
-                    response.errnum = errno;
-                }
+            switch (header->type) {
 
-                if( write(client, (char *)&response, sizeof(response_header_t)) < 0 )
-                    ERR_FATALE("Error lost client connexion")
+                case 0 :  /* read case */
 
-                if( write(client, buff, header->length) < 0 )
-                    ERR_FATALE("Error lost client connexion")
 
-                #ifdef DEBUG
-                write(1, (char *)&response, sizeof(response_header_t));
-                write(1, &buff, header->length);
-                #endif
+                    /* read request on disk */
+                    if (read_request(fd, &buff, header->offset, header->length) < 0) {
+                        perror("Error unable to read request ");
+                        response.errnum = errno;
+                    }
 
-            } else {
+                    /* write header */
+                    if (write(client, (char *) &response, sizeof(response_header_t)) < 0)
+                        ERR_FATALE("Error lost client connexion")
 
-                if (header->type != 0x1) {
+                    /* write response */
+                    if (write(client, buff, header->length) < 0)
+                        ERR_FATALE("Error lost client connexion")
+
+                    #ifdef DEBUG
+                    write(1, (char *) &response, sizeof(response_header_t));
+                    write(1, &buff, header->length);
+                    #endif
+
+                    break;
+
+                case 1 :  /* write case */
+
+                    /* read the payload */
+                    if (read_payload(client, &buff, header->length) < 0) {
+                        perror("Error reading payload");
+                        response.errnum = errno;
+                    }
+
+                    /* write payload to disk */
+                    if (write_payload(fd, &buff, header->offset, header->length) < 0) {
+                        perror("Error lseek failure");
+                        response.errnum = errno;
+                    }
+
+                    /* acknowledge */
+                    if (write(client, (char *) &response, sizeof(response_header_t)) < 0)
+                        ERR_FATALE("Error lost client connexion")
+
+                    #ifdef DEBUG
+                    write(1, (char *) &response, sizeof(response_header_t));
+                    #endif
+                    break;
+
+                default :
                     perror("Error unknown client request type");
                     response.errnum = EBADE; // invalide exchange
-                }
 
-                if( read_payload(client, &buff, header->length) < 0){
-                    perror("Error reading payload");
-                    response.errnum = errno;
-                }
-
-                if( write_payload(fd, &buff, header->offset, header->length) < 0)
-                {
-                    perror("Error lseek failure");
-                    response.errnum = errno;
-                }
-
-                if( write(client, (char *)&response, sizeof(response_header_t)) < 0 )
-                    ERR_FATALE("Error lost client connexion")
-
-                #ifdef DEBUG
-                write(1, (char *)&response, sizeof(response_header_t));
-                #endif
             }
 
-            free(buff);
             free(header);
+            free(buff);
+
         }
 
     } while( !exit_prog );
@@ -156,7 +171,7 @@ int main(int argc, char* argv[])
 * @parm
 * @return always 0 (unused)
 */
-int translate_string(char **buff, int offset)
+int translate_string(void **buff, int offset)
 {
     int i = 0;
     int length = strlen(*buff);
@@ -189,6 +204,7 @@ int read_header(int socket, query_header_t ** header)
     do{
 
         n += read(socket, buff, header_length - n);
+        // TODO use the constant SIGN_REQUEST
         begin = strstr(buff, "vvvv");
         if (begin)
         {
@@ -213,7 +229,7 @@ int read_header(int socket, query_header_t ** header)
 }
 
 
-int read_request(int fd, char ** buff, uint32_t offset, uint32_t length)
+int read_request(int fd, void ** buff, uint32_t offset, uint32_t length)
 {
 
     char *b = calloc(sizeof(char), length);
@@ -243,7 +259,7 @@ int read_request(int fd, char ** buff, uint32_t offset, uint32_t length)
 }
 
 
-int read_payload(int socket, char ** buff, uint32_t length)
+int read_payload(int socket, void ** buff, uint32_t length)
 {
     char *b = calloc(sizeof(char), length);
     uint32_t n = 0;
@@ -265,7 +281,7 @@ int read_payload(int socket, char ** buff, uint32_t length)
 }
 
 
-int write_payload(int fd, void* buff, uint32_t offset, uint32_t length)
+int write_payload(int fd, void * buff, uint32_t offset, uint32_t length)
 {
 
     if( lseek(fd, offset, SEEK_SET) < 0 )

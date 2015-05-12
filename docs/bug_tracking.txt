@@ -7,3 +7,6 @@
 [05.05.2015]  test2.test_c fail (addn_entry) there is a decalage of 1 with filename and inode new_dir1= inode 0 shall be 1
 
 [10.05.2015]  buffer received by server might have \x00 (null char) but we need to write them anyway. Buffer need to be managed as mem not string.
+        Corrigé pas un problème read/write travaillent avec des void * buffer. Ce ne sont pas des strings.
+[10.05.2015]  server response send an empty buffer (point to env?? '...x86_64...')
+        Corrigé remplacé par void * plutôt que char *

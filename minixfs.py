@@ -26,8 +26,7 @@ class minix_file_system(object):
                                                   numofblk=self.disk.super_block.s_zmap_blocks))
 
         # initialising the list by an unused inode (inode start at indices 1)
-        self.inodes_list = [minix_inode(num=0, mode=0, uid=0, size=0, time=0, gid=0, nlinks=0,
-                                        zone=[], indir_zone=0, dblr_indir_zone=0)]
+        self.inodes_list = [minix_inode()]
         buff = self.disk.read_bloc(2 + self.disk.super_block.s_imap_blocks +
                                  self.disk.super_block.s_zmap_blocks,
                                  numofblk=self.disk.super_block.s_ninodes / MINIX_INODE_PER_BLOCK)
@@ -35,8 +34,9 @@ class minix_file_system(object):
         for nb in range(self.disk.super_block.s_ninodes):
             i = minix_inode()
             i.i_ino = nb + 1
+            # TODO remove if read directly
             if self.inode_map[nb]:
-                s = struct.unpack_from('HHIIBBHHHHHHHHH', buff, nb * 32)
+                s = struct.unpack_from('HHIIBBHHHHHHHHH', buff, nb * INODE_SIZE)
                 i.i_zone = list(s[6:13])
                 i.i_mode, i.i_uid, i.i_size, i.i_time, i.i_gid, i.i_nlinks = s[0:6]
                 i.i_indir_zone = s[13]
@@ -46,6 +46,7 @@ class minix_file_system(object):
 
 #        self.disk1.write_block(2, "Datas to be transmitted")
         hexdump.hexdump(self.disk1.read_block(220, 2))
+        # TODO remove pass (test)
         pass
 
     def ialloc(self):
