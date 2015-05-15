@@ -72,7 +72,6 @@ struct __attribute__((packed)) response_header_st
     uint32_t sign;      // message signature
     uint32_t errnum;     // return value
     uint32_t handle;    // message handle
-    uint32_t length;    // payload length
 };
 
 typedef struct __attribute__((packed)) response_header_st response_header_t;

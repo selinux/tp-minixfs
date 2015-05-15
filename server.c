@@ -109,7 +109,7 @@ int main(int argc, char* argv[])
                         ERR_FATALE("Error lost client connexion")
 
                     /* write response */
-                    if (write(client, buff, header->length) < 0)
+                    if (write(client, (char *)buff, header->length) < 0)
                         ERR_FATALE("Error lost client connexion")
 
                     break;

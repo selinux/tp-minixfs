@@ -1,12 +1,19 @@
+###########
+# Actual
+
 [26.04.2015]  1ere indirection ne fonctionne pas
         corrigé en doublant les offsets (struct('H') = 2 octets)
         offset(addr blk) = 2*blk
-[26.04.2015] bmap 2e indirection ne fonctionne pas
-        Corrigé erreur inode number
-
 [05.05.2015]  test2.test_c fail (addn_entry) there is a decalage of 1 with filename and inode new_dir1= inode 0 shall be 1
 
+###########
+# Old
+
+[26.04.2015] bmap 2e indirection ne fonctionne pas
+        Corrigé erreur inode number
 [10.05.2015]  buffer received by server might have \x00 (null char) but we need to write them anyway. Buffer need to be managed as mem not string.
         Corrigé pas un problème read/write travaillent avec des void * buffer. Ce ne sont pas des strings.
 [10.05.2015]  server response send an empty buffer (point to env?? '...x86_64...')
         Corrigé remplacé par void * plutôt que char *
+[15.05.2015]  Corrigé remote_bloc_device.read_bloc. Il y a vait un décalge entre les structure response due sizeof(struct response)
+        qui était définie avec 4 int (champ length utilisé dans exercice server_bloc mais pas dans TP)

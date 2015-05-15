@@ -107,16 +107,16 @@ class remote_bloc_device(object):
         :param numofbloc: number of block to be read
         :return: the response
         """
-        magic = int('76767676', 16)
+        magic_req = int('76767676', 16)
+        magic_resp = int('87878787', 16)
         rw_type = 0
         rand.seed(None) # None = current system time
         handle = rand.randint(0,2**32)
         offset = bloc_num*self.blksize
         length = numofbloc*self.blksize
         to_send = 0
-        sent = 0
         header_size = struct.calcsize('!IIIII')
-        self.requests.insert(0, struct.pack('!IIIII', magic, rw_type, handle, offset, length))
+        self.requests.insert(0, struct.pack('!IIIII', magic_req, rw_type, handle, offset, length))
 
         while to_send < header_size:
             sent = self.fd.send(self.requests[0])
@@ -125,7 +125,7 @@ class remote_bloc_device(object):
             to_send += sent
 
         # read response 
-        responce = ""
+        responce = ''
         response_size = struct.calcsize('!III')
         to_recv = 0
 
@@ -137,7 +137,8 @@ class remote_bloc_device(object):
              to_recv += len(b)
 
         h = struct.unpack('!III', responce)
-        if h[0] == int('87878787', 16) and h[1] == 0 and h[2] == handle:
+
+        if h == (magic_resp, 0, handle):
             
             buff = ""
             to_recv = 0
@@ -154,8 +155,7 @@ class remote_bloc_device(object):
         else:
             return h[1]
 
-        hexdump.hexdump(buff)
-        return buff
+        return bytearray(buff)
 
     # TODO add __del__ methode
 
