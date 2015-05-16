@@ -1,0 +1,73 @@
+% lstlisting configuration
+\usepackage{fancyvrb}
+\usepackage{xcolor}
+\usepackage{listings}
+
+% D�finition des couleurs
+\definecolor{lightgreen}{rgb}{0.2,.98,0.2}
+\definecolor{darkgreen}{rgb}{0,0.4,0}
+\definecolor{lightgray}{gray}{0.98}
+\definecolor{darkred}{rgb}{0.545,0.000,0.000}
+\definecolor{bleuClair}{rgb}{0.31,0.51,0.74}
+\definecolor{grisTableau}{rgb}{0.9529,0.9529,0.9529}
+\lstset {	
+  language=C
+, frame=single
+, keepspaces=true
+, columns=fullflexible
+, captionpos=b
+, stepnumber=10
+, morekeywords={var,get,set}
+, basicstyle=\ttfamily\scriptsize
+, keywordstyle=\color{blue}
+, commentstyle=\color{darkgreen}
+, stringstyle=\color{darkred}
+, backgroundcolor=\color{white}
+, numbers=left
+, numberstyle=\scriptsize
+, numbersep=5pt
+, breaklines=true
+, tabsize=3
+, showstringspaces=false
+, emph={double,bool,int,unsigned,char,true,false,void,get,set}
+, emphstyle=\color{blue}
+, emph={Assert,Test}
+, emphstyle=\color{red}
+, emph={[2]\#using,\#define,\#ifdef,\#endif}
+, emphstyle={[2]\color{blue}}
+, rulesepcolor=\color{gray}
+, lineskip={-1.5pt} % single line spacing
+, escapeinside={/*(*@}{@*)*/}
+, rangeprefix=\{\  % curly left brace plus space
+, rangesuffix=\ \} % space plus curly right brace
+}
+\lstset{prebreak=\raisebox{0ex}[0ex][0ex]
+        {\ensuremath{\hookleftarrow}}}
+%\lstset{postbreak=\raisebox{0ex}[0ex][0ex]
+%        {\ensuremath{\hookrightarrow\space}}}
+\lstset{breaklines=true, breakatwhitespace=true}
+
+% replace sequence of char by another sequence of char
+% see http://stackoverflow.com/questions/1116266/listings-in-latex-with-utf-8-or-at-least-german-umlauts
+\lstset{literate=%
+{ä}{{\"a}}1
+{â}{{\^a}}1
+{� }{{\`a}}1
+{ë}{{\"e}}1
+{ê}{{\^e}}1
+{é}{{\'e}}1
+{è}{{\`e}}1
+{ï}{{\"i}}1
+{î}{{\^i}}1
+{ö}{{\"o}}1
+{ô}{{\^o}}1
+{ü}{{\"u}}1
+{û}{{\^u}}1
+{ç}{{\c c}}1
+{°}{{\textsuperscript{o}}}1
+% suppress BOM (Byte Order Mark) characters at the beginning of Visual Studio source
+% see http://tex.stackexchange.com/questions/5935/how-to-suppress-bom-effect-in-the-output
+{�}{}0
+{�}{}0
+{�}{}0
+}

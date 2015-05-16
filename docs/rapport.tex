@@ -1,0 +1,178 @@
+%type de document
+\documentclass[a4paper,12pt]{article}
+
+% règles typographiques françaises
+\usepackage[latin1]{inputenc}
+\usepackage[francais]{babel}
+\usepackage[T1]{fontenc}
+
+
+% mise en page
+\usepackage[margin=2.5cm]{geometry}
+\usepackage{fancyhdr}
+\usepackage{graphicx}
+\usepackage{array}
+\usepackage{lastpage}
+\usepackage{placeins}
+\usepackage{longtable}
+\usepackage{caption}
+\usepackage{float}
+\usepackage{wrapfig}
+\usepackage{dirtree}
+
+\usepackage[smaller, footnote, printonlyused]{acronym} % table d'acronymes, option [footnote] pour avoir les définitions en bas de page [printonlyused
+
+\usepackage{hyperref}
+\hypersetup{colorlinks=true, linkcolor=blue}
+\hypersetup{pdfauthor=Sebastien Chassot}
+\hypersetup{pdfstartpage=1}
+\hypersetup{pdfpagemode=None} %FullScreen, None
+\hypersetup{pdfpagelayout=SinglePage} %SinglePage, OneColumn, TwoColumnLeft, TwoColumnRight
+\hypersetup{pdfstartview=FitH} %Fit, FitH, FitV, FitB, FitBH, FitBV
+\pdfcompresslevel=9
+%\hypersetup{
+%  bookmarks=true                % show bookmarks bar?
+%, bookmarksopen=true
+%, unicode=false                 % non-Latin characters in Acrobat bookmarks
+%, pdftoolbar=true               % show Acrobat toolbar?
+%, pdfmenubar=true               % show Acrobat menu?
+%, pdffitwindow=false            % window fit to page when opened
+%, pdfpagemode=UseOutlines       % FullScreen, UseThumbs(show thumbnails)
+%                                % UseOutlines(show bookmarks), None
+%, pdfpagelayout=SinglePage      % SinglePage, OneColumn, TwoColumnLeft, TwoColumnRight
+%, pdfstartpage=1
+%, pdfstartview={FitV}           % Fit, FitH, FitV, FitB, FitBH, FitBV
+%, pdfsubject={}
+%, pdftitle={Rapport}    		% title
+%, pdfauthor={J. Mendes, S. Chassot, D. Wittwer}       	% author
+%, pdfcreator={LaTeX}            % creator of the document
+%, pdfkeywords={HEPIA} {Rapport} {analyse} {programmation} {terminal} {c}  % list of keywords
+%, pdfnewwindow=true             % links in new window
+%, colorlinks=false              % false: boxed links; true: colored links
+%, linkcolor=red                 % color of internal links
+%, citecolor=black               % color of links to bibliography
+%, filecolor=magenta             % color of file links
+%  urlcolor=blue                 % color of external links
+%}
+
+% Espacement interligne
+\usepackage{setspace}
+\onehalfspacing
+
+% Couleur
+\usepackage{colortbl}
+\definecolor{bleuClair}{rgb}{0.31,0.51,0.74}
+
+% ligne vide
+\newcommand{\emptyLine}[1][1]{\par\leavevmode\par}
+
+\input{inputs/inc_lst_c}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%		DEBUT DU DOCUMENT
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{document}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%		ENTETE ET PIED DE PAGE
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\pagestyle{fancy}
+% entête
+\lhead{}
+\chead{}
+\rhead{}
+% pied de page
+\lfoot{}
+\cfoot{Page \thepage\ sur \pageref{LastPage} }
+\rfoot{}
+\renewcommand{\headrulewidth}{0.1pt}
+\renewcommand{\footrulewidth}{0.1pt}
+\fancyhead[R]{\textsl{ prog system - TP Minix File system }}
+%\fancyfoot[C]{\scriptsize\emph{\class}}
+
+\fancyfoot[L]{\scriptsize\emph{\docschool{}}}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\author{Sebastien Chassot, Andre-Luc Rrobyr}
+\newcommand{\docschool}{hepia - ITI}
+\title{Rapport}
+
+% page de titre
+\begin{center}
+\includegraphics[scale=2]{imgs/hepia}
+\end{center}
+
+\vspace{3cm}
+
+\begin{center}
+\begin{huge}
+\textbf{Rapport}
+\end{huge}
+\end{center}
+
+\begin{center}
+\begin{large}
+Minix File system
+\end{large}
+\end{center}
+
+% Trait de separation
+\newcommand{\lineunder}{\color{bleuClair}\hrulefill\\\color{black}}
+\lineunder
+
+\begin{center}
+\begin{large}
+ITI 2\up{ème} soir \\
+2014 / 2015
+\end{large}
+\end{center}
+
+\vspace{3cm}
+\centerline{\includegraphics[scale=0.4]{imgs/fs6}}
+\vspace{2cm}
+
+\begin{center}
+%\begin{large}
+\textbf{Sebastien Chassot, Andre-Luc Rrobyr} \\ Juin 2015
+%\end{large}
+\end{center}
+
+\thispagestyle{empty} % enleve les entetes et pide de page de la page de titre
+
+% table des matières
+\newpage % nouvelle page
+\tableofcontents % table des matières
+\newpage % nouvelle page
+
+%\chapter*{Mini Bash}
+
+
+\section{Introduction}
+
+
+
+\vspace{1cm}
+
+\section{Le serveur de blocs}
+
+\subsection*{la problématique de la déconnexion du client}
+
+Détecter la déconnexion d'un client n'est pas trivial. En effet, lors d'un \emph{shutdown()}, 
+
+
+\subsection*{Solutions envisagées}
+
+Une des solutions les plus simple serait de traiter un échange à la fois; le client se connecte, envoit une requête, reçoit la réponse et se déconnecte. Le server fait la même chose; attend sur \emph{accept()} qu'un client se connecte, attend une requête y répond et se déconnecte.\\
+
+Cette solution est simple, permet de mieux maîtriser l'état du client et du server mais est couteuse en connexions.\\
+
+Une autre solution est d'accepter un client et rentrer dans une boucle, un \emph{fork()} ou un thread et traiter les requêtes du client tant qu'il ne se déconnecte pas. Cette solution est plus élégante mais elle nécessite de détecter la déconnexion du client.\\
+
+Une alternative possible est d'ajouter au protocole une requête (un message) de déconnexion qui synchronise le client et le server.
+
+
+ 
+\end{document} 
