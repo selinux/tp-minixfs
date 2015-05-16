@@ -47,7 +47,8 @@ class MinixTester(unittest.TestCase):
         self.assertEqual(bloc5,BLOC5)
         self.assertEqual(bloc7,BLOC7)
         self.assertEqual(bloc24,BLOC24)
-    
+        del(self.disk)
+
     #exchange bloc2 and bloc5 on the bloc device and test if the content 
     #returned by read_bloc on it matches.
     def test_2_bloc_device_write_bloc(self):
@@ -69,6 +70,7 @@ class MinixTester(unittest.TestCase):
         bloc5=self.disk.read_bloc(5)
         self.assertEqual(bloc2,BLOC5)
         self.assertEqual(bloc5,BLOC2)
+        del(self.disk)
 
     #superbloc test : read it and check object values
     def test_3_super_bloc_read_super(self):

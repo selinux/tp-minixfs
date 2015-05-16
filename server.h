@@ -29,17 +29,18 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <string.h>
+#include <stdbool.h>
+#include <fcntl.h>
 #include <errno.h>
+#include <inttypes.h>
+#include <netdb.h>
 #include <sys/types.h>
 #include <sys/socket.h>
+#include <sys/stat.h>
+#include <sys/select.h>
 #include <netinet/in.h>
 #include <netinet/ip.h>
 #include <arpa/inet.h>
-#include <sys/stat.h>
-#include <fcntl.h>
-#include <stdbool.h>
-#include <inttypes.h>
-#include <netdb.h>
 
 #define MAX_CONNEXIONS 1
 #define BUFF_SIZE 70000

@@ -68,20 +68,47 @@ int main(int argc, char* argv[])
     bool exit_prog = false;
 
     do {
+
         if ((client = accept(s, (struct sockaddr *) &addr_client, (socklen_t *) &s_len)) < 0)
             ERR_FATALE("Error accepting client");
 
+
+        bool exit_client = false;
+//        struct timeval tv;
+//        fd_set readfds, writefds, errorfds;
+
+//        tv.tv_sec = 3;
+//        tv.tv_usec = 0;
+
         /* Start the job */
 
-        while ( client ) {
+        do {
+
+//            tv.tv_sec = 3;
+//            tv.tv_usec = 0;
+//            FD_ZERO(&readfds);
+//            FD_ZERO(&writefds);
+//            FD_SET(client, &readfds);
+//
+//            int s = select(client+1, &readfds, &writefds, &errorfds, &tv);
+//
+//            if (s < 0)
+//            {
+//                ERR_FATALE("Error with select")
+//            } else if ( s == 0)
+//                break;
+//
+//            if (FD_ISSET(client, &readfds))
+//            {
 
             query_header_t * header = calloc(sizeof(query_header_t), 1);
             response_header_t response;
 
             /* read a new request */
-            if (read_header(client, &header) < 0) {
+            int n = read_header(client, &header);
+            if ( n < 0) {
                 perror("Unable to read header request");
-                continue;
+                break;
             }
 
             /* prepare the response */
@@ -132,9 +159,16 @@ int main(int argc, char* argv[])
                     if (write(client, (char *) &response, sizeof(response_header_t)) < 0)
                         ERR_FATALE("Error lost client connexion")
 
-                    #ifdef DEBUG
-                    write(1, (char *) &response, sizeof(response_header_t));
-                    #endif
+                    break;
+
+                case 2 :  /* exit case */
+
+                    /* acknowledge */
+                    if (write(client, (char *) &response, sizeof(response_header_t)) < 0)
+                        ERR_FATALE("Error lost client connexion")
+
+                    close(client);
+                    exit_client = true;
                     break;
 
                 default :
@@ -146,7 +180,7 @@ int main(int argc, char* argv[])
             free(header);
             free(buff);
 
-        }
+        } while ( !exit_client );
 
     } while( !exit_prog );
 
@@ -191,22 +225,28 @@ int read_header(int socket, query_header_t ** header)
 
     int header_length = sizeof(query_header_t);
     char buff[header_length];
+    char magic[5];
+    uint32_t * uint_magic_p = (uint32_t *)magic;
+    *uint_magic_p = SIGN_REQUEST;  /* write the magic in magic buffer */
     char * begin;
     query_header_t * tmp_header;
 
     int n = 0, offset = 0;
 
+//    sleep(2);
     do{
 
         n += read(socket, buff, header_length - n);
-        // TODO use the constant SIGN_REQUEST
-        begin = strstr(buff, "vvvv");
+
+        /* mean socket closed so need to break the main loop */
+        if( n == 0 )
+            return -1;
+
+        begin = strstr(buff, magic);
         if (begin)
         {
             // distance between pointers
             offset = begin-buff;
-//            translate_string(&buff, offset);
-//            strncpy(buff, begin, n);
             n -= offset;
         }
 
@@ -227,7 +267,7 @@ int read_header(int socket, query_header_t ** header)
 int read_request(int fd, void ** buff, uint32_t offset, uint32_t length)
 {
 
-    uint32_t n = 0;
+    int n = 0;
 
     if( lseek(fd, offset, SEEK_SET) < 0)
     {
@@ -252,7 +292,7 @@ int read_request(int fd, void ** buff, uint32_t offset, uint32_t length)
 
 int read_payload(int socket, void ** buff, uint32_t length)
 {
-    uint32_t n = 0;
+    int n = 0;
 
     do {
         n += read(socket, *buff, length-n);

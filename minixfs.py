@@ -17,8 +17,8 @@ from bloc_device import *
 class minix_file_system(object):
     def __init__(self, filename):
         # TODO add host, port and filename=None
-        self.disk = bloc_device(BLOCK_SIZE, filename)
-        # self.disk = remote_bloc_device(BLOCK_SIZE, 'localhost', 1234)
+        # self.disk = bloc_device(BLOCK_SIZE, filename)
+        self.disk = remote_bloc_device(BLOCK_SIZE, 'localhost', 1234)
 
         self.inode_map = bitarray(endian='little')
         self.zone_map = bitarray(endian='little')
