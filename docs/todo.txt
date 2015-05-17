@@ -5,6 +5,7 @@
 # TODO update file size in add_entry
 # TODO add size somewhere (when? write or balloc or ...?) and when add_entry ? what's the new size of dinode ?
 # TODO add symlink struct ?
+# TODO pop request from requests list (python) when finished and resend while not done
 
 ########
 # Done

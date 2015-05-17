@@ -152,11 +152,43 @@ ITI 2\up{ème} soir \\
 
 \section{Introduction}
 
+\section{machine d'état}
 
+Le mieux est de faire une machine d'état afin que le client et le server soient toujours dans le même état.
+
+Dans le cas de ce TP, il y a trois cas possibles
+
+\begin{enumerate}
+\item le client fait un READ (0x0)
+\item le client fait un WRITE (0x1) 
+\item le client ferme la connexion (0x2)
+\end{enumerate}
+
+\subsection*{READ}
+
+\begin{itemize}
+\item la requête client est un read + un offset + length
+\item le server return ack + payload
+\end{itemize}
+
+\subsection*{WRITE}
+
+\begin{itemize}
+\item la requête client est un write + un offset + payload
+\item le server return un ack
+\end{itemize}
+
+\subsection*{CLOSE}
+
+\begin{itemize}
+\item la requête client est un close
+\item le server return un ack
+\end{itemize}
 
 \vspace{1cm}
 
 \section{Le serveur de blocs}
+
 
 \subsection*{la problématique de la déconnexion du client}
 
