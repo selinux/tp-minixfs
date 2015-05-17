@@ -69,9 +69,10 @@ int main(int argc, char* argv[])
 
     do {
 
-        if ((client = accept(s, (struct sockaddr *) &addr_client, (socklen_t *) &s_len)) < 0)
-            ERR_FATALE("Error accepting client");
+        client = accept(s, (struct sockaddr *) &addr_client, (socklen_t *) &s_len);
 
+        if (client < 0)
+            ERR_FATALE("Error accepting client");
 
         bool exit_client = false;
 //        struct timeval tv;
@@ -124,9 +125,8 @@ int main(int argc, char* argv[])
 
                 case 0 :  /* read case */
 
-
                     /* read request on disk */
-                    if (read_request(fd, &buff, header->offset, header->length) < 0) {
+                    if (read_fs(fd, &buff, header->offset, header->length) < 0) {
                         perror("Error unable to read request ");
                         response.errnum = errno;
                     }
@@ -193,61 +193,46 @@ int main(int argc, char* argv[])
 }
 
 /**
-* @brief translate a string back to the begining of a buffer
-*
-* @parm the buffer to be corrected
-* @parm the string position in the buffer
-* @parm
-* @return always 0 (unused)
-*/
-int translate_string(void **buff, int offset)
-{
-    int i = 0;
-    int length = strlen(*buff);
-
-    while(i < length-offset) {
-        *(buff + i) = *(buff + offset + i);    /* translate char */
-        i++;
-    }
-
-    return 0;
-}
-
-/**
- *  @brief read the header of a socket socket
+ *  @brief read the header of a request
  *
  *  @parm header: pointer to header who'll be modified
  *  @parm socket: the socket to be read
- *  @return: success 0  -1 in case of failure
+ *  @return: success 0,  -1 in case of failure
  */
 int read_header(int socket, query_header_t ** header)
 {
 
     int header_length = sizeof(query_header_t);
-    char buff[header_length];
+    char buff[1000];
+
+    /* convert the magic */
     char magic[5];
     uint32_t * uint_magic_p = (uint32_t *)magic;
     *uint_magic_p = SIGN_REQUEST;  /* write the magic in magic buffer */
+
     char * begin;
     query_header_t * tmp_header;
 
-    int n = 0, offset = 0;
+    int n = 0, r = 0, offset = 0;
 
-//    sleep(2);
     do{
 
-        n += read(socket, buff, header_length - n);
-
-        /* mean socket closed so need to break the main loop */
-        if( n == 0 )
+        n = read(socket, buff, header_length - r);
+        r += n;
+        if( n < 0 )
+            exit(EXIT_FAILURE);
+        else if ( n == 0 )
+        {
+            perror("Connection closed");
             return -1;
+        }
 
         begin = strstr(buff, magic);
         if (begin)
         {
-            // distance between pointers
+            /* distance between pointers */
             offset = begin-buff;
-            n -= offset;
+            r -= offset;
         }
 
     } while ( n < header_length );
@@ -264,12 +249,12 @@ int read_header(int socket, query_header_t ** header)
 }
 
 
-int read_request(int fd, void ** buff, uint32_t offset, uint32_t length)
+int read_fs(int fd, void **buff, uint32_t offset, uint32_t length)
 {
 
-    int n = 0;
+    int n = 0, r = 0;
 
-    if( lseek(fd, offset, SEEK_SET) < 0)
+    if((lseek(fd, offset, SEEK_SET) < 0))
     {
         perror("Error lseek failure");
         return -1;
@@ -277,7 +262,8 @@ int read_request(int fd, void ** buff, uint32_t offset, uint32_t length)
 
     do {
 
-        n += read(fd, *buff, length-n);
+        n = read(fd, *buff, length - r);
+        r += n;
         if(n < 0)
         {
             perror("Error unable to read file");

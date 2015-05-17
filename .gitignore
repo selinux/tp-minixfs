@@ -172,9 +172,10 @@ target/
 minixfs_lab1.img.gen
 minixfs_lab1.img.genwrite
 server
+minixfs_lab1.img
 minixfs_lab2.img
+remote_minixfs_lab1.img
 remote_minixfs_lab2.img
 docs/rapport.toc
 docs/rapport.synctex.gz
 docs/rapport.aux
-remote_minixfs_lab1.img
