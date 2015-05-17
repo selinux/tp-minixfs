@@ -30,7 +30,7 @@ workfilewrite=testfile+".genwrite"
 string="dd if="+testfile+" of="+workfile+" bs=1024 2>/dev/null"
 os.system(string)
 
-server = 'localhost'
+server = 't440p'
 port = 1234
 
 class MinixTester(unittest.TestCase):
@@ -43,11 +43,11 @@ class MinixTester(unittest.TestCase):
         bloc5=self.disk.read_bloc(5)
         bloc7=self.disk.read_bloc(7)
         bloc24=self.disk.read_bloc(24)
+        self.disk.close_connection()
         self.assertEqual(bloc2,BLOC2)
         self.assertEqual(bloc5,BLOC5)
         self.assertEqual(bloc7,BLOC7)
         self.assertEqual(bloc24,BLOC24)
-        del(self.disk)
 
     #exchange bloc2 and bloc5 on the bloc device and test if the content 
     #returned by read_bloc on it matches.
@@ -59,24 +59,25 @@ class MinixTester(unittest.TestCase):
         bloc2=self.disk.read_bloc(2)
         bloc5=self.disk.read_bloc(5)
         #swap them
-        tmp=bloc2
-        bloc2=bloc5
-        bloc5=tmp
+        bloc2, bloc5 = bloc5,bloc2
         #write them
         self.disk.write_bloc(2,bloc2)
         self.disk.write_bloc(5,bloc5)
         #check if they are effectively swapped
-        bloc2=self.disk.read_bloc(2)
-        bloc5=self.disk.read_bloc(5)
         self.assertEqual(bloc2,BLOC5)
         self.assertEqual(bloc5,BLOC2)
-        del(self.disk)
+        self.disk.write_bloc(2,bloc2)
+        self.disk.write_bloc(5,bloc5)
+        self.disk.close_connection()
+        self.assertEqual(bloc2,BLOC2)
+        self.assertEqual(bloc5,BLOC5)
 
     #superbloc test : read it and check object values
     def test_3_super_bloc_read_super(self):
         self.disk=remote_bloc_device(BLOCK_SIZE, server, port)
         sb=minix_superbloc(self.disk)
-        
+        self.disk.close_connection()
+
         self.assertEqual(sb.s_ninodes,6848)
         self.assertEqual(sb.s_nzones,20480)
         self.assertEqual(sb.s_imap_blocks,1)
@@ -131,7 +132,7 @@ class MinixTester(unittest.TestCase):
     #testing bmap function : just check that some bmaped
     #blocs have the right numbers.
     def test_8_fs_bmap(self):
-        minixfs=minix_file_system(workfile)
+        minixfs=minix_file_system(workfile, server, port)
         #bmap of inode 167, an inode with triple indirects 
         #containing linux-0.95.tgz. Get all blocs of the file
         #direct blocs
@@ -159,7 +160,7 @@ class MinixTester(unittest.TestCase):
     #number, and name, expect another inode number
     #do a few lookups
     def test_9_fs_lookup_entry(self):
-        minixfs=minix_file_system(workfile)
+        minixfs=minix_file_system(workfile, server, port)
         #lookup_entry, inode 798 ("/usr/src/ps-0.97"), lookup for ps.c 
         inode=minixfs.lookup_entry(minixfs.inodes_list[798],"ps.c")
         self.assertEqual(inode,LOOKUPINODE1)
@@ -171,7 +172,7 @@ class MinixTester(unittest.TestCase):
     #testing namei function. Test that a few paths return
     #the expected inode number.
     def test_a_fs_namei(self):
-        minixfs=minix_file_system(workfile)
+        minixfs=minix_file_system(workfile, server, port)
         paths=["/usr/src/linux/fs/open.c","/bin/bash","/","/usr/include/assert.h"]
         namedinodelist=[]
         for p in paths:
@@ -188,7 +189,7 @@ class MinixTester(unittest.TestCase):
     def test_b_fs_ialloc_bloc(self):
         string="dd if="+workfile+" of="+workfilewrite+" bs=1024 2>/dev/null"
         os.system(string)
-        minixfs=minix_file_system(workfilewrite)
+        minixfs=minix_file_system(workfilewrite, server, port)
         dir_bmap_list=[]
         for i in range(0,7):
             bmap_bloc=minixfs.bmap(minixfs.inodes_list[56],i)
@@ -209,7 +210,7 @@ class MinixTester(unittest.TestCase):
     def test_c_fs_addentry(self):
         string="dd if="+workfile+" of="+workfilewrite+" bs=1024 2>/dev/null"
         os.system(string)
-        minixfs=minix_file_system(workfilewrite)
+        minixfs=minix_file_system(workfilewrite, server, port)
         self.assertEqual(minixfs.bmap(minixfs.inodes_list[1],0),ROOTNODEBLOCNUM1)
         
         rootnodebloc=minixfs.disk.read_bloc(minixfs.bmap(minixfs.inodes_list[1],0))
@@ -238,7 +239,7 @@ class MinixTester(unittest.TestCase):
         names_to_del=["attime.c","cmdline.c","free","free.c","Makefile","makelog","ps","ps.0","ps.1","ps.c","psdata.c","psdata.h","ps.h","pwcache.c"]
         string="dd if="+workfile+" of="+workfilewrite+" bs=1024 2>/dev/null"
         os.system(string)
-        minixfs=minix_file_system(workfilewrite)
+        minixfs=minix_file_system(workfilewrite, server, port)
         self.assertEqual(minixfs.bmap(minixfs.inodes_list[NODENUM],0),NODE798BLOCNUM1)
     
         nodebloc=minixfs.disk.read_bloc(minixfs.bmap(minixfs.inodes_list[NODENUM],0))

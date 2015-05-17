@@ -107,43 +107,8 @@ class remote_bloc_device(object):
                     self.super_block.s_zmap_blocks, self.super_block.s_firstdatazone, self.super_block.s_log_zone_size,
                     self.super_block.s_max_size, self.super_block.s_magic, clean_state)
         new_sb[:sb.__len__()] = sb
+        self.close_connection()
         log.info("socket cleanly closed")
-
-        # self.write_bloc(MINIX_SUPER_BLOCK_NUM, new_sb)
-        magic = int('76767676', 16)
-        magic_resp = int('87878787', 16)
-        rw_type = 2
-        rand.seed(None) # None = current system time
-        handle = rand.randint(0, 2**32)
-        header_size = struct.calcsize('!IIIII')
-
-        header = struct.pack('!IIIII', magic, rw_type, handle, 0, 0)
-        to_send = 0
-
-        while to_send < header_size:
-            sent = self.fd.send(self.requests[0])
-            if sent == 0:
-                raise RuntimeError("socket connection broken")
-            to_send += sent
-
-        # read response
-        responce = ''
-        response_size = struct.calcsize('!III')
-        to_recv = 0
-
-        while to_recv < response_size:
-             b = self.fd.recv(response_size-to_recv)
-             if b == '':
-                 raise RuntimeError("socket connection broken")
-             responce += b
-             to_recv += len(b)
-
-        h = struct.unpack('!III', responce)
-
-        if h == (magic_resp, 0, handle):
-            self.fd.close()
-        # TODO add something if error
-
 
     def read_bloc(self, bloc_num, numofbloc=1):
         """ Read n block from block device server
@@ -164,7 +129,7 @@ class remote_bloc_device(object):
         self.requests.insert(0, struct.pack('!IIIII', magic_req, rw_type, handle, offset, length))
 
         while to_send < header_size:
-            sent = self.fd.send(self.requests[0])
+            sent = self.fd.send(self.requests[0][to_send:])
             if sent == 0:
                 raise RuntimeError("socket connection broken")
             to_send += sent
@@ -194,6 +159,7 @@ class remote_bloc_device(object):
                 buff += b
                 to_recv += len(b)
 
+            # TODO pop request when finished
             # remove request from fifo
             # self.requests.pop[0]
 
@@ -209,19 +175,75 @@ class remote_bloc_device(object):
         :param bloc: buffer to be written
         """
         magic = int('76767676', 16)
+        magic_resp = int('87878787', 16)
         rw_type = 1
         rand.seed(None) # None = current system time
         handle = rand.randint(0, 2**32)
         offset = bloc_num*self.blksize
 
         # Can't write block not eq to BLOCK_SIZE
-        if bloc.__len__() != BLOCK_SIZE:
-            log.error("Block isn't equal to block size")
-            raise BlockSizeError("Block isn't equal to block size")
+        # if bloc.__len__() != BLOCK_SIZE:
+        #     log.error("Block isn't equal to block size")
+        #     raise BlockSizeError("Block isn't equal to block size")
 
+        to_send = 0
         header = struct.pack('!IIIII', magic, rw_type, handle, offset, BLOCK_SIZE)
-        # print(header+bloc)
-        request = header+bloc
-        self.requests.insert(0, request)
-        self.fd.send(self.requests[0].__str__())
+        self.requests.insert(0, header+bloc)
+        # TODO consolider while send
+        while to_send < len(header+bloc):
+            sent = self.fd.send(self.requests[0][to_send:])
+            if sent == 0:
+                raise RuntimeError("socket connection broken")
+            to_send += sent
 
+        # read response
+        responce = ''
+        response_size = struct.calcsize('!III')
+        to_recv = 0
+
+        while to_recv < response_size:
+             b = self.fd.recv(response_size-to_recv)
+             if b == '':
+                 raise RuntimeError("socket connection broken")
+             responce += b
+             to_recv += len(b)
+
+        h = struct.unpack('!III', responce)
+
+    def close_connection(self):
+        """ send a exit request to server  """
+        # self.write_bloc(MINIX_SUPER_BLOCK_NUM, new_sb)
+        magic = int('76767676', 16)
+        magic_resp = int('87878787', 16)
+        rw_type = 2
+        rand.seed(None) # None = current system time
+        handle = rand.randint(0, 2**32)
+        header_size = struct.calcsize('!IIIII')
+
+        header = struct.pack('!IIIII', magic, rw_type, handle, 0, 0)
+        # self.requests.insert(0, struct.pack('!IIIII', magic, rw_type, handle, 0, 0))
+        to_send = 0
+
+        while to_send < header_size:
+            sent = self.fd.send(header)
+            if sent == 0:
+                raise RuntimeError("socket connection broken")
+            to_send += sent
+
+        # read response
+        responce = ''
+        response_size = struct.calcsize('!III')
+        to_recv = 0
+
+        while to_recv < response_size:
+             b = self.fd.recv(response_size-to_recv)
+             if b == '':
+                 raise RuntimeError("socket connection broken")
+             responce += b
+             to_recv += len(b)
+
+        h = struct.unpack('!III', responce)
+
+        if h == (magic_resp, 0, handle):
+            self.fd.close()
+        # TODO add something if error
