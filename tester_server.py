@@ -31,6 +31,7 @@ string="dd if="+testfile+" of="+workfile+" bs=1024 2>/dev/null"
 os.system(string)
 
 server = 't440p'
+# server = '129.194.184.113'
 port = 1234
 
 class MinixTester(unittest.TestCase):
