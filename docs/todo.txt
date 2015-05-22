@@ -6,6 +6,8 @@
 # TODO add size somewhere (when? write or balloc or ...?) and when add_entry ? what's the new size of dinode ?
 # TODO add symlink struct ?
 # TODO pop request from requests list (python) when finished and resend while not done
+# TODO se proteger contre les fausse write du client (annonce taille 100 mais ecriture 20)
+# TODO verifier le principe : le client doit être très rigoureux, le server peut recevoir n'importe quoi
 
 ########
 # Done

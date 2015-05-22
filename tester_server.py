@@ -24,14 +24,11 @@ import sys
 # - bitarray class : used to store and manipulated inode and zone bitmaps in memory
 #   member ofs minix_filesystem class
 
-testfile="minixfs_lab1.img"
-workfile=testfile+".gen"
-workfilewrite=testfile+".genwrite"
-string="dd if="+testfile+" of="+workfile+" bs=1024 2>/dev/null"
-os.system(string)
+workfile="minixfs_lab1.img"
+orgfile=workfile+".org"
+os.system("cp "+workfile+" "+orgfile) # backup the file
 
-server = 't440p'
-# server = '129.194.184.113'
+server = 'localhost'
 port = 1234
 
 class MinixTester(unittest.TestCase):
@@ -44,60 +41,67 @@ class MinixTester(unittest.TestCase):
         bloc5=self.disk.read_bloc(5)
         bloc7=self.disk.read_bloc(7)
         bloc24=self.disk.read_bloc(24)
-        self.disk.close_connection()
         self.assertEqual(bloc2,BLOC2)
         self.assertEqual(bloc5,BLOC5)
         self.assertEqual(bloc7,BLOC7)
         self.assertEqual(bloc24,BLOC24)
+        self.disk.close_connection()
 
     #exchange bloc2 and bloc5 on the bloc device and test if the content 
     #returned by read_bloc on it matches.
-    def test_2_bloc_device_write_bloc(self):
-        string="dd if="+workfile+" of="+workfilewrite+" bs=1024 2>/dev/null"
-        os.system(string)
-        self.disk=remote_bloc_device(BLOCK_SIZE, server, port)
-        #read bloc2 and bloc5
-        bloc2=self.disk.read_bloc(2)
-        bloc5=self.disk.read_bloc(5)
-        #swap them
-        bloc2, bloc5 = bloc5,bloc2
-        #write them
-        self.disk.write_bloc(2,bloc2)
-        self.disk.write_bloc(5,bloc5)
-        #check if they are effectively swapped
-        self.assertEqual(bloc2,BLOC5)
-        self.assertEqual(bloc5,BLOC2)
-        self.disk.write_bloc(2,bloc2)
-        self.disk.write_bloc(5,bloc5)
-        self.disk.close_connection()
-        self.assertEqual(bloc2,BLOC2)
-        self.assertEqual(bloc5,BLOC5)
+    # def test_2_bloc_device_write_bloc(self):
+    #     self.disk=remote_bloc_device(BLOCK_SIZE, server, port)
+    #     #read bloc2 and bloc5
+    #     bloc2=self.disk.read_bloc(2)
+    #     bloc5=self.disk.read_bloc(5)
+    #     #swap them
+    #     # bloc2, bloc5 = bloc5, bloc2
+    #     #write them
+    #     self.disk.write_bloc(5,bloc2)
+    #     self.disk.write_bloc(2,bloc5)
+    #     #read bloc2 and bloc5
+    #     bloc2=self.disk.read_bloc(2)
+    #     bloc5=self.disk.read_bloc(5)
+    #     #check if they are effectively swapped
+    #     self.assertEqual(bloc2,BLOC5)
+    #     self.assertEqual(bloc5,BLOC2)
+    #     # put them back in place
+    #     self.disk.write_bloc(5,bloc2)
+    #     self.disk.write_bloc(2,bloc5)
+    #     #read bloc2 and bloc5
+    #     bloc2=self.disk.read_bloc(2)
+    #     bloc5=self.disk.read_bloc(5)
+    #     self.disk.close_connection()
+    #     self.assertEqual(bloc2,BLOC2)
+    #     self.assertEqual(bloc5,BLOC5)
 
     #superbloc test : read it and check object values
     def test_3_super_bloc_read_super(self):
-        self.disk=remote_bloc_device(BLOCK_SIZE, server, port)
+        self.disk = remote_bloc_device(BLOCK_SIZE, server, port)
         sb=minix_superbloc(self.disk)
         self.disk.close_connection()
 
-        self.assertEqual(sb.s_ninodes,6848)
-        self.assertEqual(sb.s_nzones,20480)
-        self.assertEqual(sb.s_imap_blocks,1)
-        self.assertEqual(sb.s_zmap_blocks,3)
-        self.assertEqual(sb.s_firstdatazone,220)
-        self.assertEqual(sb.s_max_size,268966912)
+        self.assertEqual(sb.s_ninodes, 6848)
+        self.assertEqual(sb.s_nzones, 20480)
+        self.assertEqual(sb.s_imap_blocks, 1)
+        self.assertEqual(sb.s_zmap_blocks, 3)
+        self.assertEqual(sb.s_firstdatazone, 220)
+        self.assertEqual(sb.s_max_size, 268966912)
 
     #inode and zone map tests
     #we need to copy the original as it was modified 
     #when testing write_bloc
     def test_4_fs_inode_and_bloc_bitmaps(self):
-        self.minixfs=minix_file_system(workfile)
-        self.assertEqual(self.minixfs.inode_map,INODEBITMAP1);
-        self.assertEqual(self.minixfs.zone_map,ZONEBITMAP1);
+        self.minixfs=minix_file_system(server, port)
+        self.assertEqual(self.minixfs.inode_map, INODEBITMAP1)
+        self.assertEqual(self.minixfs.zone_map, ZONEBITMAP1)
+        self.minixfs.close_connection()
 
     #inode list content test
     def test_5_fs_inode_list(self):
-        self.minixfs=minix_file_system(workfile)
-        self.assertEqual(self.minixfs.inodes_list,INODELIST);
+        self.minixfs=minix_file_system(server, port)
+        self.minixfs.close_connection()
+        self.assertEqual(self.minixfs.inodes_list, INODELIST)
 
 
     #testing ialloc()/ifree()
@@ -105,81 +109,84 @@ class MinixTester(unittest.TestCase):
     #the bitmask values after/or checking the number returned
     #by ialloc after ifree and balloc after bfree.
     def test_6_fs_ialloc_ifree(self):
-        self.minixfs=minix_file_system(workfile)
-        new_inode_num=self.minixfs.ialloc()
-        self.assertEqual(new_inode_num,NEWNODE1);
+        self.minixfs = minix_file_system(server, port)
+        new_inode_num = self.minixfs.ialloc()
+        self.assertEqual(new_inode_num, NEWNODE1)
         self.minixfs.ifree(123)
-        new_inode_num=self.minixfs.ialloc()
-        self.assertEqual(new_inode_num,NEWNODE2);
-        new_inode_num=self.minixfs.ialloc()
-        self.assertEqual(new_inode_num,NEWNODE3);
+        new_inode_num = self.minixfs.ialloc()
+        self.assertEqual(new_inode_num, NEWNODE2)
+        new_inode_num = self.minixfs.ialloc()
+        self.assertEqual(new_inode_num, NEWNODE3)
+        self.minixfs.close_connection()
 
     #testing balloc()/bfree()
     #same method as ialloc/ifree testing
     #balloc write on the filesystem as it initialize all bloc bytes to \0
-    def test_7_fs_balloc_bfree(self):
-        string="dd if="+workfile+" of="+workfilewrite+" bs=1024 2>/dev/null"
-        os.system(string)
-        self.minixfs=minix_file_system(workfilewrite)
-        new_bloc_num=self.minixfs.balloc()
-        self.assertEqual(new_bloc_num,NEWBLOC1);
-        self.minixfs.bfree(123)
-        new_bloc_num=self.minixfs.balloc()
-        self.assertEqual(new_bloc_num,NEWBLOC2);
-        new_bloc_num=self.minixfs.balloc()
-        self.assertEqual(new_bloc_num,NEWBLOC3);
-        return True
+    # def test_7_fs_balloc_bfree(self):
+    #     self.minixfs = minix_file_system(server, port)
+    #     new_bloc_num = self.minixfs.balloc()
+    #     self.assertEqual(new_bloc_num, NEWBLOC1)
+    #     self.minixfs.bfree(123)
+    #     new_bloc_num = self.minixfs.balloc()
+    #     self.assertEqual(new_bloc_num, NEWBLOC2)
+    #     new_bloc_num = self.minixfs.balloc()
+    #     self.assertEqual(new_bloc_num, NEWBLOC3)
+    #     self.minixfs.close_connection()
+    #     return True
 
     #testing bmap function : just check that some bmaped
     #blocs have the right numbers.
     def test_8_fs_bmap(self):
-        minixfs=minix_file_system(workfile, server, port)
+        self.minixfs = minix_file_system(server, port)
         #bmap of inode 167, an inode with triple indirects 
         #containing linux-0.95.tgz. Get all blocs of the file
         #direct blocs
-        dir_bmap_list=[]
-        for i in range(0,7):
-            bmap_bloc=minixfs.bmap(minixfs.inodes_list[167],i)
+        dir_bmap_list = []
+        for i in range(0, 7):
+            bmap_bloc = self.minixfs.bmap(self.minixfs.inodes_list[167], i)
             dir_bmap_list.append(bmap_bloc)
-        self.assertEqual(dir_bmap_list,DIRMAP)
+        self.assertEqual(dir_bmap_list, DIRMAP)
         
         #indirect blocs
-        indir_bmap_list=[]
+        indir_bmap_list = []
         for i in range(7,512+7):
-            bmap_bloc=minixfs.bmap(minixfs.inodes_list[167],i)
+            bmap_bloc = self.minixfs.bmap(self.minixfs.inodes_list[167], i)
             indir_bmap_list.append(bmap_bloc)
-        self.assertEqual(indir_bmap_list,INDIRMAP)
+        self.assertEqual(indir_bmap_list, INDIRMAP)
         
-        #double indirect blocs
-        dbl_indir_bmap_list=[]
-        for i in range(512+7,1024):
-            bmap_bloc=minixfs.bmap(minixfs.inodes_list[167],i)
-            dbl_indir_bmap_list.append(bmap_bloc)
-        self.assertEqual(dbl_indir_bmap_list,DBLINDIRMAP)
+        # #double indirect blocs
+        # dbl_indir_bmap_list=[]
+        # for i in range(512+7,1024):
+        #     bmap_bloc=minixfs.bmap(minixfs.inodes_list[167],i)
+        #     dbl_indir_bmap_list.append(bmap_bloc)
+        # self.assertEqual(dbl_indir_bmap_list,DBLINDIRMAP)
+        self.minixfs.close_connection()
 
     #testing lookup_entry function : give a known inode 
     #number, and name, expect another inode number
     #do a few lookups
     def test_9_fs_lookup_entry(self):
-        minixfs=minix_file_system(workfile, server, port)
+        self.minixfs = minix_file_system(server, port)
         #lookup_entry, inode 798 ("/usr/src/ps-0.97"), lookup for ps.c 
-        inode=minixfs.lookup_entry(minixfs.inodes_list[798],"ps.c")
-        self.assertEqual(inode,LOOKUPINODE1)
+        inode = self.minixfs.lookup_entry(self.minixfs.inodes_list[798], "ps.c")
+        self.assertEqual(inode, LOOKUPINODE1)
         #lookup_entry, inode 212 ("/usr/src/linux/fs/minix"), lookup for namei.c 
-        inode=minixfs.lookup_entry(minixfs.inodes_list[212],"namei.c")
-        self.assertEqual(inode,LOOKUPINODE2)
+        inode = self.minixfs.lookup_entry(self.minixfs.inodes_list[212], "namei.c")
+        self.assertEqual(inode, LOOKUPINODE2)
+        self.minixfs.close_connection()
 
 
     #testing namei function. Test that a few paths return
     #the expected inode number.
     def test_a_fs_namei(self):
-        minixfs=minix_file_system(workfile, server, port)
-        paths=["/usr/src/linux/fs/open.c","/bin/bash","/","/usr/include/assert.h"]
-        namedinodelist=[]
+        self.minixfs = minix_file_system(server, port)
+        paths=["/usr/src/linux/fs/open.c", "/bin/bash", "/", "/usr/include/assert.h"]
+        namedinodelist = []
         for p in paths:
-            namedinode=minixfs.namei(p)
+            namedinode = self.minixfs.namei(p)
             namedinodelist.append(namedinode)
-        self.assertEqual(namedinodelist,NAMEDINODES)
+        self.assertEqual(namedinodelist, NAMEDINODES)
+        self.minixfs.close_connection()
 
     #testing i_add_bloc, i_alloc_bloc ? 
     #function allocate a new bloc for a given file in the bloc list.
@@ -188,73 +195,68 @@ class MinixTester(unittest.TestCase):
     #do one direct i_alloc and one indirect i_alloc.
     #we might need to get a fresh copy of the filesystem
     def test_b_fs_ialloc_bloc(self):
-        string="dd if="+workfile+" of="+workfilewrite+" bs=1024 2>/dev/null"
-        os.system(string)
-        minixfs=minix_file_system(workfilewrite, server, port)
+        self.minixfs = minix_file_system(server, port)
         dir_bmap_list=[]
         for i in range(0,7):
-            bmap_bloc=minixfs.bmap(minixfs.inodes_list[56],i)
+            bmap_bloc = self.minixfs.bmap(self.minixfs.inodes_list[56], i)
             dir_bmap_list.append(bmap_bloc)
-        self.assertEqual(dir_bmap_list,IALLOC1)
+        self.assertEqual(dir_bmap_list, IALLOC1)
     
         #ialloc bloc 2 and 3 on the inode
-        bmap_bloc=minixfs.ialloc_bloc(minixfs.inodes_list[56],2)
-        bmap_bloc=minixfs.ialloc_bloc(minixfs.inodes_list[56],3)
+        bmap_bloc = self.minixfs.ialloc_bloc(self.minixfs.inodes_list[56],2)
+        bmap_bloc = self.minixfs.ialloc_bloc(self.minixfs.inodes_list[56],3)
         #print bmap again
-        dir_bmap_list=[]
-        for i in range(0,7):
-            bmap_bloc=minixfs.bmap(minixfs.inodes_list[56],i)
+        dir_bmap_list = []
+        for i in range(0, 7):
+            bmap_bloc = self.minixfs.bmap(self.minixfs.inodes_list[56], i)
             dir_bmap_list.append(bmap_bloc)
-        self.assertEqual(dir_bmap_list,IALLOC2)
+        self.assertEqual(dir_bmap_list, IALLOC2)
+        self.minixfs.close_connection()
 
     #testing bloc contents and inode maps before and after add_entry
     def test_c_fs_addentry(self):
-        string="dd if="+workfile+" of="+workfilewrite+" bs=1024 2>/dev/null"
-        os.system(string)
-        minixfs=minix_file_system(workfilewrite, server, port)
-        self.assertEqual(minixfs.bmap(minixfs.inodes_list[1],0),ROOTNODEBLOCNUM1)
+        self.minixfs = minix_file_system(server, port)
+        self.assertEqual(self.minixfs.bmap(self.minixfs.inodes_list[1], 0), ROOTNODEBLOCNUM1)
         
-        rootnodebloc=minixfs.disk.read_bloc(minixfs.bmap(minixfs.inodes_list[1],0))
-        self.assertEqual(rootnodebloc,ROOTNODEBLOC1)
-        for i in range(1,57):
-            minixfs.add_entry(minixfs.inodes_list[1],"new_ent"+str(i),minixfs.ialloc())
+        rootnodebloc = self.minixfs.disk.read_bloc(self.minixfs.bmap(self.minixfs.inodes_list[1], 0))
+        self.assertEqual(rootnodebloc, ROOTNODEBLOC1)
+        for i in range(1, 57):
+            self.minixfs.add_entry(self.minixfs.inodes_list[1], "new_ent"+str(i), self.minixfs.ialloc())
     
-        rootnodebloc=minixfs.disk.read_bloc(minixfs.bmap(minixfs.inodes_list[1],0))
-        self.assertEqual(rootnodebloc,ROOTNODEBLOC1MOD)
+        rootnodebloc = self.minixfs.disk.read_bloc(self.minixfs.bmap(self.minixfs.inodes_list[1], 0))
+        self.assertEqual(rootnodebloc, ROOTNODEBLOC1MOD)
         
         #more complex modification : add enough entries so that a new bloc must be allocated
         #check that the next bloc is still 0
-        self.assertEqual(minixfs.bmap(minixfs.inodes_list[1],1),ROOTNODEBLOCNUM2)
+        self.assertEqual(self.minixfs.bmap(self.minixfs.inodes_list[1], 1), ROOTNODEBLOCNUM2)
         #add some more entries
-        for i in range(57,60):
-            minixfs.add_entry(minixfs.inodes_list[1],"new_ent"+str(i),minixfs.ialloc())
+        for i in range(57, 60):
+            self.minixfs.add_entry(self.minixfs.inodes_list[1], "new_ent"+str(i), self.minixfs.ialloc())
         #check that new bloc has been allocated
-        self.assertEqual(minixfs.bmap(minixfs.inodes_list[1],1),ROOTNODEBLOCNUM2NEW)
+        self.assertEqual(self.minixfs.bmap(self.minixfs.inodes_list[1], 1), ROOTNODEBLOCNUM2NEW)
         #check its contents
-        rootnodebloc2=minixfs.disk.read_bloc(minixfs.bmap(minixfs.inodes_list[1],1))
-        self.assertEqual(rootnodebloc2,ROOTNODEBLOC2MOD)
+        rootnodebloc2 = self.minixfs.disk.read_bloc(self.minixfs.bmap(self.minixfs.inodes_list[1], 1))
+        self.assertEqual(rootnodebloc2, ROOTNODEBLOC2MOD)
     
     #testing bloc contents and inode maps before and after del_entry
     def test_d_fs_delentry(self):
-        NODENUM=798
-        names_to_del=["attime.c","cmdline.c","free","free.c","Makefile","makelog","ps","ps.0","ps.1","ps.c","psdata.c","psdata.h","ps.h","pwcache.c"]
-        string="dd if="+workfile+" of="+workfilewrite+" bs=1024 2>/dev/null"
-        os.system(string)
-        minixfs=minix_file_system(workfilewrite, server, port)
-        self.assertEqual(minixfs.bmap(minixfs.inodes_list[NODENUM],0),NODE798BLOCNUM1)
+        NODENUM = 798
+        names_to_del = ["attime.c", "cmdline.c", "free", "free.c", "Makefile", "makelog", "ps", "ps.0", "ps.1", "ps.c", "psdata.c", "psdata.h", "ps.h", "pwcache.c"]
+        self.minixfs = minix_file_system(server, port)
+        self.assertEqual(self.minifs.bmap(self.minifs.inodes_list[NODENUM], 0), NODE798BLOCNUM1)
     
-        nodebloc=minixfs.disk.read_bloc(minixfs.bmap(minixfs.inodes_list[NODENUM],0))
+        nodebloc=self.minifs.disk.read_bloc(self.minifs.bmap(self.minifs.inodes_list[NODENUM], 0))
         self.assertEqual(nodebloc,NODE798BLOC1)
 
         for name in names_to_del:
-            minixfs.del_entry(minixfs.inodes_list[NODENUM],name)
-        nodebloc=minixfs.disk.read_bloc(minixfs.bmap(minixfs.inodes_list[NODENUM],0))
-        self.assertEqual(nodebloc,NODE798BLOC1MOD)
+            self.minifs.del_entry(self.minifs.inodes_list[NODENUM], name)
+        nodebloc = self.minifs.disk.read_bloc(self.minifs.bmap(self.minifs.inodes_list[NODENUM], 0))
+        self.assertEqual(nodebloc, NODE798BLOC1MOD)
 
     def test_e_cleanup(self):
         #clean up
-        os.system("rm *.pyc")
-        os.system("rm "+workfile+" "+workfilewrite)
+        # mind that the server might also have this file opened !!!!
+        os.system("cp "+orgfile+" "+workfile)
         return True
 
 

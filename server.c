@@ -155,6 +155,8 @@ int main(int argc, char* argv[])
                         if(write(client, (char *)buff, header->length) < 0)
                             ERR_FATALE("Error responding to client")
 
+                    free(header);
+                    free(buff);
                     break;
 
                 case 1 :  /* write case */
@@ -185,8 +187,10 @@ int main(int argc, char* argv[])
 
                     /* send response to client */
                     if (write(client, (char *) &response, sizeof(response_header_t)) < 0)
-                        ERR_FATALE("Error lost client connexion")
+                        ERR_FATALE("Error lost client connexion while respond")
 
+                    free(header);
+                    free(buff);
                     break;
 
                 default :
@@ -198,8 +202,6 @@ int main(int argc, char* argv[])
 
             }
 
-            free(header);
-            free(buff);
 
         } while ( !end_session);
 
@@ -217,9 +219,10 @@ int main(int argc, char* argv[])
 /**
  *  @brief read the header of a request
  *
- *  @parm header: pointer to header who'll be modified
  *  @parm socket: the socket to be read
- *  @return: success 0,  -1 in case of failure
+ *  @parm header: pointer to header who'll be modified
+ *
+ *  @return: number of byte read, -1 in case of failure
  */
 int read_header(int socket, query_header_t ** header)
 {
@@ -241,15 +244,11 @@ int read_header(int socket, query_header_t ** header)
 
         n = read(socket, buff, header_length - r);
         r += n;
-        if( n < 0 )
-            exit(EXIT_FAILURE);
-        else if ( n == 0 )
-        {
-            perror("Connection closed");
-            return -1;
-        }
+        if( n <= 0 )
+            return n;
 
         begin = strstr(buff, magic);
+
         if (begin)
         {
             /* distance between pointers */
@@ -267,17 +266,27 @@ int read_header(int socket, query_header_t ** header)
     (*header)->offset = ntohl(tmp_header->offset);
     (*header)->length = ntohl(tmp_header->length);
 
-    return 0;
+    return r;
 }
 
-
+/**
+ * @brief read the requested block on fs
+ *
+ * @parm fd: the file descriptor
+ * @parm buff: buffer for the answer (memory need to be allocated)
+ * @parm offset: the position in file
+ * @parm the length to be read
+ *
+ * @return: return a non-negative integer indicating the number of bytes actually read.
+ *          or 0 if lost connection or negative integer in case of error
+ */
 int read_response_on_fs(int fd, void **buff, uint32_t offset, uint32_t length)
 {
 
     int n = 0, r = 0;
 
-    if((lseek(fd, offset, SEEK_SET) < 0))
-    {
+    if((lseek(fd, offset, SEEK_SET) < 0)) {
+
         perror("Error lseek failure");
         return -1;
     }
@@ -286,18 +295,27 @@ int read_response_on_fs(int fd, void **buff, uint32_t offset, uint32_t length)
 
         n = read(fd, *buff, length - r);
         r += n;
-        if(n < 0)
-        {
+
+        if(n <= 0) {
             perror("Error unable to read file");
-            return -1;
+            return n;
         }
 
     }while( n < length);
 
-    return 0;
+    return r;
 }
 
-
+/**
+ * @brief read the client payload
+ *
+ * @parm socket: the socket
+ * @parm buff: buffer for the payload (memory need to be allocated)
+ * @parm the length to be read
+ *
+ * @return: return a non-negative integer indicating the number of bytes actually read.
+ *          or 0 if lost connection or negative integer in case of error
+ */
 int read_client_payload(int socket, void **buff, uint32_t length)
 {
     int n = 0;
@@ -312,25 +330,33 @@ int read_client_payload(int socket, void **buff, uint32_t length)
 
     } while (n < length);
 
-    return 0;
+    return n;
 }
 
-
+/**
+ * @brief write the payload datas to fs
+ *
+ * @parm fd: the file descriptor (file system)
+ * @parm buff: data to be written
+ * @parm offset: the position in file system
+ * @parm the length to be written
+ *
+ * @return: return a non-negative integer indicating the number of bytes actually read.
+ *          or 0 if lost connection or negative integer in case of error
+ */
 int write_payload_to_disk(int fd, void *buff, uint32_t offset, uint32_t length)
 {
+    int n;
 
-    if( lseek(fd, offset, SEEK_SET) < 0 )
-    {
+    n = lseek(fd, offset, SEEK_SET);
+    if( n < 0 ) {
         perror("Error lseek failure");
-        return -1;
+        return n;
     }
 
     // TODO transform in do while loop (write safely)
-    if( write(fd, buff, length) < 0)
-    {
-        perror("Error unable to write payload to file");
-        return -1;
-    }
 
-    return 0;
+    n = write(fd, buff, length);
+
+    return n;
 }

@@ -12,10 +12,10 @@
 \usepackage{fancyhdr}
 \usepackage{graphicx}
 \usepackage{array}
-\usepackage{lastpage}
-\usepackage{placeins}
-\usepackage{longtable}
-\usepackage{caption}
+%\usepackage{lastpage}
+%\usepackage{placeins}
+%\usepackage{longtable}
+%\usepackage{caption}
 \usepackage{float}
 \usepackage{wrapfig}
 \usepackage{dirtree}
@@ -96,7 +96,7 @@
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\author{Sebastien Chassot, Andre-Luc Rrobyr}
+\author{Sebastien Chassot, Andre-Luc Robyr}
 \newcommand{\docschool}{hepia - ITI}
 \title{Rapport}
 
@@ -136,7 +136,7 @@ ITI 2\up{ème} soir \\
 
 \begin{center}
 %\begin{large}
-\textbf{Sebastien Chassot, Andre-Luc Rrobyr} \\ Juin 2015
+\textbf{Sebastien Chassot, Andre-Luc Robyr} \\ Juin 2015
 %\end{large}
 \end{center}
 
@@ -151,6 +151,8 @@ ITI 2\up{ème} soir \\
 
 
 \section{Introduction}
+
+\subsection{essai}
 
 \section{machine d'état}
 
@@ -205,6 +207,9 @@ Une autre solution est d'accepter un client et rentrer dans une boucle, un \emph
 
 Une alternative possible est d'ajouter au protocole une requête (un message) de déconnexion qui synchronise le client et le server.
 
+\subsection*{Problème de client malicieux}
+
+Si un client lance une requête et annonce une certaine longueur, le server va faire un read, tant que le client maintient la connexion et n'envoie pas les données, il bloque le server.\\
 
  
 \end{document} 

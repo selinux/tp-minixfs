@@ -15,12 +15,12 @@ from bloc_device import *
 
 
 class minix_file_system(object):
-    def __init__(self, filename, host=None, port=None):
+    def __init__(self, host=None, port=None):
         # TODO add host, port and filename=None
         if( host and port ):
             self.disk = remote_bloc_device(BLOCK_SIZE, host, port)
         else:
-            self.disk = bloc_device(BLOCK_SIZE, filename)
+            self.disk = bloc_device(BLOCK_SIZE, host)
 
         self.inode_map = bitarray(endian='little')
         self.zone_map = bitarray(endian='little')
@@ -318,6 +318,10 @@ class minix_file_system(object):
             self.disk.write_bloc(2 + self.disk.super_block.s_imap_blocks + i, \
                                self.zone_map.tobytes()[i * BLOCK_SIZE:(i + 1) * BLOCK_SIZE])
         return
+
+    def close_connection(self):
+        log.info("socket cleanly closed")
+        self.disk.close_connection()
 
     def is_dir(self, inode):
         """ Test if inode is a dir
