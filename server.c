@@ -74,15 +74,10 @@ int main(int argc, char* argv[])
         if (client < 0)
             ERR_FATALE("Error accepting client");
 
-        bool exit_client = false;
-//        struct timeval tv;
-//        fd_set readfds, writefds, errorfds;
-
-//        tv.tv_sec = 3;
-//        tv.tv_usec = 0;
+        /* finish client session, back to accept next one */
+        bool end_session = false;
 
         /* Start the job */
-
         do {
 
 //            tv.tv_sec = 3;
@@ -102,13 +97,21 @@ int main(int argc, char* argv[])
 //            if (FD_ISSET(client, &readfds))
 //            {
 
+            /* prepare a new request */
             query_header_t * header = calloc(sizeof(query_header_t), 1);
             response_header_t response;
 
             /* read a new request */
             int n = read_header(client, &header);
-            if ( n < 0) {
-                perror("Unable to read header request");
+
+            if ( n < 0)
+            ERR_FATALE("Unable to read header request");
+
+            /* lost client connection so break for a new one */
+            if ( n == 0 ){
+                perror("Error client lost");
+                free(header);
+                end_session = true;
                 break;
             }
 
@@ -117,8 +120,8 @@ int main(int argc, char* argv[])
             response.errnum = 0x0;
             response.handle = htonl(header->handle);
 
-
-            /* need a buffer for the response */
+            /* need a buffer for the response we use the same for
+             * client's payload or file system response */
             void * buff = calloc(sizeof(char), header->length);
 
             switch (header->type) {
@@ -126,18 +129,31 @@ int main(int argc, char* argv[])
                 case 0 :  /* read case */
 
                     /* read request on disk */
-                    if (read_fs(fd, &buff, header->offset, header->length) < 0) {
-                        perror("Error unable to read request ");
+                    n = read_fs(fd, &buff, header->offset, header->length);
+                    if ( n < 0) {
+                        perror("Error unable to read file system");
                         response.errnum = errno;
+                        free(buff);
+                        buff = NULL;
                     }
 
-                    /* write header */
-                    if (write(client, (char *) &response, sizeof(response_header_t)) < 0)
-                        ERR_FATALE("Error lost client connexion")
+                    /* send response header */
+                    if( n == 0 ) {
 
-                    /* write response */
-                    if (write(client, (char *)buff, header->length) < 0)
-                        ERR_FATALE("Error lost client connexion")
+                        perror("Error lost client connection");
+                        free(header);
+                        close(client);
+                        end_session = true;
+                        break;
+
+                    }else
+                        if (write(client, (char *) &response, sizeof(response_header_t)) < 0)
+                            ERR_FATALE("Error lost client connexion")
+
+                    /* send response if any */
+                    if (buff)
+                        if(write(client, (char *)buff, header->length) < 0)
+                            ERR_FATALE("Error lost client connexion")
 
                     break;
 
@@ -168,19 +184,22 @@ int main(int argc, char* argv[])
                         ERR_FATALE("Error lost client connexion")
 
                     close(client);
-                    exit_client = true;
+                    end_session = true;
                     break;
 
                 default :
                     perror("Error unknown client request type");
                     response.errnum = EBADE; // invalide exchange
 
+                    if (write(client, (char *) &response, sizeof(response_header_t)) < 0)
+                        ERR_FATALE("Error lost client connexion")
+
             }
 
             free(header);
             free(buff);
 
-        } while ( !exit_client );
+        } while ( !end_session);
 
     } while( !exit_prog );
 
