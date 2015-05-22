@@ -129,7 +129,7 @@ int main(int argc, char* argv[])
                 case 0 :  /* read case */
 
                     /* read request on disk */
-                    n = read_fs(fd, &buff, header->offset, header->length);
+                    n = read_response_on_fs(fd, &buff, header->offset, header->length);
                     if ( n < 0) {
                         perror("Error unable to read file system");
                         response.errnum = errno;
@@ -148,43 +148,45 @@ int main(int argc, char* argv[])
 
                     }else
                         if (write(client, (char *) &response, sizeof(response_header_t)) < 0)
-                            ERR_FATALE("Error lost client connexion")
+                            ERR_FATALE("Error responding to client")
 
                     /* send response if any */
                     if (buff)
                         if(write(client, (char *)buff, header->length) < 0)
-                            ERR_FATALE("Error lost client connexion")
+                            ERR_FATALE("Error responding to client")
 
                     break;
 
                 case 1 :  /* write case */
 
                     /* read the payload */
-                    if (read_payload(client, &buff, header->length) < 0) {
+                    n = read_client_payload(client, &buff, header->length);
+                    if ( n < 0) {
                         perror("Error reading payload");
                         response.errnum = errno;
+                        free(buff);
+                        buff = NULL;
                     }
 
-                    /* write payload to disk */
-                    if (write_payload(fd, &buff, header->offset, header->length) < 0) {
-                        perror("Error lseek failure");
-                        response.errnum = errno;
-                    }
+                    if ( n == 0) {
 
-                    /* acknowledge */
+                        perror("Error lost client connection");
+                        free(header);
+                        close(client);
+                        end_session = true;
+                        break;
+
+                    } else
+                        /* write payload to disk */
+                        if (write_payload_to_disk(fd, &buff, header->offset, header->length) < 0) {
+                            perror("Error lseek failure");
+                            response.errnum = errno;
+                        }
+
+                    /* send response to client */
                     if (write(client, (char *) &response, sizeof(response_header_t)) < 0)
                         ERR_FATALE("Error lost client connexion")
 
-                    break;
-
-                case 2 :  /* exit case */
-
-                    /* acknowledge */
-                    if (write(client, (char *) &response, sizeof(response_header_t)) < 0)
-                        ERR_FATALE("Error lost client connexion")
-
-                    close(client);
-                    end_session = true;
                     break;
 
                 default :
@@ -210,6 +212,7 @@ int main(int argc, char* argv[])
 
     return EXIT_SUCCESS;
 }
+
 
 /**
  *  @brief read the header of a request
@@ -268,7 +271,7 @@ int read_header(int socket, query_header_t ** header)
 }
 
 
-int read_fs(int fd, void **buff, uint32_t offset, uint32_t length)
+int read_response_on_fs(int fd, void **buff, uint32_t offset, uint32_t length)
 {
 
     int n = 0, r = 0;
@@ -295,7 +298,7 @@ int read_fs(int fd, void **buff, uint32_t offset, uint32_t length)
 }
 
 
-int read_payload(int socket, void ** buff, uint32_t length)
+int read_client_payload(int socket, void **buff, uint32_t length)
 {
     int n = 0;
 
@@ -313,7 +316,7 @@ int read_payload(int socket, void ** buff, uint32_t length)
 }
 
 
-int write_payload(int fd, void * buff, uint32_t offset, uint32_t length)
+int write_payload_to_disk(int fd, void *buff, uint32_t offset, uint32_t length)
 {
 
     if( lseek(fd, offset, SEEK_SET) < 0 )
