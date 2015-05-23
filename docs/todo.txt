@@ -2,11 +2,9 @@
 # to do
 
 # TODO update link in add_entry
-# TODO update file size in add_entry
-# TODO add size somewhere (when? write or balloc or ...?) and when add_entry ? what's the new size of dinode ?
 # TODO add symlink struct ?
 # TODO pop request from requests list (python) when finished and resend while not done
-# TODO se proteger contre les fausse write du client (annonce taille 100 mais ecriture 20)
+# TODO se proteger contre les faux write du client (annonce taille 100 mais ecriture 20)
 # TODO verifier le principe : le client doit être très rigoureux, le server peut recevoir n'importe quoi
 # TODO python raise exception if add file that already exist on disk
 
@@ -14,6 +12,9 @@
 ########
 # Done
 
+# TODO add a dinode if dir is full and increase capacity
+# TODO add size somewhere (when? write or balloc or ...?) and when add_entry ? what's the new size of dinode ?
+[23.05.2015] Done
 # TODO improve selection between hosts port and filename=None in __init__()
 [23.05.2015]  Done used fs_src (could be a better name!?)
 # TODO add __del__ methode in remote_bloc_device.__del__()

@@ -142,10 +142,8 @@ class minix_file_system(object):
 
         while data_block:
             content = self.disk.read_bloc(data_block)
-            # TODO replace range by xrange 0 1024 16
-            for i in range(MINIX_DIR_ENTRIES_PER_BLOCK):
-                off = i * DIRSIZE
-                self.inode = struct.unpack_from('H', content, i*DIRSIZE)[0]
+            for off in xrange(0, BLOCK_SIZE, DIRSIZE):
+                self.inode = struct.unpack_from('H', content, off)[0]
                 self.name = content[off+2:off+DIRSIZE].split('\x00')[0]
                 if self.inode != 0:
                     # add entry to dictionary
@@ -212,7 +210,6 @@ class minix_file_system(object):
             return struct.unpack_from('H', self.disk.read_bloc(inode.i_zone[8]), blk - 7 - MINIX_INODE_PER_BLOCK)
 
 
-    # TODO add a dinode if dir is full
     def add_entry(self, dinode, name, new_node_num):
         """ add a new entry in a dinode (dir)
 
@@ -221,39 +218,36 @@ class minix_file_system(object):
         :param new_node_num: inode of the new file
         """
         done = False
-        block = -1
+        blk = -1
 
-        # TODO update link
-        # TODO update file size
         if len(name) > (DIRSIZE-2): raise FileNameError('Error Filename too long')
 
         while not done:
 
-            block += 1
-            data_block = self.bmap(dinode, block)
+            blk += 1
+            data_block = self.bmap(dinode, blk)
 
-            # TODO increase dir capacity with indir and double indir
             if data_block:
                 content = bytearray(self.disk.read_bloc(data_block))
-            else:
-                if data_block < 7:
-                    dinode.i_zone[data_block+1] = self.balloc()
-                else:
-                    log.error('Error unable to add new entry in dir')
-                    raise DirFullError('Error too many file in dir')
-
+            elif blk < MINIX_ZONESZ**2 + MINIX_ZONESZ + 7:
+                data_block = self.ialloc_bloc(dinode, blk)
+                # empty new block
                 content = bytearray("".ljust(1024, '\x00'))
 
-            for offset in xrange(0, BLOCK_SIZE, DIRSIZE):
-                if not struct.unpack_from('H', content, offset)[0]:
-                    struct.pack_into('H', content, offset, new_node_num)
-                    content[offset+2:offset+DIRSIZE] = name.ljust(DIRSIZE-2, '\x00')
+            else:
+                log.error('Error unable to add new entry in dir: overflow')
+                raise DirFullError('Error too many file in dir: overflow')
+
+            for off in xrange(0, BLOCK_SIZE, DIRSIZE):
+                if not struct.unpack_from('H', content, off)[0]:
+                    struct.pack_into('H', content, off, new_node_num)
+                    content[off+2:off+DIRSIZE] = name.ljust(DIRSIZE-2, '\x00')
                     dinode.i_size += DIRSIZE
                     done = True
                     break
 
         if done:
-            self.disk.write_bloc(dinode.i_zone[block], content)
+            self.disk.write_bloc(dinode.i_zone[blk], content)
             self.update_imap()
         else:
             log.error('Error unable to add new entry in dir')
