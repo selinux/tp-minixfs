@@ -8,10 +8,14 @@
 # TODO pop request from requests list (python) when finished and resend while not done
 # TODO se proteger contre les fausse write du client (annonce taille 100 mais ecriture 20)
 # TODO verifier le principe : le client doit être très rigoureux, le server peut recevoir n'importe quoi
+# TODO python raise exception if add file that already exist on disk
+
 
 ########
 # Done
 
+# TODO improve selection between hosts port and filename=None in __init__()
+[23.05.2015]  Done used fs_src (could be a better name!?)
 # TODO add __del__ methode in remote_bloc_device.__del__()
 [15.05.2015]  Done close the socket in __del__() methode
 # TODO dans le C éviter les read(offset, size) en dehor des blocks

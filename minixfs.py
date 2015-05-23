@@ -15,12 +15,11 @@ from bloc_device import *
 
 
 class minix_file_system(object):
-    def __init__(self, host=None, port=None):
-        # TODO add host, port and filename=None
-        if( host and port ):
-            self.disk = remote_bloc_device(BLOCK_SIZE, host, port)
+    def __init__(self, fs_src=None, port=None):
+        if( fs_src and port ):
+            self.disk = remote_bloc_device(BLOCK_SIZE, fs_src, port)
         else:
-            self.disk = bloc_device(BLOCK_SIZE, host)
+            self.disk = bloc_device(BLOCK_SIZE, fs_src)
 
         self.inode_map = bitarray(endian='little')
         self.zone_map = bitarray(endian='little')
@@ -61,7 +60,7 @@ class minix_file_system(object):
         self.inodes_list.pop(pos)  # clear
         self.inodes_list.insert(pos, minix_inode())  # insert new empty inode
 
-        self.update_imap()
+        # self.update_imap() # write imap to disk
 
         return int(pos)
 
@@ -84,7 +83,8 @@ class minix_file_system(object):
             sys.exit('Error no space left on device')
 
         self.zone_map[pos] = True
-        self.update_bmap()
+        # self.update_bmap()  # write bmap to disk
+
         # data block start at 1
         return int(pos + self.disk.super_block.s_firstdatazone)
 
@@ -93,11 +93,8 @@ class minix_file_system(object):
         :param blocnum: blocnum is an index in the zone_map
         :return: True if bloc is free
         """
-        # data block start at 1 with an offset of first data bloc
-        # blocnum = blocnum - self.bd.super_block.s_firstdatazone
         self.zone_map[blocnum] = False
-        self.update_bmap()
-
+        # self.update_bmap()  # write bmap to disk
         return ~self.zone_map[blocnum]
 
     def bmap(self, inode, blk):
@@ -111,14 +108,18 @@ class minix_file_system(object):
         if blk < 7:
             return inode.i_zone[blk]
 
+        blk -= 7
+
         # indirect blocks
-        elif blk < ((BLOCK_SIZE/2) + 7):
-            return int(struct.unpack_from('H', self.disk.read_bloc(inode.i_indir_zone), (blk - 7)*2)[0])
+        if blk < MINIX_ZONESZ:
+            return int(struct.unpack_from('H', self.disk.read_bloc(inode.i_indir_zone), blk*2)[0])
+
+        blk -= MINIX_ZONESZ
 
         # double indirect blocks
-        elif (blk < (MINIX_INODE_PER_BLOCK + 1) * MINIX_INODE_PER_BLOCK + 7):
-            indir = (blk - 7 - (BLOCK_SIZE/2)) / BLOCK_SIZE # indirect bloc addr
-            off = blk - 7 - (BLOCK_SIZE/2)
+        if blk < MINIX_ZONESZ**2:
+            indir = blk / BLOCK_SIZE # indirect bloc addr
+            off = blk % MINIX_ZONESZ
 
             # read the second indirect block + read 'indirect' address and return 'offset' address
             return int(struct.unpack_from('H', self.disk.read_bloc(struct.unpack_from(
@@ -173,7 +174,7 @@ class minix_file_system(object):
         for i in self.path:
             try:
                 self.inode = self.lookup_entry(self.inodes_list[self.inode], i)
-                # if __debug__: print(self.inode.__str__())
+
             except KeyError:
                 log.error('Error lookup_entry, '+os.strerror(errno.ENODEV))
                 raise FileNotFoundError('Error file not found')
@@ -245,7 +246,7 @@ class minix_file_system(object):
 
             for offset in xrange(0, BLOCK_SIZE, DIRSIZE):
                 if not struct.unpack_from('H', content, offset)[0]:
-                    struct.pack_into('H', content, offset, new_node_num-1)
+                    struct.pack_into('H', content, offset, new_node_num)
                     content[offset+2:offset+DIRSIZE] = name.ljust(DIRSIZE-2, '\x00')
                     dinode.i_size += DIRSIZE
                     done = True
