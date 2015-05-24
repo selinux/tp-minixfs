@@ -122,17 +122,17 @@ class MinixTester(unittest.TestCase):
     #testing balloc()/bfree()
     #same method as ialloc/ifree testing
     #balloc write on the filesystem as it initialize all bloc bytes to \0
-    # def test_7_fs_balloc_bfree(self):
-    #     self.minixfs = minix_file_system(server, port)
-    #     new_bloc_num = self.minixfs.balloc()
-    #     self.assertEqual(new_bloc_num, NEWBLOC1)
-    #     self.minixfs.bfree(123)
-    #     new_bloc_num = self.minixfs.balloc()
-    #     self.assertEqual(new_bloc_num, NEWBLOC2)
-    #     new_bloc_num = self.minixfs.balloc()
-    #     self.assertEqual(new_bloc_num, NEWBLOC3)
-    #     self.minixfs.close_connection()
-    #     return True
+    def test_7_fs_balloc_bfree(self):
+        self.minixfs = minix_file_system(server, port)
+        new_bloc_num = self.minixfs.balloc()
+        self.assertEqual(new_bloc_num, NEWBLOC1)
+        self.minixfs.bfree(123)
+        new_bloc_num = self.minixfs.balloc()
+        self.assertEqual(new_bloc_num, NEWBLOC2)
+        new_bloc_num = self.minixfs.balloc()
+        self.assertEqual(new_bloc_num, NEWBLOC3)
+        self.minixfs.close_connection()
+        return True
 
     #testing bmap function : just check that some bmaped
     #blocs have the right numbers.
@@ -255,13 +255,6 @@ class MinixTester(unittest.TestCase):
         nodebloc = self.minixfs.disk.read_bloc(self.minixfs.bmap(self.minixfs.inodes_list[NODENUM], 0))
         self.assertEqual(nodebloc, NODE798BLOC1MOD)
         self.minixfs.close_connection()
-
-    def test_e_cleanup(self):
-        #clean up
-        # mind that the server might also have this file opened !!!!
-        os.system("cp "+orgfile+" "+workfile)
-        return True
-
 
 if __name__ == '__main__' :
     unittest.main()

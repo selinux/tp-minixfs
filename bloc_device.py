@@ -161,7 +161,7 @@ class remote_bloc_device(object):
 
             # TODO pop request when finished
             # remove request from fifo
-            self.requests.pop[0]
+            # self.requests.pop[0]
 
         else:
             raise RuntimeError("fail to read response")
@@ -211,7 +211,7 @@ class remote_bloc_device(object):
 
         h = struct.unpack('!III', responce)
         # TODO resend, close and pop
-        self.requests.pop[0]
+        # self.requests.pop[0]
 
     def close_connection(self):
         """ close properly the socket """
