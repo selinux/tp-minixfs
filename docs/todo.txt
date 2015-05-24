@@ -7,7 +7,7 @@
 # TODO se proteger contre les faux write du client (annonce taille 100 mais ecriture 20)
 # TODO verifier le principe : le client doit être très rigoureux, le server peut recevoir n'importe quoi
 # TODO python raise exception if add file that already exist on disk
-
+# TODO test if ack fail and resend request - pop request when finished
 
 ########
 # Done

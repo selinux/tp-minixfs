@@ -221,8 +221,9 @@ class MinixTester(unittest.TestCase):
         rootnodebloc = self.minixfs.disk.read_bloc(self.minixfs.bmap(self.minixfs.inodes_list[1], 0))
         self.assertEqual(rootnodebloc, ROOTNODEBLOC1)
         for i in range(1, 57):
+            # self.minixfs.add_entry(self.minixfs.bmap(self.minixfs.inodes_list[1], 0), "new_ent"+str(i), self.minixfs.ialloc())
             self.minixfs.add_entry(self.minixfs.inodes_list[1], "new_ent"+str(i), self.minixfs.ialloc())
-    
+
         rootnodebloc = self.minixfs.disk.read_bloc(self.minixfs.bmap(self.minixfs.inodes_list[1], 0))
         self.assertEqual(rootnodebloc, ROOTNODEBLOC1MOD)
         
@@ -237,21 +238,23 @@ class MinixTester(unittest.TestCase):
         #check its contents
         rootnodebloc2 = self.minixfs.disk.read_bloc(self.minixfs.bmap(self.minixfs.inodes_list[1], 1))
         self.assertEqual(rootnodebloc2, ROOTNODEBLOC2MOD)
-    
+        self.minixfs.close_connection()
+
     #testing bloc contents and inode maps before and after del_entry
     def test_d_fs_delentry(self):
         NODENUM = 798
         names_to_del = ["attime.c", "cmdline.c", "free", "free.c", "Makefile", "makelog", "ps", "ps.0", "ps.1", "ps.c", "psdata.c", "psdata.h", "ps.h", "pwcache.c"]
         self.minixfs = minix_file_system(server, port)
-        self.assertEqual(self.minifs.bmap(self.minifs.inodes_list[NODENUM], 0), NODE798BLOCNUM1)
+        self.assertEqual(self.minixfs.bmap(self.minixfs.inodes_list[NODENUM], 0), NODE798BLOCNUM1)
     
-        nodebloc=self.minifs.disk.read_bloc(self.minifs.bmap(self.minifs.inodes_list[NODENUM], 0))
+        nodebloc=self.minixfs.disk.read_bloc(self.minixfs.bmap(self.minixfs.inodes_list[NODENUM], 0))
         self.assertEqual(nodebloc,NODE798BLOC1)
 
         for name in names_to_del:
-            self.minifs.del_entry(self.minifs.inodes_list[NODENUM], name)
-        nodebloc = self.minifs.disk.read_bloc(self.minifs.bmap(self.minifs.inodes_list[NODENUM], 0))
+            self.minixfs.del_entry(self.minixfs.inodes_list[NODENUM], name)
+        nodebloc = self.minixfs.disk.read_bloc(self.minixfs.bmap(self.minixfs.inodes_list[NODENUM], 0))
         self.assertEqual(nodebloc, NODE798BLOC1MOD)
+        self.minixfs.close_connection()
 
     def test_e_cleanup(self):
         #clean up

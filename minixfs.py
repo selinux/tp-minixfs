@@ -228,27 +228,28 @@ class minix_file_system(object):
             data_block = self.bmap(dinode, blk)
 
             if data_block:
-                content = bytearray(self.disk.read_bloc(data_block))
+                self.content = bytearray(self.disk.read_bloc(data_block))
+
             elif blk < MINIX_ZONESZ**2 + MINIX_ZONESZ + 7:
                 data_block = self.ialloc_bloc(dinode, blk)
                 # empty new block
-                content = bytearray("".ljust(1024, '\x00'))
+                self.content = bytearray("".ljust(1024, '\x00'))
 
             else:
                 log.error('Error unable to add new entry in dir: overflow')
                 raise DirFullError('Error too many file in dir: overflow')
 
             for off in xrange(0, BLOCK_SIZE, DIRSIZE):
-                if not struct.unpack_from('H', content, off)[0]:
-                    struct.pack_into('H', content, off, new_node_num)
-                    content[off+2:off+DIRSIZE] = name.ljust(DIRSIZE-2, '\x00')
+                if not struct.unpack_from('H', self.content, off)[0]:
+                    struct.pack_into('H', self.content, off, new_node_num)
+                    self.content[off+2:off+DIRSIZE] = name.ljust(DIRSIZE-2, '\x00')
                     dinode.i_size += DIRSIZE
                     done = True
                     break
 
         if done:
-            self.disk.write_bloc(dinode.i_zone[blk], content)
-            self.update_imap()
+            self.disk.write_bloc(data_block, self.content)
+            # self.update_imap()
         else:
             log.error('Error unable to add new entry in dir')
             raise AddError('Unable to add entry')
@@ -271,10 +272,10 @@ class minix_file_system(object):
                 if inode == struct.unpack_from('H', content, i)[0]:
                     content[i:i+2] = "".ljust(2, '\x00')
                     self.bfree(data_block)
-                    data_block = 0
+                    data_block = False
                     dinode.i_size -= DIRSIZE
-                    self.update_bmap()
-                    self.update_imap()
+                    # self.update_bmap()
+                    # self.update_imap()
                     break
 
         self.disk.write_bloc(dinode.i_zone[blk], content)
