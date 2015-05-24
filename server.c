@@ -180,7 +180,7 @@ int main(int argc, char* argv[])
 
                     } else
                         /* write payload to disk */
-                        if (write_payload_to_disk(fd, &buff, header->offset, header->length) < 0) {
+                        if (write_payload_to_disk(fd, (char *)buff, header->offset, header->length) < 0) {
                             perror("Error lseek failure");
                             response.errnum = errno;
                         }
@@ -346,7 +346,7 @@ int read_client_payload(int socket, void **buff, uint32_t length)
  */
 int write_payload_to_disk(int fd, void *buff, uint32_t offset, uint32_t length)
 {
-    int n;
+    int n, r = 0;
 
     n = lseek(fd, offset, SEEK_SET);
     if( n < 0 ) {
@@ -355,8 +355,17 @@ int write_payload_to_disk(int fd, void *buff, uint32_t offset, uint32_t length)
     }
 
     // TODO transform in do while loop (write safely)
+    do {
 
-    n = write(fd, buff, length);
+        n = write(fd, (char*)buff, length - r);
+        r += n;
+
+        if( n < 0 ) {
+            perror("Error unable to write payload to file");
+            return n;
+        }
+
+    }while( n < length);
 
     return n;
 }
