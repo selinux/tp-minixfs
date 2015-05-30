@@ -1,16 +1,19 @@
 ############
 # to do
 
-# TODO make function that remove a block from inode and rearrange i_zone, indir_block,...
+# TODO make function that remove a block from inode and rearrange i_zone, indir_block,...(minixfs.py line 300)
 # TODO add symlink struct ?
 # TODO pop request from requests list (python) when finished and resend while not done
 # TODO test if ack fail and resend request - pop request when finished
 # TODO se proteger contre les faux write du client (annonce taille 100 mais ecriture 20)
 # TODO verifier le principe : le client doit être très rigoureux, le server peut recevoir n'importe quoi
+# TODO améliorer instentiation class minixfs local vs server
 
 ########
 # Done
 
+# TODO raise error in lookup_entry if filename don't exist
+[30.05.2015] done with a try/except KeyError when search entry in dictionary
 # TODO python raise exception if add file that already exist on disk
 [30.05.2015] modified add_entry (test with lookup_entry first)
 # TODO update link in add_entry

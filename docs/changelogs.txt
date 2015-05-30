@@ -12,3 +12,4 @@
 [09.05.2015]  Added class remote_block_device
 [10.05.2015]  Added block server (first draft)
 [24.05.2015]  All tests pass successfully
+[30.05.2015]  start documentation

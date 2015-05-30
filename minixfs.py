@@ -52,9 +52,10 @@ class minix_file_system(object):
             according to the inodes bitmap
         :return: the first free inode
         """
-        # TODO add index to inode map and modify inode table
-        # TODO call bmap if allowed
-        pos = self.inode_map.index(False)
+        try:
+            pos = self.inode_map.index(False)
+        except LookupError:
+            raise InodeError ("Error no more free inode in file system")
 
         self.inode_map[pos] = True
         self.inodes_list.pop(pos)  # clear
@@ -78,7 +79,7 @@ class minix_file_system(object):
         try:
             pos = self.zone_map.index(False)
         except ValueError:
-            sys.exit('Error no space left on device')
+            raise BlockAllocError ("Error no space left on device")
 
         self.zone_map[pos] = True
 
@@ -151,7 +152,10 @@ class minix_file_system(object):
             data_block = self.bmap(dinode, blk)
 
         # return name in dict (raise error if not fund)
-        return d_entry[name]
+        try:
+            return d_entry[name]
+        except KeyError:
+            return False
 
     def namei(self, path):
         """  take a path as input and return it's inode number
@@ -166,7 +170,6 @@ class minix_file_system(object):
         if not self.path[0]:
             return self.inode
 
-        # TODO add raise exception in lookup_entry
         for i in self.path:
             try:
                 self.inode = self.lookup_entry(self.inodes_list[self.inode], i)
@@ -298,7 +301,6 @@ class minix_file_system(object):
                     break
 
             if dir_content == "".ljust(BLOCK_SIZE, '\x00'):
-                # TODO replace by remove dir_block from dinode ou write_bloc
                 self.bfree(dir_block)
 
         self.disk.write_bloc(dinode.i_zone[blk], dir_content)
@@ -316,28 +318,9 @@ class minix_file_system(object):
 
         return 0
 
-    def update_bmap(self):
-        """ Write bitarray map of data to disk
-            cos we need a consistent filesystem
-        :return: 0
-        """
-        offset = 2 + self.disk.super_block.s_imap_blocks
-        # Write can only handle 1024 byte so need to slice (just in case)
-        for i in range(self.disk.super_block.s_zmap_blocks):
-            # write inode bitmap starting at bloc 2
-            self.disk.write_bloc(offset+i, self.inode_map[i*(8*BLOCK_SIZE):(i+1)*(8*BLOCK_SIZE)-1].tobytes())
-
-        return 0
-
-    def write_bloc_list(self):
-
-        for i in range(self.disk.super_block.s_zmap_blocks):
-            # start at bloc 2
-            self.disk.write_bloc(2 + self.disk.super_block.s_imap_blocks + i, \
-                               self.zone_map.tobytes()[i * BLOCK_SIZE:(i + 1) * BLOCK_SIZE])
-        return
-
     def close_connection(self):
+        """ close connection with remote block server  """
+
         log.info("socket cleanly closed")
         self.disk.close_connection()
 

@@ -154,6 +154,82 @@ ITI 2\up{ème} soir \\
 
 \section{Implémentation python}
 
+\subsection{ialloc()}
+
+\begin{lstlisting}[language=C, caption=pseudo code ialloc()()]
+ialloc(){
+
+	recherche premier libre dans inode_map
+	
+	si not trouver:
+		raise error aucun inode de libre
+	
+	inode trouver = occuper
+	clear ancien inode
+	
+	return numero inode
+}
+\end{lstlisting}
+
+\subsection{ifree()}
+
+\begin{lstlisting}[language=C, caption=pseudo code ifree()()]
+ifree( inode ){
+
+	inode = libre
+	return est-ce que inode est libre?
+}
+\end{lstlisting}
+
+\subsection{balloc()}
+
+\begin{lstlisting}[language=C, caption=pseudo code balloc()()]
+balloc( ){
+
+	recherche premier block dans block map
+	si non trouver:
+		raise error plus de place sur disk
+	
+	block = occuper
+
+	return numero de block
+}
+\end{lstlisting}
+
+\subsection{bfree()}
+
+\begin{lstlisting}[language=C, caption=pseudo code bfree()()]
+bfree( data block ){
+
+	data block = libre
+	return est-ce que data block est libre?
+}
+\end{lstlisting}
+
+\subsection{bmap()}
+
+\begin{lstlisting}[language=C, caption=pseudo code bmap()()]
+bmap( numero inode, position relative block ){
+
+	si block < 7:
+		return position du nieme block direct
+		
+	block -= 7
+	si block < nombre inode par block:
+		return position du nieme block de indirect
+	
+	block -= nombre inode par block
+	si block < (nombre inode par block)^2:
+		adresse	data block = block / nombre inode par block
+		position block = block mod nombre inode par block
+		
+		return numero block a adresse.posistion
+		
+	sinon:
+		raise error depassement de capacite
+}
+\end{lstlisting}
+
 \subsection{add\_entry()}
 
 \begin{lstlisting}[language=C, caption=pseudo code add\_entry()]
@@ -212,6 +288,7 @@ del_entry(inode dossier, nom fichier a supprimer){
 				sinon: effacer inode fichier
 			
 				enlever entree du block dossier;
+				reduire taille dossier
 				si dernier fichier du block dossier supprimer block inutile;
 	
 	valider modification sur disk;

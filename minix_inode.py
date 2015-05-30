@@ -29,9 +29,6 @@ class minix_inode(object):
             self.i_indir_zone = indir_zone
             self.i_dbl_indr_zone = dblr_indir_zone
 
-
-    # TODO initialyse inode(s)
-
     def __eq__(self, other):
         if isinstance(other, minix_inode):
             return self.i_ino == other.i_ino and \
