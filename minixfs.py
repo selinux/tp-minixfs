@@ -16,7 +16,7 @@ from bloc_device import *
 
 class minix_file_system(object):
     def __init__(self, fs_src=None, port=None):
-        if( fs_src and port ):
+        if fs_src and port:
             self.disk = remote_bloc_device(BLOCK_SIZE, fs_src, port)
         else:
             self.disk = bloc_device(BLOCK_SIZE, fs_src)
@@ -25,13 +25,13 @@ class minix_file_system(object):
         self.zone_map = bitarray(endian='little')
         self.inode_map.frombytes(self.disk.read_bloc(2, self.disk.super_block.s_imap_blocks))
         self.zone_map.frombytes(self.disk.read_bloc(2 + self.disk.super_block.s_imap_blocks,
-                                                  self.disk.super_block.s_zmap_blocks))
+                                                    self.disk.super_block.s_zmap_blocks))
 
         # initialising the list by an unused inode (inode start at indices 1)
         self.inodes_list = [minix_inode()]
         buff = self.disk.read_bloc(2 + self.disk.super_block.s_imap_blocks +
-                                 self.disk.super_block.s_zmap_blocks,
-                                 self.disk.super_block.s_ninodes / MINIX_INODE_PER_BLOCK)
+                                   self.disk.super_block.s_zmap_blocks,
+                                   self.disk.super_block.s_ninodes / MINIX_INODE_PER_BLOCK)
 
         for nb in range(self.disk.super_block.s_ninodes):
             i = minix_inode()
@@ -55,7 +55,7 @@ class minix_file_system(object):
         try:
             pos = self.inode_map.index(False)
         except LookupError:
-            raise InodeError ("Error no more free inode in file system")
+            raise InodeError("Error no more free inode in file system")
 
         self.inode_map[pos] = True
         self.inodes_list.pop(pos)  # clear
@@ -79,7 +79,7 @@ class minix_file_system(object):
         try:
             pos = self.zone_map.index(False)
         except ValueError:
-            raise BlockAllocError ("Error no space left on device")
+            raise BlockAllocError("Error no space left on device")
 
         self.zone_map[pos] = True
 
@@ -110,18 +110,18 @@ class minix_file_system(object):
 
         # indirect blocks
         if blk < MINIX_ZONESZ:
-            return int(struct.unpack_from('H', self.disk.read_bloc(inode.i_indir_zone), blk*2)[0])
+            return int(struct.unpack_from('H', self.disk.read_bloc(inode.i_indir_zone), blk * 2)[0])
 
         blk -= MINIX_ZONESZ
 
         # double indirect blocks
-        if blk < MINIX_ZONESZ**2:
-            indir = blk / BLOCK_SIZE # indirect bloc addr
+        if blk < MINIX_ZONESZ ** 2:
+            indir = blk / BLOCK_SIZE  # indirect bloc addr
             off = blk % MINIX_ZONESZ
 
             # read the second indirect block + read 'indirect' address and return 'offset' address
             return int(struct.unpack_from('H', self.disk.read_bloc(struct.unpack_from(
-                                          'H', self.disk.read_bloc(inode.i_dbl_indr_zone), indir*2)[0]), off*2)[0])
+                'H', self.disk.read_bloc(inode.i_dbl_indr_zone), indir * 2)[0]), off * 2)[0])
 
         else:
             log.error('Error bmap, block is out of bound')
@@ -142,7 +142,7 @@ class minix_file_system(object):
             content = self.disk.read_bloc(data_block)
             for off in xrange(0, BLOCK_SIZE, DIRSIZE):
                 self.inode = struct.unpack_from('H', content, off)[0]
-                self.name = content[off+2:off+DIRSIZE].split('\x00')[0]
+                self.name = content[off + 2:off + DIRSIZE].split('\x00')[0]
                 if self.inode != 0:
                     # add entry to dictionary
                     d_entry.update({self.name: self.inode})
@@ -163,30 +163,31 @@ class minix_file_system(object):
         :param path: path to search
         :return: inode of the file
         """
-        self.path = path[1:].split('/')
+        path = path[1:].split('/')
         self.inode = 1
 
         # if path empty it's root. So return inode = 1
-        if not self.path[0]:
+        if not path[0]:
             return self.inode
 
-        for i in self.path:
+        for i in path:
             try:
                 self.inode = self.lookup_entry(self.inodes_list[self.inode], i)
 
             except KeyError:
-                log.error('Error lookup_entry, '+os.strerror(errno.ENODEV))
+                log.error('Error lookup_entry, ' + os.strerror(errno.ENODEV))
                 raise FileNotFoundError('Error file not found')
 
         return self.inode
 
-    def ialloc_bloc(self, inode, blk):
+    def ialloc_bloc(self, ino, blk):
         """ Add a new data block at pos blk and return its real position on disk
 
         :param inode: the inode to add at
         :param blk: the block number to add (0,...,n-1)
         :return: the block address
         """
+        inode = ino
         if blk < 7:
             if not inode.i_zone[blk]:
                 inode.i_zone[blk] = self.balloc()
@@ -195,21 +196,21 @@ class minix_file_system(object):
         elif blk < MINIX_INODE_PER_BLOCK + 7:
             # if not already allowed write modified indirect block
             if not struct.unpack_from('H', self.disk.read_bloc(inode.i_zone[7]), blk - 7):
-                self.disk.write_bloc(2+self.disk.super_block.s_imap_blocks,
-                                   struct.pack_into('H', self.disk.read_bloc(inode.i_zone[7], blk - 7), blk - 7,
-                                                    self.balloc()))
+                self.disk.write_bloc(2 + self.disk.super_block.s_imap_blocks,
+                                     struct.pack_into('H', self.disk.read_bloc(inode.i_zone[7], blk - 7), blk - 7,
+                                                      self.balloc()))
             # now we can return it
             return struct.unpack_from('H', self.disk.read_bloc(inode.i_zone[7]), blk - 7)
 
         else:
             # if not already allowed write modified second indirect block
             if not struct.unpack_from('H', self.disk.read_bloc(inode.i_zone[8]), blk - 7 - MINIX_INODE_PER_BLOCK):
-                self.disk.write_bloc(2+self.disk.super_block.s_imap_blocks, struct.pack_into('H', self.disk.read_bloc(inode.i_zone[8],
-                                                    blk - 7 - MINIX_INODE_PER_BLOCK),
-                                                    blk - 7 - MINIX_INODE_PER_BLOCK, self.balloc()))
+                self.disk.write_bloc(2 + self.disk.super_block.s_imap_blocks,
+                                     struct.pack_into('H', self.disk.read_bloc(inode.i_zone[8],
+                                                                               blk - 7 - MINIX_INODE_PER_BLOCK),
+                                                      blk - 7 - MINIX_INODE_PER_BLOCK, self.balloc()))
             # now we can return it
             return struct.unpack_from('H', self.disk.read_bloc(inode.i_zone[8]), blk - 7 - MINIX_INODE_PER_BLOCK)
-
 
     def add_entry(self, dinode, name, new_node_num):
         """ add a new entry in a dinode (dir)
@@ -221,7 +222,8 @@ class minix_file_system(object):
         done = False
         blk = -1
 
-        if len(name) > (DIRSIZE-2): raise FileNameError('Error Filename too long')
+        if len(name) > (DIRSIZE - 2):
+            raise FileNameError('Error Filename too long')
         if self.lookup_entry(dinode, name):
             raise AddEntryError('Error filename already exist in dir')
 
@@ -233,7 +235,7 @@ class minix_file_system(object):
             if data_block:
                 self.content = bytearray(self.disk.read_bloc(data_block))
 
-            elif blk < MINIX_ZONESZ**2 + MINIX_ZONESZ + 7:
+            elif blk < MINIX_ZONESZ ** 2 + MINIX_ZONESZ + 7:
                 data_block = self.ialloc_bloc(dinode, blk)
                 # empty new block
                 self.content = bytearray("".ljust(1024, '\x00'))
@@ -244,7 +246,7 @@ class minix_file_system(object):
             for off in xrange(0, BLOCK_SIZE, DIRSIZE):
                 if not struct.unpack_from('H', self.content, off)[0]:
                     struct.pack_into('H', self.content, off, new_node_num)
-                    self.content[off+2:off+DIRSIZE] = name.ljust(DIRSIZE-2, '\x00')
+                    self.content[off + 2:off + DIRSIZE] = name.ljust(DIRSIZE - 2, '\x00')
                     dinode.i_size += DIRSIZE
                     done = True
                     break
@@ -279,7 +281,7 @@ class minix_file_system(object):
                 if inode == struct.unpack_from('H', dir_content, i)[0]:
                     # remove entry
                     # dir_content[i:i+DIRSIZE] = "".ljust(DIRSIZE, '\x00')
-                    dir_content[i:i+2] = "".ljust(2, '\x00')
+                    dir_content[i:i + 2] = "".ljust(2, '\x00')
                     self.bfree(dir_block)
                     if self.inodes_list[inode].i_nlinks > 1:
                         # inode has another name linked to it
@@ -314,42 +316,42 @@ class minix_file_system(object):
         :param inode:
         :return: True if inode is a dir
         """
-        return True if (self.inodes_list[self.inode].i_mode >> 12) == 4 else False
+        return True if (self.inodes_list[inode].i_mode >> 12) == 4 else False
 
     def is_file(self, inode):
         """ Test if inode is a file
         :param inode:
         :return: True if inode is a file
         """
-        return True if (self.inodes_list[self.inode].i_mode >> 12) == 8 else False
+        return True if (self.inodes_list[inode].i_mode >> 12) == 8 else False
 
     def is_device(self, inode):
         """ Test if inode is a device
         :param inode:
         :return: True if inode is a device
         """
-        return True if (self.inodes_list[self.inode].i_mode >> 12) == 2 else False
+        return True if (self.inodes_list[inode].i_mode >> 12) == 2 else False
 
     def is_pipe(self, inode):
         """ Test if inode is a pipe
         :param inode:
         :return: True if inode is a pipe
         """
-        return True if (self.inodes_list[self.inode].i_mode >> 12) == 1 else False
+        return True if (self.inodes_list[inode].i_mode >> 12) == 1 else False
 
     def is_device_bloc(self, inode):
         """ Test if inode is a device bloc
         :param inode:
         :return: True if inode is a device block
         """
-        return True if (self.inodes_list[self.inode].i_mode >> 12) == 6 else False
+        return True if (self.inodes_list[inode].i_mode >> 12) == 6 else False
 
     def is_link(self, inode):
         """ Test if inode is a device link
         :param inode:
         :return: True if inode is a link
         """
-        return True if (self.inodes_list[self.inode].i_mode >> 12) == 10 else False
+        return True if (self.inodes_list[inode].i_mode >> 12) == 10 else False
 
     def update_bmap(self):
         """ Write bitarray map of data to disk
@@ -360,7 +362,8 @@ class minix_file_system(object):
         # Write can only handle 1024 byte so need to slice (just in case)
         for i in range(self.disk.super_block.s_zmap_blocks):
             # write inode bitmap starting at bloc 2
-            self.disk.write_bloc(offset+i, self.inode_map[i*(8*BLOCK_SIZE):(i+1)*(8*BLOCK_SIZE)-1].tobytes())
+            self.disk.write_bloc(offset + i,
+                                 self.inode_map[i * (8 * BLOCK_SIZE):(i + 1) * (8 * BLOCK_SIZE) - 1].tobytes())
 
         return 0
 
@@ -368,40 +371,51 @@ class minix_file_system(object):
 
         for i in range(self.disk.super_block.s_zmap_blocks):
             # start at bloc 2
-            self.disk.write_bloc(2 + self.disk.super_block.s_imap_blocks + i, \
-                               self.zone_map.tobytes()[i * BLOCK_SIZE:(i + 1) * BLOCK_SIZE])
+            self.disk.write_bloc(2 + self.disk.super_block.s_imap_blocks + i,
+                                 self.zone_map.tobytes()[i * BLOCK_SIZE:(i + 1) * BLOCK_SIZE])
         return 0
+
 
 class MyBaseException(Exception):
     """ Class minixfs exceptions  """
+
     def __init__(self, message):
         super(MyBaseException, self).__init__(message)
         self.message = message
         log.error(message)
 
+
 class InodeError(MyBaseException):
     pass
+
 
 class BlockAllocError(MyBaseException):
     pass
 
+
 class OutboundError(MyBaseException):
     pass
+
 
 class FileNotFoundError(MyBaseException):
     pass
 
+
 class FileNameError(MyBaseException):
     pass
+
 
 class AddError(MyBaseException):
     pass
 
+
 class DirFullError(MyBaseException):
     pass
 
+
 class DelEntryError(MyBaseException):
     pass
+
 
 class AddEntryError(MyBaseException):
     pass

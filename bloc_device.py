@@ -129,8 +129,10 @@ class remote_bloc_device(object):
 
         #
         self.requests.insert(0, struct.pack('!IIIII', magic_req, rw_type, handle, offset, length))
+        done = False
+        buff = ""
 
-        while self.requests[0]:
+        while not done:
             # send the header
             while to_send < header_size:
                 sent = self.fd.send(self.requests[0][to_send:])
@@ -165,7 +167,8 @@ class remote_bloc_device(object):
                     to_recv += len(b)
 
                 # remove request from fifo
-                self.requests.pop[0]
+                # self.requests.pop[0]
+                done = True
 
             else:
                 raise RuntimeError("fail to read response")
