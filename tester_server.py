@@ -12,7 +12,13 @@ import unittest
 import os
 import sys
 
-# Test requirements : 
+# Test requirements :
+# Attention tj repartir d'un fichier originale (add_entry/del_entry) laissent le
+# filesystem dans un état incertain
+#
+# cp minixfs_lab1.img.org remote_minixfs_lab1.img && ./server 1234 remote_minixfs_lab1.img
+#
+#
 # - bloc_device class : modeling a disk drive with the following methods
 #   -  read_bloc, write_bloc
 # - minix_superbloc class : a structure storing minix superblocs infos.
@@ -24,10 +30,8 @@ import sys
 # - bitarray class : used to store and manipulated inode and zone bitmaps in memory
 #   member ofs minix_filesystem class
 
-workfile="minixfs_lab1.img"
-orgfile=workfile+".org"
-os.system("cp "+workfile+" "+orgfile) # backup the file
 
+# server = '129.194.185.187'  # p.ex a computer in A406
 server = 'localhost'
 port = 1234
 
@@ -49,31 +53,31 @@ class MinixTester(unittest.TestCase):
 
     #exchange bloc2 and bloc5 on the bloc device and test if the content 
     #returned by read_bloc on it matches.
-    # def test_2_bloc_device_write_bloc(self):
-    #     self.disk=remote_bloc_device(BLOCK_SIZE, server, port)
-    #     #read bloc2 and bloc5
-    #     bloc2=self.disk.read_bloc(2)
-    #     bloc5=self.disk.read_bloc(5)
-    #     #swap them
-    #     # bloc2, bloc5 = bloc5, bloc2
-    #     #write them
-    #     self.disk.write_bloc(5,bloc2)
-    #     self.disk.write_bloc(2,bloc5)
-    #     #read bloc2 and bloc5
-    #     bloc2=self.disk.read_bloc(2)
-    #     bloc5=self.disk.read_bloc(5)
-    #     #check if they are effectively swapped
-    #     self.assertEqual(bloc2,BLOC5)
-    #     self.assertEqual(bloc5,BLOC2)
-    #     # put them back in place
-    #     self.disk.write_bloc(5,bloc2)
-    #     self.disk.write_bloc(2,bloc5)
-    #     #read bloc2 and bloc5
-    #     bloc2=self.disk.read_bloc(2)
-    #     bloc5=self.disk.read_bloc(5)
-    #     self.disk.close_connection()
-    #     self.assertEqual(bloc2,BLOC2)
-    #     self.assertEqual(bloc5,BLOC5)
+    def test_2_bloc_device_write_bloc(self):
+        self.disk=remote_bloc_device(BLOCK_SIZE, server, port)
+        #read bloc2 and bloc5
+        bloc2=self.disk.read_bloc(2)
+        bloc5=self.disk.read_bloc(5)
+        #swap them
+        # bloc2, bloc5 = bloc5, bloc2
+        #write them
+        self.disk.write_bloc(5,bloc2)
+        self.disk.write_bloc(2,bloc5)
+        #read bloc2 and bloc5
+        bloc2=self.disk.read_bloc(2)
+        bloc5=self.disk.read_bloc(5)
+        #check if they are effectively swapped
+        self.assertEqual(bloc2,BLOC5)
+        self.assertEqual(bloc5,BLOC2)
+        # put them back in place
+        self.disk.write_bloc(5,bloc2)
+        self.disk.write_bloc(2,bloc5)
+        #read bloc2 and bloc5
+        bloc2=self.disk.read_bloc(2)
+        bloc5=self.disk.read_bloc(5)
+        self.disk.close_connection()
+        self.assertEqual(bloc2,BLOC2)
+        self.assertEqual(bloc5,BLOC5)
 
     #superbloc test : read it and check object values
     def test_3_super_bloc_read_super(self):
@@ -217,7 +221,8 @@ class MinixTester(unittest.TestCase):
     def test_c_fs_addentry(self):
         self.minixfs = minix_file_system(server, port)
         self.assertEqual(self.minixfs.bmap(self.minixfs.inodes_list[1], 0), ROOTNODEBLOCNUM1)
-        
+
+        tmpbloc2 = self.minixfs.disk.read_bloc(self.minixfs.bmap(self.minixfs.inodes_list[1], 1))
         rootnodebloc = self.minixfs.disk.read_bloc(self.minixfs.bmap(self.minixfs.inodes_list[1], 0))
         self.assertEqual(rootnodebloc, ROOTNODEBLOC1)
         for i in range(1, 57):
@@ -238,6 +243,9 @@ class MinixTester(unittest.TestCase):
         #check its contents
         rootnodebloc2 = self.minixfs.disk.read_bloc(self.minixfs.bmap(self.minixfs.inodes_list[1], 1))
         self.assertEqual(rootnodebloc2, ROOTNODEBLOC2MOD)
+        # put the originale block back and close
+        self.minixfs.disk.write_bloc(self.minixfs.bmap(self.minixfs.inodes_list[1], 0), ROOTNODEBLOC1)
+        self.minixfs.disk.write_bloc(self.minixfs.bmap(self.minixfs.inodes_list[1], 1), tmpbloc2)
         self.minixfs.close_connection()
 
     #testing bloc contents and inode maps before and after del_entry
@@ -254,6 +262,8 @@ class MinixTester(unittest.TestCase):
             self.minixfs.del_entry(self.minixfs.inodes_list[NODENUM], name)
         nodebloc = self.minixfs.disk.read_bloc(self.minixfs.bmap(self.minixfs.inodes_list[NODENUM], 0))
         self.assertEqual(nodebloc, NODE798BLOC1MOD)
+        # put the originale block back and close
+        self.minixfs.disk.write_bloc(self.minixfs.bmap(self.minixfs.inodes_list[NODENUM], 0), NODE798BLOC1)
         self.minixfs.close_connection()
 
 if __name__ == '__main__' :
