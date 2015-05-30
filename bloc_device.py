@@ -85,6 +85,7 @@ class remote_bloc_device(object):
         read/write commands are passed through a
         TCP socket
     """
+
     def __init__(self, blksize, host="localhost", port=1234):
         self.blksize = blksize
         self.requests = []
@@ -108,7 +109,6 @@ class remote_bloc_device(object):
                     self.super_block.s_max_size, self.super_block.s_magic, clean_state)
         new_sb[:sb.__len__()] = sb
         self.close_connection()
-        log.info("socket cleanly closed")
 
     def read_bloc(self, bloc_num, numofbloc=1):
         """ Read n block from block device server
@@ -126,46 +126,50 @@ class remote_bloc_device(object):
         length = numofbloc*self.blksize
         to_send = 0
         header_size = struct.calcsize('!IIIII')
+
+        #
         self.requests.insert(0, struct.pack('!IIIII', magic_req, rw_type, handle, offset, length))
 
-        while to_send < header_size:
-            sent = self.fd.send(self.requests[0][to_send:])
-            if sent == 0:
-                raise RuntimeError("socket connection broken")
-            to_send += sent
+        while self.requests[0]:
+            # send the header
+            while to_send < header_size:
+                sent = self.fd.send(self.requests[0][to_send:])
+                if sent == 0:
+                    raise RuntimeError("socket connection broken")
+                to_send += sent
 
-        # read response 
-        response = ''
-        response_size = struct.calcsize('!III')
-        to_recv = 0
-
-        while to_recv < response_size:
-             b = self.fd.recv(response_size-to_recv)
-             if b == '':
-                 raise RuntimeError("socket connection broken")
-             response += b
-             to_recv += len(b)
-
-        h = struct.unpack('!III', response)
-
-        if h == (magic_resp, 0, handle):
-            
-            buff = ""
+            # read response
+            response = ""
+            response_size = struct.calcsize('!III')
             to_recv = 0
-            while to_recv < length:
-                b = self.fd.recv(length-to_recv)
+
+            while to_recv < response_size:
+                b = self.fd.recv(response_size-to_recv)
                 if b == '':
                     raise RuntimeError("socket connection broken")
-                buff += b
+
+                response += b
                 to_recv += len(b)
 
-            # TODO pop request when finished
-            # remove request from fifo
-            # self.requests.pop[0]
+            h = struct.unpack('!III', response)
 
-        else:
-            raise RuntimeError("fail to read response")
-            return h[1]
+            if h == (magic_resp, 0, handle):
+            
+                buff = ""
+                to_recv = 0
+                while to_recv < length:
+                    b = self.fd.recv(length-to_recv)
+                    if b == '':
+                        raise RuntimeError("socket connection broken")
+                    buff += b
+                    to_recv += len(b)
+
+                # remove request from fifo
+                self.requests.pop[0]
+
+            else:
+                raise RuntimeError("fail to read response")
+                return h[1]
 
         return buff
 
@@ -215,6 +219,19 @@ class remote_bloc_device(object):
 
     def close_connection(self):
         """ close properly the socket """
-        # TODO add something if error
-        self.fd.close()
-        log.info("socket cleanly closed")
+
+        try:
+            self.fd.close()
+            log.info("socket cleanly closed")
+        except:
+            log.error("Error closing socket")
+
+
+class MyBaseException(Exception):
+    """ Class minixfs exceptions  """
+    def __init__(self, message):
+        super(MyBaseException, self).__init__(message)
+        self.message = message
+
+class BlockSizeError(MyBaseException):
+    pass

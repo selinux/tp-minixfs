@@ -239,7 +239,6 @@ class minix_file_system(object):
                 self.content = bytearray("".ljust(1024, '\x00'))
 
             else:
-                log.error('Error unable to add new entry in dir: overflow')
                 raise DirFullError('Error too many file in dir: overflow')
 
             for off in xrange(0, BLOCK_SIZE, DIRSIZE):
@@ -253,7 +252,6 @@ class minix_file_system(object):
         if done:
             self.disk.write_bloc(data_block, self.content)
         else:
-            log.error('Error unable to add new entry in dir')
             raise AddError('Unable to add entry')
 
     def del_entry(self, dinode, name):
@@ -305,19 +303,6 @@ class minix_file_system(object):
 
         self.disk.write_bloc(dinode.i_zone[blk], dir_content)
 
-    def update_imap(self):
-        """ Write bitarray and inodes_list to disk
-            cos we need a consistent filesystem
-        :return: 0
-        """
-        offset = 2
-        # Write can only handle 1024 byte so need to slice (just in case)
-        for i in range(self.disk.super_block.s_imap_blocks):
-            # write inode bitmap starting at bloc 2
-            self.disk.write_bloc(offset+i, self.inode_map[i*(8*BLOCK_SIZE):(i+1)*(8*BLOCK_SIZE)-1].tobytes())
-
-        return 0
-
     def close_connection(self):
         """ close connection with remote block server  """
 
@@ -366,3 +351,57 @@ class minix_file_system(object):
         """
         return True if (self.inodes_list[self.inode].i_mode >> 12) == 10 else False
 
+    def update_bmap(self):
+        """ Write bitarray map of data to disk
+            cos we need a consistent filesystem
+        :return: 0
+        """
+        offset = 2 + self.disk.super_block.s_imap_blocks
+        # Write can only handle 1024 byte so need to slice (just in case)
+        for i in range(self.disk.super_block.s_zmap_blocks):
+            # write inode bitmap starting at bloc 2
+            self.disk.write_bloc(offset+i, self.inode_map[i*(8*BLOCK_SIZE):(i+1)*(8*BLOCK_SIZE)-1].tobytes())
+
+        return 0
+
+    def write_bloc_list(self):
+
+        for i in range(self.disk.super_block.s_zmap_blocks):
+            # start at bloc 2
+            self.disk.write_bloc(2 + self.disk.super_block.s_imap_blocks + i, \
+                               self.zone_map.tobytes()[i * BLOCK_SIZE:(i + 1) * BLOCK_SIZE])
+        return 0
+
+class MyBaseException(Exception):
+    """ Class minixfs exceptions  """
+    def __init__(self, message):
+        super(MyBaseException, self).__init__(message)
+        self.message = message
+        log.error(message)
+
+class InodeError(MyBaseException):
+    pass
+
+class BlockAllocError(MyBaseException):
+    pass
+
+class OutboundError(MyBaseException):
+    pass
+
+class FileNotFoundError(MyBaseException):
+    pass
+
+class FileNameError(MyBaseException):
+    pass
+
+class AddError(MyBaseException):
+    pass
+
+class DirFullError(MyBaseException):
+    pass
+
+class DelEntryError(MyBaseException):
+    pass
+
+class AddEntryError(MyBaseException):
+    pass
