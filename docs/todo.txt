@@ -1,17 +1,20 @@
 ############
 # to do
 
-# TODO update link in add_entry
+# TODO make function that remove a block from inode and rearrange i_zone, indir_block,...
 # TODO add symlink struct ?
 # TODO pop request from requests list (python) when finished and resend while not done
+# TODO test if ack fail and resend request - pop request when finished
 # TODO se proteger contre les faux write du client (annonce taille 100 mais ecriture 20)
 # TODO verifier le principe : le client doit être très rigoureux, le server peut recevoir n'importe quoi
-# TODO python raise exception if add file that already exist on disk
-# TODO test if ack fail and resend request - pop request when finished
 
 ########
 # Done
 
+# TODO python raise exception if add file that already exist on disk
+[30.05.2015] modified add_entry (test with lookup_entry first)
+# TODO update link in add_entry
+[30.05.2015] not necessary
 # TODO add a dinode if dir is full and increase capacity
 # TODO add size somewhere (when? write or balloc or ...?) and when add_entry ? what's the new size of dinode ?
 [23.05.2015] Done

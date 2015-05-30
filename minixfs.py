@@ -60,8 +60,6 @@ class minix_file_system(object):
         self.inodes_list.pop(pos)  # clear
         self.inodes_list.insert(pos, minix_inode())  # insert new empty inode
 
-        # self.update_imap() # write imap to disk
-
         return int(pos)
 
     def ifree(self, inodnum):
@@ -83,7 +81,6 @@ class minix_file_system(object):
             sys.exit('Error no space left on device')
 
         self.zone_map[pos] = True
-        # self.update_bmap()  # write bmap to disk
 
         # data block start at 1
         return int(pos + self.disk.super_block.s_firstdatazone)
@@ -94,7 +91,7 @@ class minix_file_system(object):
         :return: True if bloc is free
         """
         self.zone_map[blocnum] = False
-        # self.update_bmap()  # write bmap to disk
+
         return ~self.zone_map[blocnum]
 
     def bmap(self, inode, blk):
@@ -153,6 +150,7 @@ class minix_file_system(object):
             blk += 1
             data_block = self.bmap(dinode, blk)
 
+        # return name in dict (raise error if not fund)
         return d_entry[name]
 
     def namei(self, path):
@@ -221,6 +219,8 @@ class minix_file_system(object):
         blk = -1
 
         if len(name) > (DIRSIZE-2): raise FileNameError('Error Filename too long')
+        if self.lookup_entry(dinode, name):
+            raise AddEntryError('Error filename already exist in dir')
 
         while not done:
 
@@ -249,37 +249,59 @@ class minix_file_system(object):
 
         if done:
             self.disk.write_bloc(data_block, self.content)
-            # self.update_imap()
         else:
             log.error('Error unable to add new entry in dir')
             raise AddError('Unable to add entry')
 
-    #delete an entry named "name" 
     def del_entry(self, dinode, name):
+        """ delete filename from dir
+
+        :param dinode: the directory's file
+        :param name: filename to remove
+        """
         blk = -1
         inode = self.lookup_entry(dinode, name)
         if not self.ifree(inode):
-            raise DelEntryError('Error deleting entry')
+            raise DelEntryError('Error deleting entry filename not found')
 
-        data_block = 1
+        dir_block = 1
 
-        while data_block:
+        # while dir block search inode
+        while dir_block:
             blk += 1
-            data_block = self.bmap(dinode, blk)
-            content = bytearray(self.disk.read_bloc(data_block))
+            dir_block = self.bmap(dinode, blk)
+            # take a block
+            dir_content = bytearray(self.disk.read_bloc(dir_block))
+
+            # look for inode
             for i in xrange(0, BLOCK_SIZE, DIRSIZE):
-                # remove entry
-                if inode == struct.unpack_from('H', content, i)[0]:
-                    content[i:i+2] = "".ljust(2, '\x00')
-                    self.bfree(data_block)
-                    data_block = False
+                if inode == struct.unpack_from('H', dir_content, i)[0]:
+                    # remove entry
+                    # dir_content[i:i+DIRSIZE] = "".ljust(DIRSIZE, '\x00')
+                    dir_content[i:i+2] = "".ljust(2, '\x00')
+                    self.bfree(dir_block)
+                    if self.inodes_list[inode].i_nlinks > 1:
+                        # inode has another name linked to it
+                        self.inodes_list[inode].i_nlinks -= 1
+                    else:
+                        fb = 0
+                        file_blk = self.bmap(self.inodes_list[inode], fb)
+                        # free file's data block
+                        while file_blk:
+                            self.bfree(file_blk)
+                            fb += 1
+                            file_blk = self.bmap(self.inodes_list[inode], fb)
+
+                        self.ifree(inode)
+                    dir_block = False
                     dinode.i_size -= DIRSIZE
-                    # self.update_bmap()
-                    # self.update_imap()
                     break
 
-        self.disk.write_bloc(dinode.i_zone[blk], content)
+            if dir_content == "".ljust(BLOCK_SIZE, '\x00'):
+                # TODO replace by remove dir_block from dinode ou write_bloc
+                self.bfree(dir_block)
 
+        self.disk.write_bloc(dinode.i_zone[blk], dir_content)
 
     def update_imap(self):
         """ Write bitarray and inodes_list to disk

@@ -1,7 +1,7 @@
 %type de document
 \documentclass[a4paper,12pt]{article}
 
-% règles typographiques françaises
+% regles typographiques françaises
 \usepackage[latin1]{inputenc}
 \usepackage[francais]{babel}
 \usepackage[T1]{fontenc}
@@ -152,40 +152,92 @@ ITI 2\up{ème} soir \\
 
 \section{Introduction}
 
-\subsection{essai}
+\section{Implémentation python}
 
-\section{machine d'état}
+\subsection{add\_entry()}
 
-Le mieux est de faire une machine d'état afin que le client et le server soient toujours dans le même état.
+\begin{lstlisting}[language=C, caption=pseudo code add\_entry()]
+add_entry(inode dossier, nom fichier a inserer, inode du nouveau fichier){
+	si nom de fichier non conforme;
+		raise error
+	si nom de fichier existe deja dans dossier:
+		raise error
+		
+	tant que not done:
+		prendre block dossier:
+			si place libre:
+				inserer inode et nom
+				changer taille dossier
+				done
 
-Dans le cas de ce TP, il y a trois cas possibles
+			sinon:
+				si not next block:
+					creer nouveau block
+					si plus possible creer:
+						break
+						
+	si done:
+		valider modification sur disk
+	sinon:
+		raise error plus de place
+}
+\end{lstlisting}
 
-\begin{enumerate}
-\item le client fait un READ (0x0)
-\item le client fait un WRITE (0x1) 
-\item le client ferme la connexion (0x2)
-\end{enumerate}
+\subsection{del\_entry()}
 
-\subsection*{READ}
+On commence par rechercher l'inode de l'entrée dans le dir et on raise une error si le nom n'existe pas.
+
+Pour chaque block du dir (le dir peut occuper plusieurs block) on recherche l'inode.
+
+Si l'inode a plusieurs link, c'est qu'il est utilisé par un autre fichier il suffit donc de décrémenter le nombre de liens pointant sur lui.
+
+Sinon, on libère tous les blocks de l'inode.
+
+Dans les deux cas, on retire l'entrée.
+
+Si l'entrée était la dernière du dir on peut effacer ce block du dinode. Attention on pourrait créer 300 fichiers et effacer par hasard tous les fichiers du 3\up{e} block. Il faut donc supprimer le 3\up{e} mais décaler les suivants (la commande \emph{bmap()} renvoit les block qui se suivent)
+
+On écrit finalement le nouveau contenu du block dir.
+
+\begin{lstlisting}[language=C, caption=pseudo code del\_entry()]
+del_entry(inode dossier, nom fichier a supprimer){
+	rechercher_entree;
+	si (non trouve)
+		raise error;
+
+	tant que block dossier:
+		rechercher entree dans block dossier
+			trouver:
+				si plusieurs liens: reduire
+				sinon: effacer inode fichier
+			
+				enlever entree du block dossier;
+				si dernier fichier du block dossier supprimer block inutile;
+	
+	valider modification sur disk;
+}
+\end{lstlisting}
+
+\subsection{symlink}
+
+Il n'était pas demandé de tenir compte des symlinks 
+
+
+
+\subsection*{read()}
 
 \begin{itemize}
 \item la requête client est un read + un offset + length
 \item le server return ack + payload
 \end{itemize}
 
-\subsection*{WRITE}
+\subsection*{write()}
 
 \begin{itemize}
 \item la requête client est un write + un offset + payload
 \item le server return un ack
 \end{itemize}
 
-\subsection*{CLOSE}
-
-\begin{itemize}
-\item la requête client est un close
-\item le server return un ack
-\end{itemize}
 
 \vspace{1cm}
 
@@ -211,5 +263,6 @@ Une alternative possible est d'ajouter au protocole une requête (un message) de 
 
 Si un client lance une requête et annonce une certaine longueur, le server va faire un read, tant que le client maintient la connexion et n'envoie pas les données, il bloque le server.\\
 
+\section{Implémentation du server}
  
 \end{document} 
