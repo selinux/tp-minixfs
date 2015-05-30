@@ -141,11 +141,11 @@ class minix_file_system(object):
         while data_block:
             content = self.disk.read_bloc(data_block)
             for off in xrange(0, BLOCK_SIZE, DIRSIZE):
-                self.inode = struct.unpack_from('H', content, off)[0]
+                inode = struct.unpack_from('H', content, off)[0]
                 self.name = content[off + 2:off + DIRSIZE].split('\x00')[0]
-                if self.inode != 0:
+                if inode != 0:
                     # add entry to dictionary
-                    d_entry.update({self.name: self.inode})
+                    d_entry.update({self.name: inode})
 
             # pick next data block
             blk += 1
