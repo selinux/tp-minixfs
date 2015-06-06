@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
-# Note : minix-fs types are little endian
+
+""" This is the main minixfs API """
 
 
 __author__ = 'Sebastien Chassot'
@@ -12,9 +13,13 @@ __status__ = "TP minix fs"
 
 from minix_inode import *
 from bloc_device import *
+import errno
 
 
 class minix_file_system(object):
+    """
+        The main class
+    """
     def __init__(self, fs_src=None, port=None):
         if fs_src and port:
             self.disk = remote_bloc_device(BLOCK_SIZE, fs_src, port)
@@ -92,6 +97,7 @@ class minix_file_system(object):
         :return: True if bloc is free
         """
         self.zone_map[blocnum] = False
+        # TODO check if block indirect and free if not
 
         return ~self.zone_map[blocnum]
 
@@ -221,6 +227,7 @@ class minix_file_system(object):
         """
         done = False
         blk = -1
+        # TODO increment link de l'inode
 
         if len(name) > (DIRSIZE - 2):
             raise FileNameError('Error Filename too long')
@@ -233,6 +240,7 @@ class minix_file_system(object):
             data_block = self.bmap(dinode, blk)
 
             if data_block:
+                # TODO if new block  bytearray("".ljust(1024, '\x00'))
                 self.content = bytearray(self.disk.read_bloc(data_block))
 
             elif blk < MINIX_ZONESZ ** 2 + MINIX_ZONESZ + 7:
@@ -308,7 +316,7 @@ class minix_file_system(object):
     def close_connection(self):
         """ close connection with remote block server  """
 
-        log.info("socket cleanly closed")
+        # log.info("socket cleanly closed")
         self.disk.close_connection()
 
     def is_dir(self, inode):

@@ -1,8 +1,9 @@
 %type de document
 \documentclass[a4paper,12pt]{article}
 
-% regles typographiques françaises
-\usepackage[latin1]{inputenc}
+% regles typographiques franÃƒÂ§aises
+%\usepackage[latin1]{inputenc}
+\usepackage[utf8]{inputenc}
 \usepackage[francais]{babel}
 \usepackage[T1]{fontenc}
 
@@ -20,7 +21,7 @@
 \usepackage{wrapfig}
 \usepackage{dirtree}
 
-\usepackage[smaller, footnote, printonlyused]{acronym} % table d'acronymes, option [footnote] pour avoir les définitions en bas de page [printonlyused
+\usepackage[smaller, footnote, printonlyused]{acronym} % table d'acronymes, option [footnote] pour avoir les dÃƒÂ©finitions en bas de page [printonlyused
 
 \usepackage{hyperref}
 \hypersetup{colorlinks=true, linkcolor=blue}
@@ -78,7 +79,7 @@
 %		ENTETE ET PIED DE PAGE
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \pagestyle{fancy}
-% entête
+% entÃƒÂªte
 \lhead{}
 \chead{}
 \rhead{}
@@ -96,7 +97,7 @@
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\author{Sebastien Chassot, Andre-Luc Robyr}
+\author{Sebastien Chassot}
 \newcommand{\docschool}{hepia - ITI}
 \title{Rapport}
 
@@ -125,26 +126,28 @@ Minix File system
 
 \begin{center}
 \begin{large}
-ITI 2\up{ème} soir \\
+ITI 2\up{Ã¨me} soir \\
 2014 / 2015
 \end{large}
 \end{center}
 
 \vspace{3cm}
-\centerline{\includegraphics[scale=0.4]{imgs/fs6}}
+\centerline{\includegraphics[scale=0.52]{imgs/illustration_FS}}
 \vspace{2cm}
 
 \begin{center}
 %\begin{large}
-\textbf{Sebastien Chassot, Andre-Luc Robyr} \\ Juin 2015
+\textbf{Sebastien Chassot} \\ Juin 2015
 %\end{large}
 \end{center}
 
 \thispagestyle{empty} % enleve les entetes et pide de page de la page de titre
 
-% table des matières
+% table des matiÃƒÂ¨res
 \newpage % nouvelle page
-\tableofcontents % table des matières
+\tableofcontents % table des matiÃ¨res
+\listoffigures
+\listoftables
 \newpage % nouvelle page
 
 %\chapter*{Mini Bash}
@@ -152,7 +155,37 @@ ITI 2\up{ème} soir \\
 
 \section{Introduction}
 
-\section{Implémentation python}
+Le but de ce travail est d'implÃ©menter un systÃ¨me MinixFS V1 en python en proposant une API standard et de modifier un fichier \emph{formatÃ©} en minixfs via cet interface.\\
+
+Dans un deuxiÃ¨me temps, les modifications seront faites Ã   travers le rÃ©seau. Un server (Ã©crit en C) modifiera le fichier par block reÃ§u via des sockets AF\_INET. On rÃ©utilisera le travail fait en python et son API mais les block seront transmis au server selon un protocole relativement simple.
+ 
+\begin{figure}[H]
+\begin{center}
+\includegraphics[scale=.6]{imgs/schema_client_server}
+\caption{Principe de fonctionnement}
+\label{fig:Architecture client server}
+\end{center}
+\end{figure}
+
+
+Un seul client est traitÃ© Ã  la fois ce qui Ã©vite les problÃ¨mes d'accÃ¨s concurrent - traitÃ© dans d'autres cours. Le principe est simple. le client fait une requÃªte, le server y rÃ©pond.\\
+
+
+
+\section{ImplÃ©mentation python}
+
+\subsection{description de l'API}
+
+
+\begin{description}
+\item[ialloc()] \hfill \\
+	alloue un inode
+\end{description}
+\begin{itemize}
+\item ialloc()
+\end{itemize}
+
+
 
 \subsection{ialloc()}
 
@@ -161,11 +194,12 @@ ialloc(){
 
 	recherche premier libre dans inode_map
 	
-	si not trouver:
-		raise error aucun inode de libre
+	si not trouve:
+		raise error plus aucun inode de libre
 	
-	inode trouver = occuper
-	clear ancien inode
+	inode trouve = occupe
+	del ancien inode
+	new inode
 	
 	return numero inode
 }
@@ -261,19 +295,19 @@ add_entry(inode dossier, nom fichier a inserer, inode du nouveau fichier){
 
 \subsection{del\_entry()}
 
-On commence par rechercher l'inode de l'entrée dans le dir et on raise une error si le nom n'existe pas.
+On commence par rechercher l'inode de l'entrÃ©e dans le dir et on raise une error si le nom n'existe pas.
 
 Pour chaque block du dir (le dir peut occuper plusieurs block) on recherche l'inode.
 
-Si l'inode a plusieurs link, c'est qu'il est utilisé par un autre fichier il suffit donc de décrémenter le nombre de liens pointant sur lui.
+Si l'inode a plusieurs link, c'est qu'il est utilisÃ© par un autre fichier il suffit donc de dÃ©crÃ©menter le nombre de liens pointant sur lui.
 
-Sinon, on libère tous les blocks de l'inode.
+Sinon, on libÃ¨re tous les blocks de l'inode.
 
-Dans les deux cas, on retire l'entrée.
+Dans les deux cas, on retire l'entrÃ©e.
 
-Si l'entrée était la dernière du dir on peut effacer ce block du dinode. Attention on pourrait créer 300 fichiers et effacer par hasard tous les fichiers du 3\up{e} block. Il faut donc supprimer le 3\up{e} mais décaler les suivants (la commande \emph{bmap()} renvoit les block qui se suivent)
+Si l'entrÃ©e Ã©tait la derniÃ¨re du dir on peut effacer ce block du dinode. Attention on pourrait crÃ©er 300 fichiers et effacer par hasard tous les fichiers du 3\up{e} block. Il faut donc supprimer le 3\up{e} mais dÃ©caler les suivants (la commande \emph{bmap()} renvoie les block qui se suivent)
 
-On écrit finalement le nouveau contenu du block dir.
+On ÃƒÂ©crit finalement le nouveau contenu du block dir.
 
 \begin{lstlisting}[language=C, caption=pseudo code del\_entry()]
 del_entry(inode dossier, nom fichier a supprimer){
@@ -297,21 +331,21 @@ del_entry(inode dossier, nom fichier a supprimer){
 
 \subsection{symlink}
 
-Il n'était pas demandé de tenir compte des symlinks 
+Il n'Ã©tait pas demandÃ© de tenir compte des symlinks 
 
 
 
 \subsection*{read()}
 
 \begin{itemize}
-\item la requête client est un read + un offset + length
+\item la requÃªte client est un read + un offset + length
 \item le server return ack + payload
 \end{itemize}
 
 \subsection*{write()}
 
 \begin{itemize}
-\item la requête client est un write + un offset + payload
+\item la requÃªte client est un write + un offset + payload
 \item le server return un ack
 \end{itemize}
 
@@ -321,25 +355,25 @@ Il n'était pas demandé de tenir compte des symlinks
 \section{Le serveur de blocs}
 
 
-\subsection*{la problématique de la déconnexion du client}
+\subsection*{la problÃ©matique de la dÃ©connexion du client}
 
-Détecter la déconnexion d'un client n'est pas trivial. En effet, lors d'un \emph{shutdown()}, 
+DÃ©tecter la dÃ©connexion d'un client n'est pas trivial. En effet, lors d'un \emph{shutdown()}, 
 
 
-\subsection*{Solutions envisagées}
+\subsection*{Solutions envisagÃ©es}
 
-Une des solutions les plus simple serait de traiter un échange à la fois; le client se connecte, envoit une requête, reçoit la réponse et se déconnecte. Le server fait la même chose; attend sur \emph{accept()} qu'un client se connecte, attend une requête y répond et se déconnecte.\\
+Une des solutions les plus simple serait de traiter un Ã‰change Ã   la fois; le client se connecte, envoie une requÃªte, reÃ§oit la rÃ©ponse et se dÃ©connecte. Le server fait la mÃªme chose; attend sur \emph{accept()} qu'un client se connecte, attend une requÃªte y rÃ©pond et se dÃ©connecte.\\
 
-Cette solution est simple, permet de mieux maîtriser l'état du client et du server mais est couteuse en connexions.\\
+Cette solution est simple, permet de mieux maÃ®triser l'Ã©tat du client et du server mais est couteuse en connexions.\\
 
-Une autre solution est d'accepter un client et rentrer dans une boucle, un \emph{fork()} ou un thread et traiter les requêtes du client tant qu'il ne se déconnecte pas. Cette solution est plus élégante mais elle nécessite de détecter la déconnexion du client.\\
+Une autre solution est d'accepter un client et rentrer dans une boucle, un \emph{fork()} ou un thread et traiter les requÃªtes du client tant qu'il ne se dÃ©connecte pas. Cette solution est plus Ã©lÃ©gante mais elle nÃ©cessite de dÃ©tecter la dÃ©connexion du client.\\
 
-Une alternative possible est d'ajouter au protocole une requête (un message) de déconnexion qui synchronise le client et le server.
+Une alternative possible est d'ajouter au protocole une requÃªte (un message) de dÃ©connexion qui synchronise le client et le server.
 
-\subsection*{Problème de client malicieux}
+\subsection*{ProblÃ¨me de client malicieux}
 
-Si un client lance une requête et annonce une certaine longueur, le server va faire un read, tant que le client maintient la connexion et n'envoie pas les données, il bloque le server.\\
+Si un client lance une requÃªte et annonce une certaine longueur, le server va faire un read, tant que le client maintient la connexion et n'envoie pas les donnÃ©es, il bloque le server.\\
 
-\section{Implémentation du server}
+\section{ImplÃ©mentation du server}
  
 \end{document} 

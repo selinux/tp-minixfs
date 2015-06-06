@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
-# emulate a simple bloc device using a file
-# reading it only by bloc units
+"""
+emulate a simple bloc device using a file
+reading it only by bloc units
+"""
 
 __author__ = 'Sebastien Chassot'
 __author_email__ = 'sebastien.chassot@etu.hesge.ch'
@@ -16,11 +18,25 @@ import socket
 import random as rand
 import logging as log
 
+# init the log
 log.basicConfig(format='%(levelname)s:%(message)s', level=log.INFO)
 
 
 class bloc_device(object):
-    """ Class block device """
+    """ Class block device
+        This class open a minix filesystem created like this :
+
+        $ truncate -s 10M new.minixfs.img
+        $ mkfs.minix new.minixfs.img
+            3424 inodes
+            10240 blocks
+            Firstdatazone=112 (112)
+            Zonesize=1024
+            Maxsize=268966912
+
+        and performed read/write operation on it like a block device.
+
+    """
 
     def __init__(self, blksize, pathname):
         """ Init a new block device """
@@ -30,6 +46,7 @@ class bloc_device(object):
         try:
             self.fd = open(pathname, 'r+b')
         except OSError:
+            log.error("Error unable to open file system")
             sys.exit("Error unable to open file system")
 
         self.super_block = minix_superbloc(self)
@@ -39,14 +56,13 @@ class bloc_device(object):
         """ Close properly the block device """
         new_sb = bytearray("".ljust(1024, '\x00'))
         clean_state = 1
-        sb = struct.pack('HHHHHHIHH', self.super_block.s_ninodes, self.super_block.s_nzones, self.super_block.s_imap_blocks,
-                    self.super_block.s_zmap_blocks, self.super_block.s_firstdatazone, self.super_block.s_log_zone_size,
-                    self.super_block.s_max_size, self.super_block.s_magic, clean_state)
+        sb = struct.pack('HHHHHHIHH', self.super_block.s_ninodes, self.super_block.s_nzones,
+                self.super_block.s_imap_blocks, self.super_block.s_zmap_blocks, self.super_block.s_firstdatazone,
+                self.super_block.s_log_zone_size, self.super_block.s_max_size, self.super_block.s_magic, clean_state)
         new_sb[:sb.__len__()] = sb
-        log.info("file system cleanly closed")
         # self.write_bloc(MINIX_SUPER_BLOCK_NUM, new_sb)
         self.fd.close()
-
+        log.info("file system closed")
 
     def read_bloc(self, bloc_num, numofblk=1):
         """ Read n block from block device
@@ -54,12 +70,14 @@ class bloc_device(object):
         :param numofblk: number of block to be read
         :return: the buffer
         """
-        # TODO test fs size and bloc_num comparison
         try:
             self.fd.seek(bloc_num*self.blksize)
             buff = self.fd.read(int(numofblk*self.blksize))
-        except OSError, err:
-            print(err)
+        except:
+            log.error("Unable to read requested block")
+            raise RuntimeError("Unable to read requested block")
+
+        log.debug("Read block")
 
         return buff
 
@@ -72,8 +90,11 @@ class bloc_device(object):
         try:
             self.fd.seek(bloc_num*self.blksize)
             n = self.fd.write(bloc)
-        except OSError, err:
-            print(err)
+        except OSError:
+            log.error("Unable to write requested block to disk")
+            raise RuntimeError("Unable to write requested block to disk")
+
+        log.debug("Write block")
 
         return n
 
@@ -81,8 +102,23 @@ class remote_bloc_device(object):
     """ Class remote block device
 
         This class connect to a remote bloc server and
-        read/write commands are passed through a
-        TCP socket
+        read/write commands are passed through a AF_INET
+        socket.
+
+        This connect to server running like this :
+
+        $ truncate -s 10M new.minixfs.img
+        $ mkfs.minix new.minixfs.img
+            3424 inodes
+            10240 blocks
+            Firstdatazone=112 (112)
+            Zonesize=1024
+            Maxsize=268966912
+
+        $ ./server {port} new.minixfs.img
+
+        and send read/write request to it.
+
     """
 
     def __init__(self, blksize, host="localhost", port=1234):
@@ -93,20 +129,16 @@ class remote_bloc_device(object):
         try:
             self.fd.connect((socket.gethostbyname(host), port))
         except socket.error:
-            print("Couldnt connect to the block server")
+            log.error("Couldnt connect to the block server")
             sys.exit("Error unable to connect to block server")
 
         self.super_block = minix_superbloc(self)
         log.info("remote file system opened successfully")
 
     def __del__(self):
-        """ Cleanly close the socket """
-        new_sb = bytearray("".ljust(1024, '\x00'))
-        clean_state = 1
-        sb = struct.pack('HHHHHHIHH', self.super_block.s_ninodes, self.super_block.s_nzones,
-                self.super_block.s_imap_blocks, self.super_block.s_zmap_blocks, self.super_block.s_firstdatazone,
-                self.super_block.s_log_zone_size, self.super_block.s_max_size, self.super_block.s_magic, clean_state)
-        new_sb[:sb.__len__()] = sb
+        """ Cleanly close the socket when deleting object
+
+        """
         self.close_connection()
 
     def read_bloc(self, bloc_num, numofbloc=1):
@@ -126,7 +158,6 @@ class remote_bloc_device(object):
         to_send = 0
         header_size = struct.calcsize('!IIIII')
 
-        #
         self.requests.insert(0, struct.pack('!IIIII', magic_req, rw_type, handle, offset, length))
         done = False
         buff = ""
@@ -136,8 +167,11 @@ class remote_bloc_device(object):
             while to_send < header_size:
                 sent = self.fd.send(self.requests[0][to_send:])
                 if sent == 0:
+                    log.error("Lost connection with the server while sending request")
                     raise RuntimeError("socket connection broken")
                 to_send += sent
+
+            log.debug("The request has been sent to the server")
 
             # read response
             response = ""
@@ -152,6 +186,8 @@ class remote_bloc_device(object):
                 response += b
                 to_recv += len(b)
 
+            log.debug("A response has been received")
+
             h = struct.unpack('!III', response)
 
             if h == (magic_resp, 0, handle):
@@ -161,6 +197,7 @@ class remote_bloc_device(object):
                 while to_recv < length:
                     b = self.fd.recv(length-to_recv)
                     if b == '':
+                        log.error("Lost connection with the server during response")
                         raise RuntimeError("socket connection broken")
                     buff += b
                     to_recv += len(b)
@@ -168,8 +205,10 @@ class remote_bloc_device(object):
                 # remove request from fifo
                 # self.requests.pop[0]
                 done = True
+                log.debug("A response has been received without any error")
 
             else:
+                log.error("The server return an error")
                 raise RuntimeError("fail to read response")
 
         return buff
@@ -195,10 +234,11 @@ class remote_bloc_device(object):
         to_send = 0
         header = struct.pack('!IIIII', magic, rw_type, handle, offset, self.blksize)
         self.requests.insert(0, header+bloc)
-        # TODO consolider while send
+
         while to_send < len(header+bloc):
             sent = self.fd.send(self.requests[0][to_send:])
             if sent == 0:
+                log.error("Lost connection while send request")
                 raise RuntimeError("socket connection broken")
             to_send += sent
 
@@ -208,24 +248,40 @@ class remote_bloc_device(object):
         to_recv = 0
 
         while to_recv < response_size:
-             b = self.fd.recv(response_size-to_recv)
-             if b == '':
-                 raise RuntimeError("socket connection broken")
-             responce += b
-             to_recv += len(b)
+            b = self.fd.recv(response_size-to_recv)
+            if b == '':
+                raise RuntimeError("socket connection broken")
+            responce += b
+            to_recv += len(b)
 
         h = struct.unpack('!III', responce)
-        # TODO resend, close and pop
-        # self.requests.pop[0]
+
+        if h[0] != magic_resp or h[1] != 0:
+            log.error("Server write return error")
+            raise RuntimeError("Server write return error")
 
     def close_connection(self):
-        """ close properly the socket """
+        """ Close properly the filesystem
 
+            the superblock shall be marked as clean and the socket
+            closed.
+        """
+        # A new superblock
+        new_sb = bytearray("".ljust(1024, '\x00'))
+        clean_state = 1
+        sb = struct.pack('HHHHHHIHH', self.super_block.s_ninodes, self.super_block.s_nzones,
+                self.super_block.s_imap_blocks, self.super_block.s_zmap_blocks, self.super_block.s_firstdatazone,
+                self.super_block.s_log_zone_size, self.super_block.s_max_size, self.super_block.s_magic, clean_state)
+        # mark the superblock as clean
+        new_sb[:sb.__len__()] = sb
+
+        # close the socket
         try:
             self.fd.close()
-            log.info("socket cleanly closed")
+            log.info("socket closed")
         except:
             log.error("Error closing socket")
+            raise RuntimeError("Error closing socket")
 
 
 class MyBaseException(Exception):
@@ -233,6 +289,7 @@ class MyBaseException(Exception):
     def __init__(self, message):
         super(MyBaseException, self).__init__(message)
         self.message = message
+
 
 class BlockSizeError(MyBaseException):
     pass

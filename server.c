@@ -232,6 +232,8 @@ int read_header(int socket, query_header_t ** header)
 
     /* convert the magic */
     char magic[5];
+    // TODO  sprintf(buff."%x",int_var)
+    //
     uint32_t * uint_magic_p = (uint32_t *)magic;
     *uint_magic_p = SIGN_REQUEST;  /* write the magic in magic buffer */
 

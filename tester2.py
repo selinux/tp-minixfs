@@ -24,7 +24,7 @@ import sys
 # - bitarray class : used to store and manipulated inode and zone bitmaps in memory
 #   member ofs minix_filesystem class
 
-testfile="minixfs_lab2.img"
+testfile="filesystems/minixfs_lab2.img"
 workfile=testfile+".gen"
 workfilewrite=testfile+".genwrite"
 string="dd if="+testfile+" of="+workfile+" bs=1024 2>/dev/null"
@@ -44,7 +44,8 @@ class MinixTester(unittest.TestCase):
         self.assertEqual(bloc5,BLOC5)
         self.assertEqual(bloc7,BLOC7)
         self.assertEqual(bloc24,BLOC24)
-    
+        del self.disk
+
     #exchange bloc2 and bloc5 on the bloc device and test if the content 
     #returned by read_bloc on it matches.
     def test_2_bloc_device_write_bloc(self):
@@ -66,6 +67,7 @@ class MinixTester(unittest.TestCase):
         bloc5=self.disk.read_bloc(5)
         self.assertEqual(bloc2,BLOC5)
         self.assertEqual(bloc5,BLOC2)
+        del self.disk
 
     #superbloc test : read it and check object values
     def test_3_super_bloc_read_super(self):
@@ -78,6 +80,7 @@ class MinixTester(unittest.TestCase):
         self.assertEqual(sb.s_zmap_blocks,1)
         self.assertEqual(sb.s_firstdatazone,26)
         self.assertEqual(sb.s_max_size,268966912)
+        del self.disk
 
     #inode and zone map tests
     #we need to copy the original as it was modified 
@@ -86,11 +89,13 @@ class MinixTester(unittest.TestCase):
         self.minixfs=minix_file_system(workfile)
         self.assertEqual(self.minixfs.inode_map,INODEBITMAP1);
         self.assertEqual(self.minixfs.zone_map,ZONEBITMAP1);
+        del self.minixfs
 
     #inode list content test
 #    def test_5_fs_inode_list(self):
 #        self.minixfs=minix_file_system(workfile)
 #        self.assertEqual(self.minixfs.inodes_list,INODELIST);
+#        del(self.minixfs)
 
 
     #testing ialloc()/ifree()
@@ -106,6 +111,7 @@ class MinixTester(unittest.TestCase):
         self.assertEqual(new_inode_num,NEWNODE2);
         new_inode_num=self.minixfs.ialloc()
         self.assertEqual(new_inode_num,NEWNODE3);
+        del self.minixfs
 
     #testing balloc()/bfree()
     #same method as ialloc/ifree testing
@@ -121,6 +127,8 @@ class MinixTester(unittest.TestCase):
         self.assertEqual(new_bloc_num,NEWBLOC2);
         new_bloc_num=self.minixfs.balloc()
         self.assertEqual(new_bloc_num,NEWBLOC3);
+        del self.minixfs
+
         return True
 
     #testing bmap function : just check that some bmaped
