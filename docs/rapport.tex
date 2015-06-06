@@ -9,7 +9,7 @@
 
 
 % mise en page
-\usepackage[margin=2.5cm]{geometry}
+\usepackage[margin=2cm]{geometry}
 \usepackage{fancyhdr}
 \usepackage{graphicx}
 \usepackage{array}
@@ -179,12 +179,27 @@ Un seul client est traité à la fois ce qui évite les problèmes d'accès conc
 
 \begin{description}
 \item[ialloc()] \hfill \\
-	alloue un inode
-\end{description}
-\begin{itemize}
-\item ialloc()
-\end{itemize}
+	alloue un inode - puisqu'il contient peut-être d'ancienne donnée, il est remis à zéro
+\item[ifree()] \hfill \\
+	change l'état de l'inode à libre dans la bitmap des inodes
+\item[balloc()] \hfill \\
+	recherche et renvoie le premier block libre dans la bitmap des data block
+\item[bfree()] \hfill \\
+	change l'état du data block à libre dans la bitmap (libre pour une future utilisation)
+\item[bmap()] \hfill \\
+	fait la transformation entre un numéro de block relatif et la position effective de ce block sur le disque
+\item[lookup\_entry()] \hfill \\
+	recherche une entrée dans un dossier et retourne l'inode de ce fichier
+\item[namei()] \hfill \\
+	Recherche en partant de la racine et en suivant l'arborescence jusqu'à trouver le fichier et renvoie son numéro d'inode
+\item[ialloc\_bloc(inode, block)] \hfill \\
+	Recherche un block de libre sur le disque et place 
+\item[namei()] \hfill \\
 
+\item[namei()] \hfill \\
+
+\item[namei()] \hfill \\
+\end{description}
 
 
 \subsection{ialloc()}
@@ -307,7 +322,7 @@ Dans les deux cas, on retire l'entrée.
 
 Si l'entrée était la dernière du dir on peut effacer ce block du dinode. Attention on pourrait créer 300 fichiers et effacer par hasard tous les fichiers du 3\up{e} block. Il faut donc supprimer le 3\up{e} mais décaler les suivants (la commande \emph{bmap()} renvoie les block qui se suivent)
 
-On Ã©crit finalement le nouveau contenu du block dir.
+On écrit finalement le nouveau contenu du block dir.
 
 \begin{lstlisting}[language=C, caption=pseudo code del\_entry()]
 del_entry(inode dossier, nom fichier a supprimer){
@@ -328,6 +343,11 @@ del_entry(inode dossier, nom fichier a supprimer){
 	valider modification sur disk;
 }
 \end{lstlisting}
+
+
+\subsection{ialloc\_bloc()}
+
+Cette fonction attribue un block à n'importe quel position - dans un nouvel inode, on peut vouloir commencer par écrire le block \emph{2452} (dans la zone doublement indirect). Si le block indirect ou doublement indirect n'existe pas, il faut penser à pouvoir l'allouer à n'importe quel moment.\\
 
 \subsection{symlink}
 

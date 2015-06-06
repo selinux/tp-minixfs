@@ -18,9 +18,36 @@ import errno
 
 class minix_file_system(object):
     """
-        The main class
+        The main class of minix filesystem V1.0 API
+
+        this class manage a minixfs :
+            * alloc and free inode
+            * reserve/free datablock in block bitmap
+            * map relative entry in inode to absolute entry in filesystem
+            * add data block to inode
+            * check if a file exist in dinode
+            * return inode number of an absolute path
+            * add/remove entry in dir
+
+        future usage :
+            * test inode file type
+
+
     """
     def __init__(self, fs_src=None, port=None):
+        """
+            Constructor ; init the block to work with
+
+            It could be a local file :
+                minix = minix_file_system(filename)
+
+            Or it could be a block server :
+                minix = minix_file_system(server, port)
+
+
+        :param fs_src: Could be file or a server (ip or hostname)
+        :param port: in case of a connection to server, otherwise port=None
+        """
         if fs_src and port:
             self.disk = remote_bloc_device(BLOCK_SIZE, fs_src, port)
         else:
@@ -50,11 +77,14 @@ class minix_file_system(object):
             self.inodes_list.append(i)
 
     def ialloc(self):
-        """ return the first free inode number available
-            starting at 0 and upto s.n_inodes-1.
-            The bitmap ranges from index 0 to inod_num-1
-            Inode 0 is never and is always set.
-            according to the inodes bitmap
+        """
+            Return the first free inode number available in inode bitmap
+            starting at 0 up to (s.n_inodes)-1 ((nb of imap block*1024/16)*8).
+
+            The bitmap ranges start at index 0 a finish at max_inod_num-1
+            Inode 0 is never used even if it's set for python commodity. The
+            inode 1 is the root of the filesystem.
+
         :return: the first free inode
         """
         try:
@@ -69,16 +99,28 @@ class minix_file_system(object):
         return int(pos)
 
     def ifree(self, inodnum):
-        """ toggle an inode as available for the next ialloc()
-        :param inodnum:
+        """
+            Toggle an inode as available for the next ialloc()
+
+        :param inodnum:  the inode to be freed
         :return: True if inodnum == False
         """
+
+        # can't free root or inexistant inode
+        if inodnum > self.disk.super_block.s_imap_blocks*BLOCK_SIZE*8 or inodnum < 2:
+            log.error("Error inode is out of bound")
+            raise InodeError("Error inode is out of bound")
+
         # inodes start at 1
-        self.inode_map[inodnum] = False
-        return ~self.inode_map[inodnum]  # return 'not' state (true if false)
+        if self.inodes_list[inodnum]:
+            self.inode_map[inodnum] = False
+
+        return bool(~self.inode_map[inodnum])  # return 'not' state (true if false)
 
     def balloc(self):
-        """ return the first free bloc index in the volume.
+        """
+            Return the first free bloc index in the volume.
+
         :return: the first free bloc
         """
         try:
@@ -92,17 +134,19 @@ class minix_file_system(object):
         return int(pos + self.disk.super_block.s_firstdatazone)
 
     def bfree(self, blocnum):
-        """ toggle a bloc as available for the next balloc()
+        """
+            Toggle a bloc as available for the next balloc()
+
         :param blocnum: blocnum is an index in the zone_map
         :return: True if bloc is free
         """
         self.zone_map[blocnum] = False
-        # TODO check if block indirect and free if not
 
         return ~self.zone_map[blocnum]
 
     def bmap(self, inode, blk):
-        """ Map a block number with his real block number on disk
+        """
+            Map a block number with his real block number on disk
 
         :param inode: the inode
         :param blk: the block number ( 0,.., n-1)
@@ -134,10 +178,13 @@ class minix_file_system(object):
             raise OutboundError('Error Block is out of bound')
 
     def lookup_entry(self, dinode, name):
-        """ lookup for a name in a directory, and return its inode number,
+        """
+            Lookup for a name in a directory, and return its inode number,
             given inode directory dinode
+
         :param dinode: directory inode
         :param name: dirname to search
+
         :return: directory's inode
         """
         blk = 0
@@ -164,7 +211,12 @@ class minix_file_system(object):
             return False
 
     def namei(self, path):
-        """  take a path as input and return it's inode number
+        """
+            Take a path as input and return it's inode number
+
+            Start from root and recursively look for subdir until
+            last one fund and return the inode number of file
+            (or dir)
 
         :param path: path to search
         :return: inode of the file
@@ -187,7 +239,8 @@ class minix_file_system(object):
         return self.inode
 
     def ialloc_bloc(self, ino, blk):
-        """ Add a new data block at pos blk and return its real position on disk
+        """
+            Add a new data block at pos blk and return its real position on disk
 
         :param inode: the inode to add at
         :param blk: the block number to add (0,...,n-1)
@@ -199,24 +252,52 @@ class minix_file_system(object):
                 inode.i_zone[blk] = self.balloc()
             return inode.i_zone[blk]
 
-        elif blk < MINIX_INODE_PER_BLOCK + 7:
+        if blk < MINIX_INODE_PER_BLOCK + 7:
+            if not inode.i_indir_zone:
+                inode.i_indir_zone = self.balloc()
+                # write a new empty block to disk
+                self.disk.write_bloc(bytearray("".ljust(1024, '\x00')), inode.i_indir_zone)
+                log.debug("A new indirect block has been created")
+
             # if not already allowed write modified indirect block
-            if not struct.unpack_from('H', self.disk.read_bloc(inode.i_zone[7]), blk - 7):
+            if not struct.unpack_from('H', self.disk.read_bloc(inode.i_indir_zone), blk-7):
                 self.disk.write_bloc(2 + self.disk.super_block.s_imap_blocks,
-                                     struct.pack_into('H', self.disk.read_bloc(inode.i_zone[7], blk - 7), blk - 7,
+                                     struct.pack_into('H', self.disk.read_bloc(inode.i_indir_zone, blk-7), blk-7,
                                                       self.balloc()))
             # now we can return it
-            return struct.unpack_from('H', self.disk.read_bloc(inode.i_zone[7]), blk - 7)
+            return struct.unpack_from('H', self.disk.read_bloc(inode.i_indir_zone), blk-7)
+
+        if blk < (7 + MINIX_ZONESZ * (MINIX_ZONESZ+1)):
+            # if double indirect block don't exist we need to add it in inode (and write it to disk)
+            if not inode.i_dbl_indr_zone:
+                inode.i_dbl_indr_zone = self.balloc()
+                # write a new empty block to disk
+                self.disk.write_bloc(inode.i_dbl_indr_zone, bytearray("".ljust(1024, '\x00')))
+                log.debug("A new double indirect block has been created")
+
+            # if this block is the first in the double indirect block we need to create an empty block for it
+            if not struct.unpack_from('H', self.disk.read_bloc(inode.i_dbl_indr_zone), (blk-7-MINIX_ZONESZ)/MINIX_ZONESZ):
+                new_blk = self.balloc()
+                self.disk.write_bloc(inode.i_dbl_indr_zone, struct.pack_into('H',
+                                self.disk.read_bloc(inode.i_dbl_indr_zone), (blk-7) % MINIX_ZONESZ, new_blk))
+                # write a new empty block
+                self.disk.write_bloc(bytearray("".ljust(1024, '\x00')), new_blk)
+
+            # if not already allocated write modified second indirect block
+            if not struct.unpack_from('H', self.disk.read_bloc(struct.unpack_from('H', self.disk.read_bloc(inode.i_dbl_indr_zone),
+                                                      (blk-7-MINIX_ZONESZ) / MINIX_ZONESZ)), (blk-7) % MINIX_ZONESZ):
+
+                struct.pack_into('H', self.disk.read_bloc(struct.unpack_from('H', inode.i_dbl_indr_zone,
+                                          (blk-7-MINIX_ZONESZ) / MINIX_ZONESZ)), (blk-7) % MINIX_ZONESZ, self.balloc())
+
+            # if block was previously allocated it's
+            # now we return it - new one if a condition was
+            return struct.unpack_from('H', struct.unpack_from('H', self.disk.read_bloc(inode.i_dbl_indr_zone),
+                                                    (blk-7-MINIX_ZONESZ) / MINIX_ZONESZ), (blk-7) % MINIX_ZONESZ)
 
         else:
-            # if not already allowed write modified second indirect block
-            if not struct.unpack_from('H', self.disk.read_bloc(inode.i_zone[8]), blk - 7 - MINIX_INODE_PER_BLOCK):
-                self.disk.write_bloc(2 + self.disk.super_block.s_imap_blocks,
-                                     struct.pack_into('H', self.disk.read_bloc(inode.i_zone[8],
-                                                                               blk - 7 - MINIX_INODE_PER_BLOCK),
-                                                      blk - 7 - MINIX_INODE_PER_BLOCK, self.balloc()))
-            # now we can return it
-            return struct.unpack_from('H', self.disk.read_bloc(inode.i_zone[8]), blk - 7 - MINIX_INODE_PER_BLOCK)
+            log.error('Error bmap, block is out of bound')
+            raise OutboundError('Error Block is out of bound')
 
     def add_entry(self, dinode, name, new_node_num):
         """ add a new entry in a dinode (dir)
@@ -271,6 +352,7 @@ class minix_file_system(object):
         :param name: filename to remove
         """
         blk = -1
+
         inode = self.lookup_entry(dinode, name)
         if not self.ifree(inode):
             raise DelEntryError('Error deleting entry filename not found')
@@ -280,7 +362,11 @@ class minix_file_system(object):
         # while dir block search inode
         while dir_block:
             blk += 1
+            # try:
             dir_block = self.bmap(dinode, blk)
+            # except:
+            #     raise DelEntryError('Error deleting entry filename not found')
+
             # take a block
             dir_content = bytearray(self.disk.read_bloc(dir_block))
 
@@ -296,7 +382,12 @@ class minix_file_system(object):
                         self.inodes_list[inode].i_nlinks -= 1
                     else:
                         fb = 0
-                        file_blk = self.bmap(self.inodes_list[inode], fb)
+                        try:
+                            file_blk = self.bmap(self.inodes_list[inode], fb)
+                        except:
+                            log.error('Error deleting entry filename not found')
+                            raise DelEntryError('Error deleting entry filename not found')
+
                         # free file's data block
                         while file_blk:
                             self.bfree(file_blk)

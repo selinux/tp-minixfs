@@ -189,3 +189,6 @@ docs/rapport.fls
 docs/rapport.lot
 docs/.ipynb_checkpoints
 .ipynb_checkpoints
+
+docs/rapport.bbl
+docs/rapport.blg
