@@ -169,13 +169,21 @@ target/
 
 
 
-minixfs_lab1.img.gen
-minixfs_lab1.img.genwrite
+filesystems/minixfs_lab1.img.gen
+filesystems/minixfs_lab2.img.gen
+filesystems/minixfs_lab1.img.genwrite
+filesystems/minixfs_lab2.img.genwrite
 server
-minixfs_lab1.img
-minixfs_lab2.img
-remote_minixfs_lab1.img
-remote_minixfs_lab2.img
+filesystems/remote_minixfs_lab1.img
+filesystems/remote_minixfs_lab2.img
 docs/rapport.toc
 docs/rapport.synctex.gz
 docs/rapport.aux
+
+
+docs/rapport.lof
+docs/rapport.dvi
+docs/rapport.fdb_latexmk
+docs/rapport.fls
+docs/rapport.lot
+docs/.ipynb_checkpoints

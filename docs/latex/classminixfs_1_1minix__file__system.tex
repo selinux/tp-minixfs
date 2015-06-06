@@ -1,0 +1,331 @@
+\hypertarget{classminixfs_1_1minix__file__system}{}\section{minix\+\_\+file\+\_\+system Class Reference}
+\label{classminixfs_1_1minix__file__system}\index{minix\+\_\+file\+\_\+system@{minix\+\_\+file\+\_\+system}}
+
+
+Inheritance diagram for minix\+\_\+file\+\_\+system\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=179pt]{classminixfs_1_1minix__file__system__inherit__graph}
+\end{center}
+\end{figure}
+
+
+Collaboration diagram for minix\+\_\+file\+\_\+system\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=179pt]{classminixfs_1_1minix__file__system__coll__graph}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{classminixfs_1_1minix__file__system_ac775ee34451fdfa742b318538164070e}{}def {\bfseries \+\_\+\+\_\+init\+\_\+\+\_\+}\label{classminixfs_1_1minix__file__system_ac775ee34451fdfa742b318538164070e}
+
+\item 
+def \hyperlink{classminixfs_1_1minix__file__system_ac753955974e9b3614eec2d1cf8b93639}{ialloc} (self)
+\item 
+def \hyperlink{classminixfs_1_1minix__file__system_a55ed46422438bf8eab80de66acd378b1}{ifree} (self, inodnum)
+\item 
+def \hyperlink{classminixfs_1_1minix__file__system_a51021b42e8af995e5ac74979a7aee885}{balloc} (self)
+\item 
+def \hyperlink{classminixfs_1_1minix__file__system_a54f50fa051d1d77d753ce8688ed7e6ba}{bfree} (self, blocnum)
+\item 
+def \hyperlink{classminixfs_1_1minix__file__system_a07b52e5651158cb195a01a5e6234c996}{bmap} (self, inode, blk)
+\item 
+def \hyperlink{classminixfs_1_1minix__file__system_adf96ecc47840b99f288a32cd06e3abd2}{lookup\+\_\+entry} (self, dinode, name)
+\item 
+def \hyperlink{classminixfs_1_1minix__file__system_a76146b8729e2a37f75ee55908bee4274}{namei} (self, path)
+\item 
+def \hyperlink{classminixfs_1_1minix__file__system_a6a0b6aa1991aeb4c025efd78b8ef91b3}{ialloc\+\_\+bloc} (self, ino, blk)
+\item 
+def \hyperlink{classminixfs_1_1minix__file__system_a166b0076ab0da67e19ff5df78a3d0993}{add\+\_\+entry} (self, dinode, name, new\+\_\+node\+\_\+num)
+\item 
+def \hyperlink{classminixfs_1_1minix__file__system_af0e1a37032a14afc0f39854b1a9a3b9e}{del\+\_\+entry} (self, dinode, name)
+\item 
+def \hyperlink{classminixfs_1_1minix__file__system_a000dc714be8532702febb6be755908dc}{close\+\_\+connection} (self)
+\item 
+def \hyperlink{classminixfs_1_1minix__file__system_ac93c361341836b72c9dce468707c2705}{is\+\_\+dir} (self, inode)
+\item 
+def \hyperlink{classminixfs_1_1minix__file__system_a293eb36362ad3007d5091e16e2fe6550}{is\+\_\+file} (self, inode)
+\item 
+def \hyperlink{classminixfs_1_1minix__file__system_a2b4c5bb96e8c76aa6bc4cd4813955e37}{is\+\_\+device} (self, inode)
+\item 
+def \hyperlink{classminixfs_1_1minix__file__system_aa39b3f3c9b4b0f53db847ec573af0ed7}{is\+\_\+pipe} (self, inode)
+\item 
+def \hyperlink{classminixfs_1_1minix__file__system_a1ad61c8572bc6ac7095a1fe919f37bff}{is\+\_\+device\+\_\+bloc} (self, inode)
+\item 
+def \hyperlink{classminixfs_1_1minix__file__system_a8bc62266489b102f6b4355418f7fcc97}{is\+\_\+link} (self, inode)
+\item 
+def \hyperlink{classminixfs_1_1minix__file__system_ab9c789d57e93f265d894591bc684915d}{update\+\_\+bmap} (self)
+\item 
+\hypertarget{classminixfs_1_1minix__file__system_a4123373564284dee6575bf8df6bc26b6}{}def {\bfseries write\+\_\+bloc\+\_\+list} (self)\label{classminixfs_1_1minix__file__system_a4123373564284dee6575bf8df6bc26b6}
+
+\end{DoxyCompactItemize}
+\subsection*{Data Fields}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{classminixfs_1_1minix__file__system_a36c7b5664c44733896398e42189f7c6f}{}{\bfseries disk}\label{classminixfs_1_1minix__file__system_a36c7b5664c44733896398e42189f7c6f}
+
+\item 
+\hypertarget{classminixfs_1_1minix__file__system_a1f4f91840a510cd7fc5bcb80c4be2e8d}{}{\bfseries inode\+\_\+map}\label{classminixfs_1_1minix__file__system_a1f4f91840a510cd7fc5bcb80c4be2e8d}
+
+\item 
+\hypertarget{classminixfs_1_1minix__file__system_a73bbcc7382e0e5f4e3e39c4d34e823b1}{}{\bfseries zone\+\_\+map}\label{classminixfs_1_1minix__file__system_a73bbcc7382e0e5f4e3e39c4d34e823b1}
+
+\item 
+\hypertarget{classminixfs_1_1minix__file__system_ace64866ea69e2b7b947d9ee2b97820a2}{}{\bfseries inodes\+\_\+list}\label{classminixfs_1_1minix__file__system_ace64866ea69e2b7b947d9ee2b97820a2}
+
+\item 
+\hypertarget{classminixfs_1_1minix__file__system_ab74e6bf80237ddc4109968cedc58c151}{}{\bfseries name}\label{classminixfs_1_1minix__file__system_ab74e6bf80237ddc4109968cedc58c151}
+
+\item 
+\hypertarget{classminixfs_1_1minix__file__system_ac6f54b4e2a370e4eb77474268c5369be}{}{\bfseries inode}\label{classminixfs_1_1minix__file__system_ac6f54b4e2a370e4eb77474268c5369be}
+
+\item 
+\hypertarget{classminixfs_1_1minix__file__system_a6858851eee0e05f318897984757b59dc}{}{\bfseries content}\label{classminixfs_1_1minix__file__system_a6858851eee0e05f318897984757b59dc}
+
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\begin{DoxyVerb}    The main class
+\end{DoxyVerb}
+ 
+
+\subsection{Member Function Documentation}
+\hypertarget{classminixfs_1_1minix__file__system_a166b0076ab0da67e19ff5df78a3d0993}{}\index{minixfs\+::minix\+\_\+file\+\_\+system@{minixfs\+::minix\+\_\+file\+\_\+system}!add\+\_\+entry@{add\+\_\+entry}}
+\index{add\+\_\+entry@{add\+\_\+entry}!minixfs\+::minix\+\_\+file\+\_\+system@{minixfs\+::minix\+\_\+file\+\_\+system}}
+\subsubsection[{add\+\_\+entry}]{\setlength{\rightskip}{0pt plus 5cm}def add\+\_\+entry (
+\begin{DoxyParamCaption}
+\item[{}]{self, }
+\item[{}]{dinode, }
+\item[{}]{name, }
+\item[{}]{new\+\_\+node\+\_\+num}
+\end{DoxyParamCaption}
+)}\label{classminixfs_1_1minix__file__system_a166b0076ab0da67e19ff5df78a3d0993}
+\begin{DoxyVerb}add a new entry in a dinode (dir)
+
+:param dinode: inode number of the dir
+:param name: name of the file to be added
+:param new_node_num: inode of the new file
+\end{DoxyVerb}
+ \hypertarget{classminixfs_1_1minix__file__system_a51021b42e8af995e5ac74979a7aee885}{}\index{minixfs\+::minix\+\_\+file\+\_\+system@{minixfs\+::minix\+\_\+file\+\_\+system}!balloc@{balloc}}
+\index{balloc@{balloc}!minixfs\+::minix\+\_\+file\+\_\+system@{minixfs\+::minix\+\_\+file\+\_\+system}}
+\subsubsection[{balloc}]{\setlength{\rightskip}{0pt plus 5cm}def balloc (
+\begin{DoxyParamCaption}
+\item[{}]{self}
+\end{DoxyParamCaption}
+)}\label{classminixfs_1_1minix__file__system_a51021b42e8af995e5ac74979a7aee885}
+\begin{DoxyVerb}return the first free bloc index in the volume.
+:return: the first free bloc
+\end{DoxyVerb}
+ \hypertarget{classminixfs_1_1minix__file__system_a54f50fa051d1d77d753ce8688ed7e6ba}{}\index{minixfs\+::minix\+\_\+file\+\_\+system@{minixfs\+::minix\+\_\+file\+\_\+system}!bfree@{bfree}}
+\index{bfree@{bfree}!minixfs\+::minix\+\_\+file\+\_\+system@{minixfs\+::minix\+\_\+file\+\_\+system}}
+\subsubsection[{bfree}]{\setlength{\rightskip}{0pt plus 5cm}def bfree (
+\begin{DoxyParamCaption}
+\item[{}]{self, }
+\item[{}]{blocnum}
+\end{DoxyParamCaption}
+)}\label{classminixfs_1_1minix__file__system_a54f50fa051d1d77d753ce8688ed7e6ba}
+\begin{DoxyVerb}toggle a bloc as available for the next balloc()
+:param blocnum: blocnum is an index in the zone_map
+:return: True if bloc is free
+\end{DoxyVerb}
+ \hypertarget{classminixfs_1_1minix__file__system_a07b52e5651158cb195a01a5e6234c996}{}\index{minixfs\+::minix\+\_\+file\+\_\+system@{minixfs\+::minix\+\_\+file\+\_\+system}!bmap@{bmap}}
+\index{bmap@{bmap}!minixfs\+::minix\+\_\+file\+\_\+system@{minixfs\+::minix\+\_\+file\+\_\+system}}
+\subsubsection[{bmap}]{\setlength{\rightskip}{0pt plus 5cm}def bmap (
+\begin{DoxyParamCaption}
+\item[{}]{self, }
+\item[{}]{inode, }
+\item[{}]{blk}
+\end{DoxyParamCaption}
+)}\label{classminixfs_1_1minix__file__system_a07b52e5651158cb195a01a5e6234c996}
+\begin{DoxyVerb}Map a block number with his real block number on disk
+
+:param inode: the inode
+:param blk: the block number ( 0,.., n-1)
+:return: the corresponding block number on disk
+\end{DoxyVerb}
+ \hypertarget{classminixfs_1_1minix__file__system_a000dc714be8532702febb6be755908dc}{}\index{minixfs\+::minix\+\_\+file\+\_\+system@{minixfs\+::minix\+\_\+file\+\_\+system}!close\+\_\+connection@{close\+\_\+connection}}
+\index{close\+\_\+connection@{close\+\_\+connection}!minixfs\+::minix\+\_\+file\+\_\+system@{minixfs\+::minix\+\_\+file\+\_\+system}}
+\subsubsection[{close\+\_\+connection}]{\setlength{\rightskip}{0pt plus 5cm}def close\+\_\+connection (
+\begin{DoxyParamCaption}
+\item[{}]{self}
+\end{DoxyParamCaption}
+)}\label{classminixfs_1_1minix__file__system_a000dc714be8532702febb6be755908dc}
+\begin{DoxyVerb}close connection with remote block server  \end{DoxyVerb}
+ \hypertarget{classminixfs_1_1minix__file__system_af0e1a37032a14afc0f39854b1a9a3b9e}{}\index{minixfs\+::minix\+\_\+file\+\_\+system@{minixfs\+::minix\+\_\+file\+\_\+system}!del\+\_\+entry@{del\+\_\+entry}}
+\index{del\+\_\+entry@{del\+\_\+entry}!minixfs\+::minix\+\_\+file\+\_\+system@{minixfs\+::minix\+\_\+file\+\_\+system}}
+\subsubsection[{del\+\_\+entry}]{\setlength{\rightskip}{0pt plus 5cm}def del\+\_\+entry (
+\begin{DoxyParamCaption}
+\item[{}]{self, }
+\item[{}]{dinode, }
+\item[{}]{name}
+\end{DoxyParamCaption}
+)}\label{classminixfs_1_1minix__file__system_af0e1a37032a14afc0f39854b1a9a3b9e}
+\begin{DoxyVerb}delete filename from dir
+
+:param dinode: the directory's file
+:param name: filename to remove
+\end{DoxyVerb}
+ \hypertarget{classminixfs_1_1minix__file__system_ac753955974e9b3614eec2d1cf8b93639}{}\index{minixfs\+::minix\+\_\+file\+\_\+system@{minixfs\+::minix\+\_\+file\+\_\+system}!ialloc@{ialloc}}
+\index{ialloc@{ialloc}!minixfs\+::minix\+\_\+file\+\_\+system@{minixfs\+::minix\+\_\+file\+\_\+system}}
+\subsubsection[{ialloc}]{\setlength{\rightskip}{0pt plus 5cm}def ialloc (
+\begin{DoxyParamCaption}
+\item[{}]{self}
+\end{DoxyParamCaption}
+)}\label{classminixfs_1_1minix__file__system_ac753955974e9b3614eec2d1cf8b93639}
+\begin{DoxyVerb}return the first free inode number available
+    starting at 0 and upto s.n_inodes-1.
+    The bitmap ranges from index 0 to inod_num-1
+    Inode 0 is never and is always set.
+    according to the inodes bitmap
+:return: the first free inode
+\end{DoxyVerb}
+ \hypertarget{classminixfs_1_1minix__file__system_a6a0b6aa1991aeb4c025efd78b8ef91b3}{}\index{minixfs\+::minix\+\_\+file\+\_\+system@{minixfs\+::minix\+\_\+file\+\_\+system}!ialloc\+\_\+bloc@{ialloc\+\_\+bloc}}
+\index{ialloc\+\_\+bloc@{ialloc\+\_\+bloc}!minixfs\+::minix\+\_\+file\+\_\+system@{minixfs\+::minix\+\_\+file\+\_\+system}}
+\subsubsection[{ialloc\+\_\+bloc}]{\setlength{\rightskip}{0pt plus 5cm}def ialloc\+\_\+bloc (
+\begin{DoxyParamCaption}
+\item[{}]{self, }
+\item[{}]{ino, }
+\item[{}]{blk}
+\end{DoxyParamCaption}
+)}\label{classminixfs_1_1minix__file__system_a6a0b6aa1991aeb4c025efd78b8ef91b3}
+\begin{DoxyVerb}Add a new data block at pos blk and return its real position on disk
+
+:param inode: the inode to add at
+:param blk: the block number to add (0,...,n-1)
+:return: the block address
+\end{DoxyVerb}
+ \hypertarget{classminixfs_1_1minix__file__system_a55ed46422438bf8eab80de66acd378b1}{}\index{minixfs\+::minix\+\_\+file\+\_\+system@{minixfs\+::minix\+\_\+file\+\_\+system}!ifree@{ifree}}
+\index{ifree@{ifree}!minixfs\+::minix\+\_\+file\+\_\+system@{minixfs\+::minix\+\_\+file\+\_\+system}}
+\subsubsection[{ifree}]{\setlength{\rightskip}{0pt plus 5cm}def ifree (
+\begin{DoxyParamCaption}
+\item[{}]{self, }
+\item[{}]{inodnum}
+\end{DoxyParamCaption}
+)}\label{classminixfs_1_1minix__file__system_a55ed46422438bf8eab80de66acd378b1}
+\begin{DoxyVerb}toggle an inode as available for the next ialloc()
+:param inodnum:
+:return: True if inodnum == False
+\end{DoxyVerb}
+ \hypertarget{classminixfs_1_1minix__file__system_a2b4c5bb96e8c76aa6bc4cd4813955e37}{}\index{minixfs\+::minix\+\_\+file\+\_\+system@{minixfs\+::minix\+\_\+file\+\_\+system}!is\+\_\+device@{is\+\_\+device}}
+\index{is\+\_\+device@{is\+\_\+device}!minixfs\+::minix\+\_\+file\+\_\+system@{minixfs\+::minix\+\_\+file\+\_\+system}}
+\subsubsection[{is\+\_\+device}]{\setlength{\rightskip}{0pt plus 5cm}def is\+\_\+device (
+\begin{DoxyParamCaption}
+\item[{}]{self, }
+\item[{}]{inode}
+\end{DoxyParamCaption}
+)}\label{classminixfs_1_1minix__file__system_a2b4c5bb96e8c76aa6bc4cd4813955e37}
+\begin{DoxyVerb}Test if inode is a device
+:param inode:
+:return: True if inode is a device
+\end{DoxyVerb}
+ \hypertarget{classminixfs_1_1minix__file__system_a1ad61c8572bc6ac7095a1fe919f37bff}{}\index{minixfs\+::minix\+\_\+file\+\_\+system@{minixfs\+::minix\+\_\+file\+\_\+system}!is\+\_\+device\+\_\+bloc@{is\+\_\+device\+\_\+bloc}}
+\index{is\+\_\+device\+\_\+bloc@{is\+\_\+device\+\_\+bloc}!minixfs\+::minix\+\_\+file\+\_\+system@{minixfs\+::minix\+\_\+file\+\_\+system}}
+\subsubsection[{is\+\_\+device\+\_\+bloc}]{\setlength{\rightskip}{0pt plus 5cm}def is\+\_\+device\+\_\+bloc (
+\begin{DoxyParamCaption}
+\item[{}]{self, }
+\item[{}]{inode}
+\end{DoxyParamCaption}
+)}\label{classminixfs_1_1minix__file__system_a1ad61c8572bc6ac7095a1fe919f37bff}
+\begin{DoxyVerb}Test if inode is a device bloc
+:param inode:
+:return: True if inode is a device block
+\end{DoxyVerb}
+ \hypertarget{classminixfs_1_1minix__file__system_ac93c361341836b72c9dce468707c2705}{}\index{minixfs\+::minix\+\_\+file\+\_\+system@{minixfs\+::minix\+\_\+file\+\_\+system}!is\+\_\+dir@{is\+\_\+dir}}
+\index{is\+\_\+dir@{is\+\_\+dir}!minixfs\+::minix\+\_\+file\+\_\+system@{minixfs\+::minix\+\_\+file\+\_\+system}}
+\subsubsection[{is\+\_\+dir}]{\setlength{\rightskip}{0pt plus 5cm}def is\+\_\+dir (
+\begin{DoxyParamCaption}
+\item[{}]{self, }
+\item[{}]{inode}
+\end{DoxyParamCaption}
+)}\label{classminixfs_1_1minix__file__system_ac93c361341836b72c9dce468707c2705}
+\begin{DoxyVerb}Test if inode is a dir
+:param inode:
+:return: True if inode is a dir
+\end{DoxyVerb}
+ \hypertarget{classminixfs_1_1minix__file__system_a293eb36362ad3007d5091e16e2fe6550}{}\index{minixfs\+::minix\+\_\+file\+\_\+system@{minixfs\+::minix\+\_\+file\+\_\+system}!is\+\_\+file@{is\+\_\+file}}
+\index{is\+\_\+file@{is\+\_\+file}!minixfs\+::minix\+\_\+file\+\_\+system@{minixfs\+::minix\+\_\+file\+\_\+system}}
+\subsubsection[{is\+\_\+file}]{\setlength{\rightskip}{0pt plus 5cm}def is\+\_\+file (
+\begin{DoxyParamCaption}
+\item[{}]{self, }
+\item[{}]{inode}
+\end{DoxyParamCaption}
+)}\label{classminixfs_1_1minix__file__system_a293eb36362ad3007d5091e16e2fe6550}
+\begin{DoxyVerb}Test if inode is a file
+:param inode:
+:return: True if inode is a file
+\end{DoxyVerb}
+ \hypertarget{classminixfs_1_1minix__file__system_a8bc62266489b102f6b4355418f7fcc97}{}\index{minixfs\+::minix\+\_\+file\+\_\+system@{minixfs\+::minix\+\_\+file\+\_\+system}!is\+\_\+link@{is\+\_\+link}}
+\index{is\+\_\+link@{is\+\_\+link}!minixfs\+::minix\+\_\+file\+\_\+system@{minixfs\+::minix\+\_\+file\+\_\+system}}
+\subsubsection[{is\+\_\+link}]{\setlength{\rightskip}{0pt plus 5cm}def is\+\_\+link (
+\begin{DoxyParamCaption}
+\item[{}]{self, }
+\item[{}]{inode}
+\end{DoxyParamCaption}
+)}\label{classminixfs_1_1minix__file__system_a8bc62266489b102f6b4355418f7fcc97}
+\begin{DoxyVerb}Test if inode is a device link
+:param inode:
+:return: True if inode is a link
+\end{DoxyVerb}
+ \hypertarget{classminixfs_1_1minix__file__system_aa39b3f3c9b4b0f53db847ec573af0ed7}{}\index{minixfs\+::minix\+\_\+file\+\_\+system@{minixfs\+::minix\+\_\+file\+\_\+system}!is\+\_\+pipe@{is\+\_\+pipe}}
+\index{is\+\_\+pipe@{is\+\_\+pipe}!minixfs\+::minix\+\_\+file\+\_\+system@{minixfs\+::minix\+\_\+file\+\_\+system}}
+\subsubsection[{is\+\_\+pipe}]{\setlength{\rightskip}{0pt plus 5cm}def is\+\_\+pipe (
+\begin{DoxyParamCaption}
+\item[{}]{self, }
+\item[{}]{inode}
+\end{DoxyParamCaption}
+)}\label{classminixfs_1_1minix__file__system_aa39b3f3c9b4b0f53db847ec573af0ed7}
+\begin{DoxyVerb}Test if inode is a pipe
+:param inode:
+:return: True if inode is a pipe
+\end{DoxyVerb}
+ \hypertarget{classminixfs_1_1minix__file__system_adf96ecc47840b99f288a32cd06e3abd2}{}\index{minixfs\+::minix\+\_\+file\+\_\+system@{minixfs\+::minix\+\_\+file\+\_\+system}!lookup\+\_\+entry@{lookup\+\_\+entry}}
+\index{lookup\+\_\+entry@{lookup\+\_\+entry}!minixfs\+::minix\+\_\+file\+\_\+system@{minixfs\+::minix\+\_\+file\+\_\+system}}
+\subsubsection[{lookup\+\_\+entry}]{\setlength{\rightskip}{0pt plus 5cm}def lookup\+\_\+entry (
+\begin{DoxyParamCaption}
+\item[{}]{self, }
+\item[{}]{dinode, }
+\item[{}]{name}
+\end{DoxyParamCaption}
+)}\label{classminixfs_1_1minix__file__system_adf96ecc47840b99f288a32cd06e3abd2}
+\begin{DoxyVerb}lookup for a name in a directory, and return its inode number,
+    given inode directory dinode
+:param dinode: directory inode
+:param name: dirname to search
+:return: directory's inode
+\end{DoxyVerb}
+ \hypertarget{classminixfs_1_1minix__file__system_a76146b8729e2a37f75ee55908bee4274}{}\index{minixfs\+::minix\+\_\+file\+\_\+system@{minixfs\+::minix\+\_\+file\+\_\+system}!namei@{namei}}
+\index{namei@{namei}!minixfs\+::minix\+\_\+file\+\_\+system@{minixfs\+::minix\+\_\+file\+\_\+system}}
+\subsubsection[{namei}]{\setlength{\rightskip}{0pt plus 5cm}def namei (
+\begin{DoxyParamCaption}
+\item[{}]{self, }
+\item[{}]{path}
+\end{DoxyParamCaption}
+)}\label{classminixfs_1_1minix__file__system_a76146b8729e2a37f75ee55908bee4274}
+\begin{DoxyVerb}take a path as input and return it's inode number
+
+:param path: path to search
+:return: inode of the file
+\end{DoxyVerb}
+ \hypertarget{classminixfs_1_1minix__file__system_ab9c789d57e93f265d894591bc684915d}{}\index{minixfs\+::minix\+\_\+file\+\_\+system@{minixfs\+::minix\+\_\+file\+\_\+system}!update\+\_\+bmap@{update\+\_\+bmap}}
+\index{update\+\_\+bmap@{update\+\_\+bmap}!minixfs\+::minix\+\_\+file\+\_\+system@{minixfs\+::minix\+\_\+file\+\_\+system}}
+\subsubsection[{update\+\_\+bmap}]{\setlength{\rightskip}{0pt plus 5cm}def update\+\_\+bmap (
+\begin{DoxyParamCaption}
+\item[{}]{self}
+\end{DoxyParamCaption}
+)}\label{classminixfs_1_1minix__file__system_ab9c789d57e93f265d894591bc684915d}
+\begin{DoxyVerb}Write bitarray map of data to disk
+    cos we need a consistent filesystem
+:return: 0
+\end{DoxyVerb}
+ 
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+minixfs.\+py\end{DoxyCompactItemize}

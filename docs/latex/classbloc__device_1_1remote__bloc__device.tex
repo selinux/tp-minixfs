@@ -1,0 +1,119 @@
+\hypertarget{classbloc__device_1_1remote__bloc__device}{}\section{remote\+\_\+bloc\+\_\+device Class Reference}
+\label{classbloc__device_1_1remote__bloc__device}\index{remote\+\_\+bloc\+\_\+device@{remote\+\_\+bloc\+\_\+device}}
+
+
+Inheritance diagram for remote\+\_\+bloc\+\_\+device\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=191pt]{classbloc__device_1_1remote__bloc__device__inherit__graph}
+\end{center}
+\end{figure}
+
+
+Collaboration diagram for remote\+\_\+bloc\+\_\+device\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=191pt]{classbloc__device_1_1remote__bloc__device__coll__graph}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{classbloc__device_1_1remote__bloc__device_ac775ee34451fdfa742b318538164070e}{}def {\bfseries \+\_\+\+\_\+init\+\_\+\+\_\+}\label{classbloc__device_1_1remote__bloc__device_ac775ee34451fdfa742b318538164070e}
+
+\item 
+def \hyperlink{classbloc__device_1_1remote__bloc__device_a41a65d7030dd1006b177d0bc24e1a12b}{\+\_\+\+\_\+del\+\_\+\+\_\+} (self)
+\item 
+def \hyperlink{classbloc__device_1_1remote__bloc__device_ae8140b2e367967eee2d1e692e1fa09ee}{read\+\_\+bloc}
+\item 
+def \hyperlink{classbloc__device_1_1remote__bloc__device_a1ebddb0555944a72d7d252d13364b943}{write\+\_\+bloc} (self, bloc\+\_\+num, bloc)
+\item 
+def \hyperlink{classbloc__device_1_1remote__bloc__device_a000dc714be8532702febb6be755908dc}{close\+\_\+connection} (self)
+\end{DoxyCompactItemize}
+\subsection*{Data Fields}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{classbloc__device_1_1remote__bloc__device_a0fe38b9d912af78392a2e7156fbfc6e6}{}{\bfseries blksize}\label{classbloc__device_1_1remote__bloc__device_a0fe38b9d912af78392a2e7156fbfc6e6}
+
+\item 
+\hypertarget{classbloc__device_1_1remote__bloc__device_a796eb6fe3758085a1379a7a873e41fff}{}{\bfseries requests}\label{classbloc__device_1_1remote__bloc__device_a796eb6fe3758085a1379a7a873e41fff}
+
+\item 
+\hypertarget{classbloc__device_1_1remote__bloc__device_a7bfddf7ae6ce1b1321289f622d4b117e}{}{\bfseries responses}\label{classbloc__device_1_1remote__bloc__device_a7bfddf7ae6ce1b1321289f622d4b117e}
+
+\item 
+\hypertarget{classbloc__device_1_1remote__bloc__device_a44f21d5190b5a6df8089f54799628d7e}{}{\bfseries fd}\label{classbloc__device_1_1remote__bloc__device_a44f21d5190b5a6df8089f54799628d7e}
+
+\item 
+\hypertarget{classbloc__device_1_1remote__bloc__device_ade010e06fb5903346750389bafe241c2}{}{\bfseries super\+\_\+block}\label{classbloc__device_1_1remote__bloc__device_ade010e06fb5903346750389bafe241c2}
+
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\begin{DoxyVerb}Class remote block device
+
+    This class connect to a remote bloc server and
+    read/write commands are passed through a
+    TCP socket
+\end{DoxyVerb}
+ 
+
+\subsection{Constructor \& Destructor Documentation}
+\hypertarget{classbloc__device_1_1remote__bloc__device_a41a65d7030dd1006b177d0bc24e1a12b}{}\index{bloc\+\_\+device\+::remote\+\_\+bloc\+\_\+device@{bloc\+\_\+device\+::remote\+\_\+bloc\+\_\+device}!\+\_\+\+\_\+del\+\_\+\+\_\+@{\+\_\+\+\_\+del\+\_\+\+\_\+}}
+\index{\+\_\+\+\_\+del\+\_\+\+\_\+@{\+\_\+\+\_\+del\+\_\+\+\_\+}!bloc\+\_\+device\+::remote\+\_\+bloc\+\_\+device@{bloc\+\_\+device\+::remote\+\_\+bloc\+\_\+device}}
+\subsubsection[{\+\_\+\+\_\+del\+\_\+\+\_\+}]{\setlength{\rightskip}{0pt plus 5cm}def \+\_\+\+\_\+del\+\_\+\+\_\+ (
+\begin{DoxyParamCaption}
+\item[{}]{self}
+\end{DoxyParamCaption}
+)}\label{classbloc__device_1_1remote__bloc__device_a41a65d7030dd1006b177d0bc24e1a12b}
+\begin{DoxyVerb}Cleanly close the socket \end{DoxyVerb}
+ 
+
+\subsection{Member Function Documentation}
+\hypertarget{classbloc__device_1_1remote__bloc__device_a000dc714be8532702febb6be755908dc}{}\index{bloc\+\_\+device\+::remote\+\_\+bloc\+\_\+device@{bloc\+\_\+device\+::remote\+\_\+bloc\+\_\+device}!close\+\_\+connection@{close\+\_\+connection}}
+\index{close\+\_\+connection@{close\+\_\+connection}!bloc\+\_\+device\+::remote\+\_\+bloc\+\_\+device@{bloc\+\_\+device\+::remote\+\_\+bloc\+\_\+device}}
+\subsubsection[{close\+\_\+connection}]{\setlength{\rightskip}{0pt plus 5cm}def close\+\_\+connection (
+\begin{DoxyParamCaption}
+\item[{}]{self}
+\end{DoxyParamCaption}
+)}\label{classbloc__device_1_1remote__bloc__device_a000dc714be8532702febb6be755908dc}
+\begin{DoxyVerb}close properly the socket \end{DoxyVerb}
+ \hypertarget{classbloc__device_1_1remote__bloc__device_ae8140b2e367967eee2d1e692e1fa09ee}{}\index{bloc\+\_\+device\+::remote\+\_\+bloc\+\_\+device@{bloc\+\_\+device\+::remote\+\_\+bloc\+\_\+device}!read\+\_\+bloc@{read\+\_\+bloc}}
+\index{read\+\_\+bloc@{read\+\_\+bloc}!bloc\+\_\+device\+::remote\+\_\+bloc\+\_\+device@{bloc\+\_\+device\+::remote\+\_\+bloc\+\_\+device}}
+\subsubsection[{read\+\_\+bloc}]{\setlength{\rightskip}{0pt plus 5cm}def read\+\_\+bloc (
+\begin{DoxyParamCaption}
+\item[{}]{self, }
+\item[{}]{bloc\+\_\+num, }
+\item[{}]{numofbloc = {\ttfamily 1}}
+\end{DoxyParamCaption}
+)}\label{classbloc__device_1_1remote__bloc__device_ae8140b2e367967eee2d1e692e1fa09ee}
+\begin{DoxyVerb}Read n block from block device server
+
+:param bloc_num: the bloc number
+:param numofbloc: number of block to be read
+:return: the response
+\end{DoxyVerb}
+ \hypertarget{classbloc__device_1_1remote__bloc__device_a1ebddb0555944a72d7d252d13364b943}{}\index{bloc\+\_\+device\+::remote\+\_\+bloc\+\_\+device@{bloc\+\_\+device\+::remote\+\_\+bloc\+\_\+device}!write\+\_\+bloc@{write\+\_\+bloc}}
+\index{write\+\_\+bloc@{write\+\_\+bloc}!bloc\+\_\+device\+::remote\+\_\+bloc\+\_\+device@{bloc\+\_\+device\+::remote\+\_\+bloc\+\_\+device}}
+\subsubsection[{write\+\_\+bloc}]{\setlength{\rightskip}{0pt plus 5cm}def write\+\_\+bloc (
+\begin{DoxyParamCaption}
+\item[{}]{self, }
+\item[{}]{bloc\+\_\+num, }
+\item[{}]{bloc}
+\end{DoxyParamCaption}
+)}\label{classbloc__device_1_1remote__bloc__device_a1ebddb0555944a72d7d252d13364b943}
+\begin{DoxyVerb}Write block from block device server
+
+:param bloc_num: the bloc number
+:param bloc: buffer to be written
+\end{DoxyVerb}
+ 
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+bloc\+\_\+device.\+py\end{DoxyCompactItemize}

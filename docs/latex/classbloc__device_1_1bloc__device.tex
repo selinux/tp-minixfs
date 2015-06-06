@@ -1,0 +1,106 @@
+\hypertarget{classbloc__device_1_1bloc__device}{}\section{bloc\+\_\+device Class Reference}
+\label{classbloc__device_1_1bloc__device}\index{bloc\+\_\+device@{bloc\+\_\+device}}
+
+
+Inheritance diagram for bloc\+\_\+device\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=152pt]{classbloc__device_1_1bloc__device__inherit__graph}
+\end{center}
+\end{figure}
+
+
+Collaboration diagram for bloc\+\_\+device\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=152pt]{classbloc__device_1_1bloc__device__coll__graph}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+def \hyperlink{classbloc__device_1_1bloc__device_ac6e95c27b9ae6c994fd74a9314a4fed4}{\+\_\+\+\_\+init\+\_\+\+\_\+} (self, blksize, pathname)
+\item 
+def \hyperlink{classbloc__device_1_1bloc__device_a41a65d7030dd1006b177d0bc24e1a12b}{\+\_\+\+\_\+del\+\_\+\+\_\+} (self)
+\item 
+def \hyperlink{classbloc__device_1_1bloc__device_ae8140b2e367967eee2d1e692e1fa09ee}{read\+\_\+bloc}
+\item 
+def \hyperlink{classbloc__device_1_1bloc__device_a1ebddb0555944a72d7d252d13364b943}{write\+\_\+bloc} (self, bloc\+\_\+num, bloc)
+\end{DoxyCompactItemize}
+\subsection*{Data Fields}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{classbloc__device_1_1bloc__device_a0fe38b9d912af78392a2e7156fbfc6e6}{}{\bfseries blksize}\label{classbloc__device_1_1bloc__device_a0fe38b9d912af78392a2e7156fbfc6e6}
+
+\item 
+\hypertarget{classbloc__device_1_1bloc__device_a44f21d5190b5a6df8089f54799628d7e}{}{\bfseries fd}\label{classbloc__device_1_1bloc__device_a44f21d5190b5a6df8089f54799628d7e}
+
+\item 
+\hypertarget{classbloc__device_1_1bloc__device_ade010e06fb5903346750389bafe241c2}{}{\bfseries super\+\_\+block}\label{classbloc__device_1_1bloc__device_ade010e06fb5903346750389bafe241c2}
+
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\begin{DoxyVerb}Class block device \end{DoxyVerb}
+ 
+
+\subsection{Constructor \& Destructor Documentation}
+\hypertarget{classbloc__device_1_1bloc__device_ac6e95c27b9ae6c994fd74a9314a4fed4}{}\index{bloc\+\_\+device\+::bloc\+\_\+device@{bloc\+\_\+device\+::bloc\+\_\+device}!\+\_\+\+\_\+init\+\_\+\+\_\+@{\+\_\+\+\_\+init\+\_\+\+\_\+}}
+\index{\+\_\+\+\_\+init\+\_\+\+\_\+@{\+\_\+\+\_\+init\+\_\+\+\_\+}!bloc\+\_\+device\+::bloc\+\_\+device@{bloc\+\_\+device\+::bloc\+\_\+device}}
+\subsubsection[{\+\_\+\+\_\+init\+\_\+\+\_\+}]{\setlength{\rightskip}{0pt plus 5cm}def \+\_\+\+\_\+init\+\_\+\+\_\+ (
+\begin{DoxyParamCaption}
+\item[{}]{self, }
+\item[{}]{blksize, }
+\item[{}]{pathname}
+\end{DoxyParamCaption}
+)}\label{classbloc__device_1_1bloc__device_ac6e95c27b9ae6c994fd74a9314a4fed4}
+\begin{DoxyVerb}Init a new block device \end{DoxyVerb}
+ \hypertarget{classbloc__device_1_1bloc__device_a41a65d7030dd1006b177d0bc24e1a12b}{}\index{bloc\+\_\+device\+::bloc\+\_\+device@{bloc\+\_\+device\+::bloc\+\_\+device}!\+\_\+\+\_\+del\+\_\+\+\_\+@{\+\_\+\+\_\+del\+\_\+\+\_\+}}
+\index{\+\_\+\+\_\+del\+\_\+\+\_\+@{\+\_\+\+\_\+del\+\_\+\+\_\+}!bloc\+\_\+device\+::bloc\+\_\+device@{bloc\+\_\+device\+::bloc\+\_\+device}}
+\subsubsection[{\+\_\+\+\_\+del\+\_\+\+\_\+}]{\setlength{\rightskip}{0pt plus 5cm}def \+\_\+\+\_\+del\+\_\+\+\_\+ (
+\begin{DoxyParamCaption}
+\item[{}]{self}
+\end{DoxyParamCaption}
+)}\label{classbloc__device_1_1bloc__device_a41a65d7030dd1006b177d0bc24e1a12b}
+\begin{DoxyVerb}Close properly the block device \end{DoxyVerb}
+ 
+
+\subsection{Member Function Documentation}
+\hypertarget{classbloc__device_1_1bloc__device_ae8140b2e367967eee2d1e692e1fa09ee}{}\index{bloc\+\_\+device\+::bloc\+\_\+device@{bloc\+\_\+device\+::bloc\+\_\+device}!read\+\_\+bloc@{read\+\_\+bloc}}
+\index{read\+\_\+bloc@{read\+\_\+bloc}!bloc\+\_\+device\+::bloc\+\_\+device@{bloc\+\_\+device\+::bloc\+\_\+device}}
+\subsubsection[{read\+\_\+bloc}]{\setlength{\rightskip}{0pt plus 5cm}def read\+\_\+bloc (
+\begin{DoxyParamCaption}
+\item[{}]{self, }
+\item[{}]{bloc\+\_\+num, }
+\item[{}]{numofblk = {\ttfamily 1}}
+\end{DoxyParamCaption}
+)}\label{classbloc__device_1_1bloc__device_ae8140b2e367967eee2d1e692e1fa09ee}
+\begin{DoxyVerb}Read n block from block device
+:param bloc_num: block number to be read
+:param numofblk: number of block to be read
+:return: the buffer
+\end{DoxyVerb}
+ \hypertarget{classbloc__device_1_1bloc__device_a1ebddb0555944a72d7d252d13364b943}{}\index{bloc\+\_\+device\+::bloc\+\_\+device@{bloc\+\_\+device\+::bloc\+\_\+device}!write\+\_\+bloc@{write\+\_\+bloc}}
+\index{write\+\_\+bloc@{write\+\_\+bloc}!bloc\+\_\+device\+::bloc\+\_\+device@{bloc\+\_\+device\+::bloc\+\_\+device}}
+\subsubsection[{write\+\_\+bloc}]{\setlength{\rightskip}{0pt plus 5cm}def write\+\_\+bloc (
+\begin{DoxyParamCaption}
+\item[{}]{self, }
+\item[{}]{bloc\+\_\+num, }
+\item[{}]{bloc}
+\end{DoxyParamCaption}
+)}\label{classbloc__device_1_1bloc__device_a1ebddb0555944a72d7d252d13364b943}
+\begin{DoxyVerb}Write a block to block device
+:param bloc_num: block number to be written
+:param bloc: buffer to be written
+:return: nb of bytes actually written
+\end{DoxyVerb}
+ 
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+bloc\+\_\+device.\+py\end{DoxyCompactItemize}
