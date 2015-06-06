@@ -173,6 +173,7 @@ filesystems/minixfs_lab1.img.gen
 filesystems/minixfs_lab2.img.gen
 filesystems/minixfs_lab1.img.genwrite
 filesystems/minixfs_lab2.img.genwrite
+filesystems/new.minixfs.img
 server
 filesystems/remote_minixfs_lab1.img
 filesystems/remote_minixfs_lab2.img
