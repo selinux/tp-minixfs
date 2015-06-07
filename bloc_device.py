@@ -19,7 +19,7 @@ import random as rand
 import logging as log
 
 # init the log
-log.basicConfig(format='%(levelname)s:%(message)s', level=log.INFO)
+log.basicConfig(format='%(levelname)s:%(message)s', level=log.DEBUG)
 
 
 class bloc_device(object):
@@ -45,9 +45,8 @@ class bloc_device(object):
         # with open(pathname, 'br') as self.fd:
         try:
             self.fd = open(pathname, 'r+b')
-        except OSError:
-            log.error("Error unable to open file system")
-            sys.exit("Error unable to open file system")
+        except:
+            raise BlocDeviceException("Error unable to open file system")
 
         self.super_block = minix_superbloc(self)
         log.info("file system opened successfully")
@@ -62,7 +61,7 @@ class bloc_device(object):
         new_sb[:sb.__len__()] = sb
         # self.write_bloc(MINIX_SUPER_BLOCK_NUM, new_sb)
         self.fd.close()
-        log.info("file system closed")
+        log.info("file descriptor closed")
 
     def read_bloc(self, bloc_num, numofblk=1):
         """ Read n block from block device
@@ -74,8 +73,7 @@ class bloc_device(object):
             self.fd.seek(bloc_num*self.blksize)
             buff = self.fd.read(int(numofblk*self.blksize))
         except:
-            log.error("Unable to read requested block")
-            raise RuntimeError("Unable to read requested block")
+            raise BlocDeviceException("Error read_bloc: Unable to read requested block")
 
         log.debug("Read block")
 
@@ -89,14 +87,13 @@ class bloc_device(object):
         """
         try:
             self.fd.seek(bloc_num*self.blksize)
-            n = self.fd.write(bloc)
-        except OSError:
-            log.error("Unable to write requested block to disk")
-            raise RuntimeError("Unable to write requested block to disk")
+            buff = self.fd.write(bloc)
+        except:
+            raise BlocDeviceException("Error Write_block: Unable to write requested block to disk")
 
         log.debug("Write block")
 
-        return n
+        return buff
 
 class remote_bloc_device(object):
     """ Class remote block device
@@ -120,7 +117,6 @@ class remote_bloc_device(object):
         and send read/write request to it.
 
     """
-
     def __init__(self, blksize, host="localhost", port=1234):
         self.blksize = blksize
         self.requests = []
@@ -128,9 +124,8 @@ class remote_bloc_device(object):
         self.fd = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         try:
             self.fd.connect((socket.gethostbyname(host), port))
-        except socket.error:
-            log.error("Couldnt connect to the block server")
-            sys.exit("Error unable to connect to block server")
+        except:
+            raise BlocDeviceException("Error remote_bloc_device: Couldnt connect to the block server")
 
         self.super_block = minix_superbloc(self)
         log.info("remote file system opened successfully")
@@ -140,6 +135,7 @@ class remote_bloc_device(object):
 
         """
         self.close_connection()
+        log.info('Closed bloc_device')
 
     def read_bloc(self, bloc_num, numofbloc=1):
         """ Read n block from block device server
@@ -167,8 +163,7 @@ class remote_bloc_device(object):
             while to_send < header_size:
                 sent = self.fd.send(self.requests[0][to_send:])
                 if sent == 0:
-                    log.error("Lost connection with the server while sending request")
-                    raise RuntimeError("socket connection broken")
+                    raise BlocDeviceException("Error read_bloc: Lost connection with the server while sending request")
                 to_send += sent
 
             log.debug("The request has been sent to the server")
@@ -181,7 +176,7 @@ class remote_bloc_device(object):
             while to_recv < response_size:
                 b = self.fd.recv(response_size-to_recv)
                 if b == '':
-                    raise RuntimeError("socket connection broken")
+                    raise BlocDeviceException("Error read_bloc: socket connection broken while receiving response")
 
                 response += b
                 to_recv += len(b)
@@ -197,8 +192,7 @@ class remote_bloc_device(object):
                 while to_recv < length:
                     b = self.fd.recv(length-to_recv)
                     if b == '':
-                        log.error("Lost connection with the server during response")
-                        raise RuntimeError("socket connection broken")
+                        raise BlocDeviceException("Error read_bloc: socket connection broken while receiving payload")
                     buff += b
                     to_recv += len(b)
 
@@ -208,8 +202,8 @@ class remote_bloc_device(object):
                 log.debug("A response has been received without any error")
 
             else:
-                log.error("The server return an error")
-                raise RuntimeError("fail to read response")
+                msg = "Error read_bloc: server return errno : "+h[1]
+                raise BlocDeviceException(msg)
 
         return buff
 
@@ -228,8 +222,7 @@ class remote_bloc_device(object):
 
         # Can't write block not eq to BLOCK_SIZE it's a block server after all ?!
         if bloc.__len__() != self.blksize:
-            log.error("Block isn't equal to block size")
-            raise BlockSizeError("Block isn't equal to block size")
+            raise BlocDeviceException("Error write_bloc: Block isn't equal to block size")
 
         to_send = 0
         header = struct.pack('!IIIII', magic, rw_type, handle, offset, self.blksize)
@@ -238,8 +231,8 @@ class remote_bloc_device(object):
         while to_send < len(header+bloc):
             sent = self.fd.send(self.requests[0][to_send:])
             if sent == 0:
-                log.error("Lost connection while send request")
-                raise RuntimeError("socket connection broken")
+                raise BlocDeviceException("Error write_bloc: Lost connection while sending request")
+
             to_send += sent
 
         # read response
@@ -250,15 +243,22 @@ class remote_bloc_device(object):
         while to_recv < response_size:
             b = self.fd.recv(response_size-to_recv)
             if b == '':
-                raise RuntimeError("socket connection broken")
+                raise BlocDeviceException("Error read_bloc: socket connection broken while receiving response")
             responce += b
             to_recv += len(b)
 
+        # Error treatment
         h = struct.unpack('!III', responce)
 
-        if h[0] != magic_resp or h[1] != 0:
-            log.error("Server write return error")
-            raise RuntimeError("Server write return error")
+        if h[0] != magic_resp:
+            raise BlocDeviceException('Error write_bloc: Server response unknown')
+
+        if h[1] != 0:
+            msg = "Error read_bloc: server return errno : "+h[1]
+            raise BlocDeviceException(msg)
+
+        if h[3] != handle:
+            raise BlocDeviceException('Error write_bloc: Server send an unknown response handler')
 
     def close_connection(self):
         """ Close properly the filesystem
@@ -280,16 +280,11 @@ class remote_bloc_device(object):
             self.fd.close()
             log.info("socket closed")
         except:
-            log.error("Error closing socket")
-            raise RuntimeError("Error closing socket")
+            raise BlocDeviceException("Error closing socket")
 
 
-class MyBaseException(Exception):
+class BlocDeviceException(Exception):
     """ Class minixfs exceptions  """
     def __init__(self, message):
-        super(MyBaseException, self).__init__(message)
-        self.message = message
-
-
-class BlockSizeError(MyBaseException):
-    pass
+        super(BlocDeviceException, self).__init__(message)
+        log.error(message)
