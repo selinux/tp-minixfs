@@ -100,13 +100,13 @@ class MinixTester(unittest.TestCase):
         self.minixfs = minix_file_system(server, port)
         self.assertEqual(self.minixfs.inode_map, INODEBITMAP1)
         self.assertEqual(self.minixfs.zone_map, ZONEBITMAP1)
-        self.minixfs.close_connection()
+        del self.minixfs
 
     # inode list content test
     def test_5_fs_inode_list(self):
         self.minixfs = minix_file_system(server, port)
-        self.minixfs.close_connection()
         self.assertEqual(self.minixfs.inodes_list, INODELIST)
+        del self.minixfs
 
     # testing ialloc()/ifree()
     # calling ialloc()/ifree() several time and checking
@@ -121,7 +121,7 @@ class MinixTester(unittest.TestCase):
         self.assertEqual(new_inode_num, NEWNODE2)
         new_inode_num = self.minixfs.ialloc()
         self.assertEqual(new_inode_num, NEWNODE3)
-        self.minixfs.close_connection()
+        del self.minixfs
 
     # testing balloc()/bfree()
     # same method as ialloc/ifree testing
@@ -135,7 +135,7 @@ class MinixTester(unittest.TestCase):
         self.assertEqual(new_bloc_num, NEWBLOC2)
         new_bloc_num = self.minixfs.balloc()
         self.assertEqual(new_bloc_num, NEWBLOC3)
-        self.minixfs.close_connection()
+        del self.minixfs
         return True
 
     # testing bmap function : just check that some bmaped
@@ -164,7 +164,7 @@ class MinixTester(unittest.TestCase):
             bmap_bloc = self.minixfs.bmap(self.minixfs.inodes_list[167], i)
             dbl_indir_bmap_list.append(bmap_bloc)
         self.assertEqual(dbl_indir_bmap_list, DBLINDIRMAP)
-        self.minixfs.close_connection()
+        del self.minixfs
 
     # testing lookup_entry function : give a known inode
     # number, and name, expect another inode number
@@ -177,7 +177,7 @@ class MinixTester(unittest.TestCase):
         # lookup_entry, inode 212 ("/usr/src/linux/fs/minix"), lookup for namei.c
         inode = self.minixfs.lookup_entry(self.minixfs.inodes_list[212], "namei.c")
         self.assertEqual(inode, LOOKUPINODE2)
-        self.minixfs.close_connection()
+        del self.minixfs
 
     # testing namei function. Test that a few paths return
     # the expected inode number.
@@ -189,7 +189,7 @@ class MinixTester(unittest.TestCase):
             namedinode = self.minixfs.namei(p)
             namedinodelist.append(namedinode)
         self.assertEqual(namedinodelist, NAMEDINODES)
-        self.minixfs.close_connection()
+        del self.minixfs
 
     # testing i_add_bloc, i_alloc_bloc ?
     # function allocate a new bloc for a given file in the bloc list.
@@ -214,7 +214,7 @@ class MinixTester(unittest.TestCase):
             bmap_bloc = self.minixfs.bmap(self.minixfs.inodes_list[56], i)
             dir_bmap_list.append(bmap_bloc)
         self.assertEqual(dir_bmap_list, IALLOC2)
-        self.minixfs.close_connection()
+        del self.minixfs
 
     # testing bloc contents and inode maps before and after add_entry
     def test_c_fs_addentry(self):
@@ -244,7 +244,7 @@ class MinixTester(unittest.TestCase):
         # put the original block back and close
         self.minixfs.disk.write_bloc(self.minixfs.bmap(self.minixfs.inodes_list[1], 0), ROOTNODEBLOC1)
         self.minixfs.disk.write_bloc(self.minixfs.bmap(self.minixfs.inodes_list[1], 1), tmpbloc2)
-        self.minixfs.close_connection()
+        del self.minixfs
 
     # testing bloc contents and inode maps before and after del_entry
     def test_d_fs_delentry(self):
@@ -263,7 +263,7 @@ class MinixTester(unittest.TestCase):
         self.assertEqual(nodebloc, NODE798BLOC1MOD)
         # put the originale block back and close
         self.minixfs.disk.write_bloc(self.minixfs.bmap(self.minixfs.inodes_list[nodenum], 0), NODE798BLOC1)
-        self.minixfs.close_connection()
+        del self.minixfs
 
 if __name__ == '__main__':
     unittest.main()

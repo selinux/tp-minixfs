@@ -90,7 +90,7 @@ class minix_file_system(object):
         try:
             pos = self.inode_map.index(False)
         except LookupError:
-            raise MinixfsError("Error no more free inode in file system")
+            raise MinixfsException("Error no more free inode in file system")
 
         self.inode_map[pos] = True
         self.inodes_list.pop(pos)  # clear
@@ -108,7 +108,7 @@ class minix_file_system(object):
 
         # can't free root or inexistant inode
         if inodnum > self.disk.super_block.s_imap_blocks*BLOCK_SIZE*8 or inodnum < 2:
-            raise MinixfsError("Error inode is out of bound")
+            raise MinixfsException("Error inode is out of bound")
 
         # inodes start at 1
         if self.inodes_list[inodnum]:
@@ -125,7 +125,7 @@ class minix_file_system(object):
         try:
             pos = self.zone_map.index(False)
         except ValueError:
-            raise MinixfsError("Error no space left on device")
+            raise MinixfsException("Error no space left on device")
 
         self.zone_map[pos] = True
 
@@ -173,7 +173,7 @@ class minix_file_system(object):
                 'H', self.disk.read_bloc(inode.i_dbl_indr_zone), indir * 2)[0]), off * 2)[0])
 
         else:
-            raise MinixfsError('Error Block is out of bound')
+            raise MinixfsException('Error Block is out of bound')
 
     def lookup_entry(self, dinode, name):
         """
@@ -230,7 +230,7 @@ class minix_file_system(object):
             try:
                 self.inode = self.lookup_entry(self.inodes_list[self.inode], i)
             except:
-                raise MinixfsError('Error file not found')
+                raise MinixfsException('Error file not found')
 
         return self.inode
 
@@ -292,7 +292,7 @@ class minix_file_system(object):
                                                     (blk-7-MINIX_ZONESZ) / MINIX_ZONESZ), (blk-7) % MINIX_ZONESZ)
 
         else:
-            raise MinixfsError('Error bmap: block is out of bound')
+            raise MinixfsException('Error bmap: block is out of bound')
 
     def add_entry(self, dinode, name, new_node_num):
         """ add a new entry in a dinode (dir)
@@ -305,13 +305,13 @@ class minix_file_system(object):
         blk = -1
 
         if len(name) > (DIRSIZE - 2):
-            raise MinixfsError('Error add_entry: Filename too long')
+            raise MinixfsException('Error add_entry: Filename too long')
 
         if self.lookup_entry(dinode, name):
-            raise MinixfsError('Error add_entry: filename already exist in dir')
+            raise MinixfsException('Error add_entry: filename already exist in dir')
 
         if not self.is_dir(dinode):
-            raise MinixfsError('Error add_entry: Could only add file in a dir')
+            raise MinixfsException('Error add_entry: Could only add file in a dir')
 
         while not done:
 
@@ -327,7 +327,7 @@ class minix_file_system(object):
                 self.content = bytearray("".ljust(1024, '\x00'))
 
             else:
-                raise MinixfsError('Error add_entry: too many file in dir (fs overflow)')
+                raise MinixfsException('Error add_entry: too many file in dir (fs overflow)')
 
             for off in xrange(0, BLOCK_SIZE, DIRSIZE):
                 if not struct.unpack_from('H', self.content, off)[0]:
@@ -340,7 +340,7 @@ class minix_file_system(object):
         if done:
             self.disk.write_bloc(data_block, self.content)
         else:
-            raise MinixfsError('Error add_entry: Unable to add entry')
+            raise MinixfsException('Error add_entry: Unable to add entry')
 
     def del_entry(self, dinode, name):
         """ delete filename from dir
@@ -353,10 +353,10 @@ class minix_file_system(object):
         inode = self.lookup_entry(dinode, name)
 
         if not self.ifree(inode):
-            raise MinixfsError('Error del_entry: Inode not freed')
+            raise MinixfsException('Error del_entry: Inode not freed')
 
         if not self.is_dir(dinode):
-            raise MinixfsError('Error del_entry: This is not a dir')
+            raise MinixfsException('Error del_entry: This is not a dir')
 
         dir_block = 1
 
@@ -386,7 +386,7 @@ class minix_file_system(object):
                         try:
                             file_blk = self.bmap(self.inodes_list[inode], fb)
                         except:
-                            raise MinixfsError('Error deleting entry filename not found')
+                            raise MinixfsException('Error deleting entry filename not found')
 
                         # free file's data block
                         while file_blk:
@@ -473,9 +473,9 @@ class minix_file_system(object):
         log.info('Close minix filesystem')
 
 
-class MinixfsError(Exception):
+class MinixfsException(Exception):
     """ Class minixfs exceptions  """
 
     def __init__(self, message):
-        super(MinixfsError, self).__init__(message)
+        super(MinixfsException, self).__init__(message)
         log.error(message)

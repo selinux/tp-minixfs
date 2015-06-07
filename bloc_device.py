@@ -19,7 +19,11 @@ import random as rand
 import logging as log
 
 # init the log
-log.basicConfig(format='%(levelname)s:%(message)s', level=log.DEBUG)
+
+#LOG_FILENAME = 'minixfs_tester.log'
+
+log.basicConfig(format='%(levelname)s:%(message)s', level=log.INFO)
+#log.basicConfig(filename=LOG_FILENAME, level=log.DEBUG)
 
 
 class bloc_device(object):
@@ -64,7 +68,10 @@ class bloc_device(object):
         log.info("file descriptor closed")
 
     def read_bloc(self, bloc_num, numofblk=1):
-        """ Read n block from block device
+        """
+            Read n block from block device and return
+            the buffer
+
         :param bloc_num: block number to be read
         :param numofblk: number of block to be read
         :return: the buffer
@@ -80,8 +87,11 @@ class bloc_device(object):
         return buff
 
     def write_bloc(self, bloc_num, bloc):
-        """ Write a block to block device
-        :param bloc_num: block number to be written
+        """
+            Write a block to block device
+            the block must be equal to BLOCK_SIZE
+
+        :param bloc_num: offset position of the block to be written
         :param bloc: buffer to be written
         :return: nb of bytes actually written
         """
@@ -131,14 +141,16 @@ class remote_bloc_device(object):
         log.info("remote file system opened successfully")
 
     def __del__(self):
-        """ Cleanly close the socket when deleting object
+        """
+            Cleanly close the socket when deleting object
 
         """
         self.close_connection()
         log.info('Closed bloc_device')
 
     def read_bloc(self, bloc_num, numofbloc=1):
-        """ Read n block from block device server
+        """
+            Read n block from block device server
 
         :param bloc_num: the bloc number
         :param numofbloc: number of block to be read
@@ -208,7 +220,9 @@ class remote_bloc_device(object):
         return buff
 
     def write_bloc(self, bloc_num, bloc):
-        """ Write block from block device server
+        """
+            Write block from block device server
+            the buffer must be equal to BLOCK_SIZE
 
         :param bloc_num: the bloc number
         :param bloc: buffer to be written
@@ -257,7 +271,7 @@ class remote_bloc_device(object):
             msg = "Error read_bloc: server return errno : "+h[1]
             raise BlocDeviceException(msg)
 
-        if h[3] != handle:
+        if h[2] != handle:
             raise BlocDeviceException('Error write_bloc: Server send an unknown response handler')
 
     def close_connection(self):

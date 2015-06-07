@@ -18,6 +18,9 @@ run_debug: server
 	cp $(ORG) $(NEW)
 	strace ./server $(port) $(NEW)
 
+run_doc: 
+	pydoc -b
+
 
 # Efface fichiers objets et exécutable
 clean:

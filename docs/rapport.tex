@@ -199,7 +199,7 @@ Un seul client est traité à la fois ce qui évite les problèmes d'accès conc
 \end{description}
 
 
-\subsection{ialloc()}
+\subsection*{ialloc()}
 
 \begin{lstlisting}[language=C, caption=pseudo code ialloc()()]
 ialloc(){
@@ -217,7 +217,7 @@ ialloc(){
 }
 \end{lstlisting}
 
-\subsection{ifree(inode)}
+\subsection*{ifree(inode)}
 
 \begin{lstlisting}[language=C, caption=pseudo code ifree()()]
 ifree( inode ){
@@ -227,7 +227,7 @@ ifree( inode ){
 }
 \end{lstlisting}
 
-\subsection{balloc()}
+\subsection*{balloc()}
 
 \begin{lstlisting}[language=C, caption=pseudo code balloc()()]
 balloc( ){
@@ -242,7 +242,7 @@ balloc( ){
 }
 \end{lstlisting}
 
-\subsection{bfree(blocknum)}
+\subsection*{bfree(blocknum)}
 
 \begin{lstlisting}[language=C, caption=pseudo code bfree()()]
 bfree( data block ){
@@ -252,7 +252,7 @@ bfree( data block ){
 }
 \end{lstlisting}
 
-\subsection{bmap()}
+\subsection*{bmap()}
 
 \begin{lstlisting}[language=C, caption=pseudo code bmap()()]
 bmap( numero inode, position relative block ){
@@ -276,7 +276,7 @@ bmap( numero inode, position relative block ){
 }
 \end{lstlisting}
 
-\subsection{add\_entry()}
+\subsection*{add\_entry()}
 
 \begin{lstlisting}[language=C, caption=pseudo code add\_entry()]
 add_entry(inode dossier, nom fichier a inserer, inode du nouveau fichier){
@@ -305,7 +305,7 @@ add_entry(inode dossier, nom fichier a inserer, inode du nouveau fichier){
 }
 \end{lstlisting}
 
-\subsection{del\_entry()}
+\subsection*{del\_entry()}
 
 On commence par rechercher l'inode de l'entrée dans le dir et on raise une error si le nom n'existe pas.
 
@@ -342,22 +342,27 @@ del_entry(inode dossier, nom fichier a supprimer){
 \end{lstlisting}
 
 
-\subsection{ialloc\_bloc()}
+\subsection*{ialloc\_bloc()}
 
 Cette fonction attribue un block à n'importe quel position - dans un nouvel inode, on peut vouloir commencer par écrire le block \emph{2452} (dans la zone doublement indirect). Si le block indirect ou doublement indirect n'existe pas, il faut penser à pouvoir l'allouer à n'importe quel moment.\\
 
 \subsection{Logs et exceptions}
 
-Dans tous les code python, les erreurs lèvent une exception qui log une erreur \emph{log.error()}.\\
+Dans tous le code python, les erreurs lèvent une exception qui log une erreur \emph{log.error()}.\\
 
 Dans le reste du programme, deux niveaux de log sont utilisé \emph{log.info()} et \emph{log.debug()}. Il suffit de changer \emph{log.basicConfig()} de \emph{level=log.INFO} à  \emph{level=log.DEBUG}.\\
+
+Il y a aussi moyen de sortir les logs dans un fichier.\\
+
 
 \begin{lstlisting}[language=python, caption=initialisation logs et exception MinixfsError()]
 import logging as log
 
 log.basicConfig(format='%(levelname)s:%(message)s', level=log.INFO)
+#LOG_FILENAME = 'minixfs_tester.log'
+#log.basicConfig(filename=LOG_FILENAME,level=log.DEBUG)
 
-class MinixfsError(Exception):
+class MinixfsException(Exception):
     """ Class minixfs exceptions  """
 
     def __init__(self, message):
@@ -366,11 +371,6 @@ class MinixfsError(Exception):
         
         
 \end{lstlisting}
-
-\subsection{symlink}
-
-Il n'était pas demandé de tenir compte des symlinks 
-
 
 
 \subsection*{read()}
@@ -387,31 +387,125 @@ Il n'était pas demandé de tenir compte des symlinks
 \item le server return un ack
 \end{itemize}
 
+\subsection{Problèmes rencontrés}
+
+Une difficulté vient de la taille du fichier (dans l'inode). Savoir s'il faut la modifier la taille ou si c'est à l'appel system \emph{write()} de le faire - p.ex en attribuant un block avec \emph{ialloc\_bloc()} faut-il corrigé la taille à ce moment là? Avec des commandes tel que truncate est-ce vraiment au filesystem de se maintenir?
+
 
 \vspace{1cm}
 
 \section{Le serveur de blocs}
 
 
-\subsection*{la problématique de la déconnexion du client}
+\subsection{la problématique de la connexion}
 
-Détecter la déconnexion d'un client n'est pas trivial. En effet, lors d'un \emph{shutdown()}, 
+Détecter la déconnexion d'un client n'est pas trivial. En effet, lors d'un \emph{shutdown()} , 
 
+\subsection{Principe de fonctionnement}
+
+La communication est bidirectionnelle mais le client initie toujours la communication. Le server ne fait que répondre aux requêtes.\\
+
+Dans ce travail, il n'y a pas de concurrence, un seul client est traité à la fois.\\
+
+Un client se connecte (\emph{accept()} et le server rentre dans une boucle. On aurait également pu faire un fork ou lancer un thread pour traiter le client.\\
+
+Tant que le client ne se déconnecte pas, le server bloc sur le premier read. Si read renvoi \emph{0}, le server ferme la connexion, sort de la boucle intérieur et bloque sur \emph{accept()} en attente d'un nouveau client.\\
+
+ C'est cette solution qui a été mise en place (dans une boucle infinie) mais elle ne permet pas de se protéger d'un client malveillant. Si un client ne respecte pas le protocole le server peut être 
+
+\begin{figure}[H]
+\begin{center}
+\includegraphics[scale=.6]{imgs/schema_server}
+\caption{Principe de fonctionnement du server}
+\label{fig:Architecture server}
+\end{center}
+\end{figure}
 
 \subsection*{Solutions envisagées}
 
-Une des solutions les plus simple serait de traiter un Échange à  la fois; le client se connecte, envoie une requête, reçoit la réponse et se déconnecte. Le server fait la même chose; attend sur \emph{accept()} qu'un client se connecte, attend une requête y répond et se déconnecte.\\
+Une des solutions les plus simple serait de traiter les demandes l'une après l'autre; le client se connecte, envoie une requête, reçoit la réponse et se déconnecte. Le server fait la même chose; attend sur \emph{accept()} qu'un client se connecte puis traite la requête et y répond et se déconnecte.\\
 
 Cette solution est simple, permet de mieux maîtriser l'état du client et du server mais est couteuse en connexions.\\
 
-Une autre solution est d'accepter un client et rentrer dans une boucle, un \emph{fork()} ou un thread et traiter les requêtes du client tant qu'il ne se déconnecte pas. Cette solution est plus élégante mais elle nécessite de détecter la déconnexion du client.\\
 
-Une alternative possible est d'ajouter au protocole une requête (un message) de déconnexion qui synchronise le client et le server.
+Une alternative possible est d'ajouter au protocole une requête (un message) de déconnexion qui synchronise le client et le server. Complexifier le protocole.\\
+
+Une autre serait de faire une machine d'état afin de s'assurer de l'état dans lequel est le client et le server et le passage entre chaque état. Si un problème arrive, revenir dans un état connu.
 
 \subsection*{Problème de client malicieux}
 
 Si un client lance une requête et annonce une certaine longueur, le server va faire un read, tant que le client maintient la connexion et n'envoie pas les données, il bloque le server.\\
 
-\section{Implémentation du server}
- 
+une solution serait de faire un \emph{select()} avant le read avec un timeout
+
+\begin{lstlisting}[language=C, caption=pseudo code del\_entry()]
+struct timeval tv;
+fd_set readfds;
+int state;
+
+FD_ZERO(&readfds);
+
+tv.tv_sec = 5;
+tv.tv_usec = 0;
+
+client = accept(s, (struct sockaddr *) &addr_client, (socklen_t *) &s_len);
+
+FD_SET(client, &readfds);
+
+boucle {
+
+	state = select(n, &readfds, NULL, NULL, &tv);
+	
+	if(FD_ISSET(client, &readfds))
+		read_socket();
+	else
+		continue;
+
+...
+
+}
+\end{lstlisting}
+
+
+\section{Exécution et tests unitaires}
+
+Pour tester le fonctionnement\\
+
+
+Où avec l'utilisation de strace
+
+\begin{lstlisting}[language=bash,caption={lancer le server}]
+
+	$ cp ./filesystems/minixfs\_lab1.img.org ./filesystems/minixfs\_lab1.img
+	$ ./server 1234 ./filesystems/minixfs\_lab1.img
+	
+	$ strace ./server 1234 ./filesystems/minixfs\_lab1.img
+
+	$ make run
+	$ make run_debug
+\end{lstlisting}
+
+on peut enfin lancer le client\\
+\begin{lstlisting}[language=bash,caption={lancer le client}]
+	
+	$ python2 tester_server.py
+  
+INFO:remote file system opened successfully
+INFO:socket closed
+INFO:remote file system opened successfully
+(...)
+.
+----------------------------------------------------------------------
+Ran 13 tests in 71.003s
+
+OK
+
+\end{lstlisting}
+
+%\shellcmd{python2 tester_server.py\\
+%INFO:remote file system opened successfully\\
+%INFO:socket closed\\
+%INFO:remote file system opened successfully}
+
+
 \end{document} 

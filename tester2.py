@@ -88,14 +88,14 @@ class MinixTester(unittest.TestCase):
     def test_4_fs_inode_and_bloc_bitmaps(self):
         self.minixfs=minix_file_system(workfile)
         self.assertEqual(self.minixfs.inode_map,INODEBITMAP1);
-        self.assertEqual(self.minixfs.zone_map,ZONEBITMAP1);
+        self.assertEqual(self.minixfs.zone_map, ZONEBITMAP1);
         del self.minixfs
 
     #inode list content test
-#    def test_5_fs_inode_list(self):
-#        self.minixfs=minix_file_system(workfile)
-#        self.assertEqual(self.minixfs.inodes_list,INODELIST);
-#        del(self.minixfs)
+    def test_5_fs_inode_list(self):
+        self.minixfs=minix_file_system(workfile)
+        self.assertEqual(self.minixfs.inodes_list, INODELIST);
+        del self.minixfs
 
 
     #testing ialloc()/ifree()

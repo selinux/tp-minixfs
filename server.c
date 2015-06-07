@@ -61,7 +61,7 @@ int main(int argc, char* argv[])
         ERR_FATALE("Error binding socket");
 
     if( listen(s, MAX_CONNEXIONS) < 0)
-        perror("Unable to set listner");
+       perror("Unable to set listner");
 
     /* socket initialisation finished */
 
@@ -79,23 +79,6 @@ int main(int argc, char* argv[])
 
         /* Start the job */
         do {
-
-//            tv.tv_sec = 3;
-//            tv.tv_usec = 0;
-//            FD_ZERO(&readfds);
-//            FD_ZERO(&writefds);
-//            FD_SET(client, &readfds);
-//
-//            int s = select(client+1, &readfds, &writefds, &errorfds, &tv);
-//
-//            if (s < 0)
-//            {
-//                ERR_FATALE("Error with select")
-//            } else if ( s == 0)
-//                break;
-//
-//            if (FD_ISSET(client, &readfds))
-//            {
 
             /* prepare a new request */
             query_header_t * header = calloc(sizeof(query_header_t), 1);
