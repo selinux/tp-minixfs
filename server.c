@@ -71,6 +71,9 @@ int main(int argc, char* argv[])
 
         client = accept(s, (struct sockaddr *) &addr_client, (socklen_t *) &s_len);
 
+        if(write(1, "Client connected\n", 17) < 0)
+            ERR_FATALE("Error writing stdout");
+
         if (client < 0)
             ERR_FATALE("Error accepting client");
 
@@ -92,7 +95,7 @@ int main(int argc, char* argv[])
 
             /* lost client connection so break for a new one */
             if ( n == 0 ){
-                perror("Error client lost");
+                perror("Client disconnected end session");
                 free(header);
                 end_session = true;
                 break;
@@ -125,6 +128,7 @@ int main(int argc, char* argv[])
 
                         perror("Error lost client connection");
                         free(header);
+
                         close(client);
                         end_session = true;
                         break;
