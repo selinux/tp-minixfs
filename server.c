@@ -107,7 +107,7 @@ int main(int argc, char* argv[])
             response.handle = htonl(header->handle);
 
             /* need a buffer for the response we use the same for
-             * client's payload or file system response */
+               client's payload or file system response */
             void * buff = calloc(sizeof(char), header->length);
 
             switch (header->type) {
@@ -124,26 +124,34 @@ int main(int argc, char* argv[])
                     }
 
                     /* send response header */
-                    if( n == 0 ) {
+
+                    n = write_to_client(client, (char *) &response, sizeof(response_header_t));
+
+                    if( n <= 0 ) {
 
                         perror("Error lost client connection");
                         free(header);
-
                         close(client);
                         end_session = true;
                         break;
-
-                    }else
-                        if (write(client, (char *) &response, sizeof(response_header_t)) < 0)
-                            ERR_FATALE("Error responding to client")
+                    }
 
                     /* send response if any */
-                    if (buff)
-                        if(write(client, (char *)buff, header->length) < 0)
-                            ERR_FATALE("Error responding to client")
+                    if (buff) {
+                        printf("\n\nOK\n%s\n\n", (char*)&buff);
+                        n = write_to_client(client, (char *) buff, header->length);
+
+                        if( n <= 0 ) {
+                            perror("Error lost client connection");
+                            free(buff);
+                            close(client);
+                            end_session = true;
+                            break;
+                        }
+                        free(buff);
+                    }
 
                     free(header);
-                    free(buff);
                     break;
 
                 case 1 :  /* write case */
@@ -167,7 +175,7 @@ int main(int argc, char* argv[])
 
                     } else {
                         /* write payload to disk */
-                        if (write_payload_to_disk(fd, (char *)buff, header->offset, header->length) < 0) {
+                        if (write_to_disk(fd, (char *)buff, header->offset, header->length) < 0) {
                             perror("Error unable to write payload to disk");
                             response.errnum = errno;
                         }
@@ -287,6 +295,7 @@ int read_response_on_fs(int fd, void **buff, uint32_t offset, uint32_t length)
 
         n = read(fd, *buff, length - r);
         r += n;
+        buff += n;
 
         if(n <= 0) {
             perror("Error unable to read file");
@@ -315,6 +324,7 @@ int read_client_payload(int socket, void **buff, uint32_t length)
     do {
         n = read(socket, *buff, length-n);
         r += n;
+        buff += n;
 
         if(n <= 0)
         {
@@ -338,7 +348,7 @@ int read_client_payload(int socket, void **buff, uint32_t length)
  * @return: return a non-negative integer indicating the number of bytes actually read.
  *          or 0 if lost connection or negative integer in case of error
  */
-int write_payload_to_disk(int fd, void *buff, uint32_t offset, uint32_t length)
+int write_to_disk(int fd, void *buff, uint32_t offset, uint32_t length)
 {
     int n, r = 0;
 
@@ -353,8 +363,39 @@ int write_payload_to_disk(int fd, void *buff, uint32_t offset, uint32_t length)
         n = write(fd, (char*)buff, length - r);
         r += n;
 
+        buff += n;
+
         if( n < 0 ) {
             perror("Error writing payload to disk");
+            return n;
+        }
+
+    }while( r < length);
+
+    return r;
+}
+/**
+ * @brief send the payload back to client
+ *
+ * @parm fd: the socket
+ * @parm buff: data to be sent
+ * @parm the length to be written
+ *
+ * @return: return a non-negative integer indicating the number of bytes actually read.
+ *          or 0 if lost connection or negative integer in case of error
+ */
+int write_to_client(int sock, void *buff, uint32_t length)
+{
+    int n, r = 0;
+
+    do {
+
+        n = write(sock, (char*)buff, length - r);
+        r += n;
+        buff += n;
+
+        if( n < 0 ) {
+            perror("Error sending payload to client");
             return n;
         }
 
