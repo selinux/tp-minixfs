@@ -5,7 +5,8 @@ FILESYSTEM=./filesystems
 ORG=$(FILESYSTEM)/minixfs_lab1.img.org
 NEW=$(FILESYSTEM)/remote_minixfs_lab1.img
 port=1234
-all : $(TP03)
+
+all : server
 
 server: $(SRC)
 	$(CC) $(CFLAGS) $? -o $@

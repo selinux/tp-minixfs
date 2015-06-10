@@ -165,12 +165,13 @@ int main(int argc, char* argv[])
                         end_session = true;
                         break;
 
-                    } else
+                    } else {
                         /* write payload to disk */
                         if (write_payload_to_disk(fd, (char *)buff, header->offset, header->length) < 0) {
-                            perror("Error lseek failure");
+                            perror("Error unable to write payload to disk");
                             response.errnum = errno;
                         }
+                    }
 
                     /* send response to client */
                     if (write(client, (char *) &response, sizeof(response_header_t)) < 0)
@@ -215,14 +216,16 @@ int read_header(int socket, query_header_t ** header)
 {
 
     int header_length = sizeof(query_header_t);
+
+    /* temporary buffer to stock header and possible garbage */
     char buff[1000];
 
     /* convert the magic */
     char magic[5];
-    // TODO  sprintf(buff."%x",int_var)
-    //
+
     uint32_t * uint_magic_p = (uint32_t *)magic;
     *uint_magic_p = SIGN_REQUEST;  /* write the magic in magic buffer */
+    /* could have been remplaced by  sprintf(magic,"%x", SIGN_RESPONSE); */
 
     char * begin;
     query_header_t * tmp_header;
@@ -274,10 +277,10 @@ int read_response_on_fs(int fd, void **buff, uint32_t offset, uint32_t length)
 
     int n = 0, r = 0;
 
-    if((lseek(fd, offset, SEEK_SET) < 0)) {
-
+    n = lseek(fd, offset, SEEK_SET) < 0;
+    if( n < 0) {
         perror("Error lseek failure");
-        return -1;
+        return n;
     }
 
     do {
@@ -290,7 +293,7 @@ int read_response_on_fs(int fd, void **buff, uint32_t offset, uint32_t length)
             return n;
         }
 
-    }while( n < length);
+    }while( r < length);
 
     return r;
 }
@@ -307,19 +310,21 @@ int read_response_on_fs(int fd, void **buff, uint32_t offset, uint32_t length)
  */
 int read_client_payload(int socket, void **buff, uint32_t length)
 {
-    int n = 0;
+    int n = 0, r = 0;
 
     do {
-        n += read(socket, *buff, length-n);
-        if(n < 0)
+        n = read(socket, *buff, length-n);
+        r += n;
+
+        if(n <= 0)
         {
             perror("Unable to read payload");
-            return -1;
+            return n;
         }
 
-    } while (n < length);
+    } while (r < length);
 
-    return n;
+    return r;
 }
 
 /**
@@ -343,18 +348,17 @@ int write_payload_to_disk(int fd, void *buff, uint32_t offset, uint32_t length)
         return n;
     }
 
-    // TODO transform in do while loop (write safely)
     do {
 
         n = write(fd, (char*)buff, length - r);
         r += n;
 
         if( n < 0 ) {
-            perror("Error unable to write payload to file");
+            perror("Error writing payload to disk");
             return n;
         }
 
-    }while( n < length);
+    }while( r < length);
 
-    return n;
+    return r;
 }
