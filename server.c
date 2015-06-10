@@ -124,13 +124,12 @@ int main(int argc, char* argv[])
                     }
 
                     /* send response header */
-
                     n = write_to_client(client, (char *) &response, sizeof(response_header_t));
 
                     if( n <= 0 ) {
-
                         perror("Error lost client connection");
                         free(header);
+                        free(buff);
                         close(client);
                         end_session = true;
                         break;
@@ -138,7 +137,6 @@ int main(int argc, char* argv[])
 
                     /* send response if any */
                     if (buff) {
-                        printf("\n\nOK\n%s\n\n", (char*)&buff);
                         n = write_to_client(client, (char *) buff, header->length);
 
                         if( n <= 0 ) {
@@ -166,7 +164,6 @@ int main(int argc, char* argv[])
                     }
 
                     if ( n == 0) {
-
                         perror("Error lost client connection");
                         free(header);
                         close(client);
@@ -182,8 +179,15 @@ int main(int argc, char* argv[])
                     }
 
                     /* send response to client */
-                    if (write(client, (char *) &response, sizeof(response_header_t)) < 0)
-                        ERR_FATALE("Error lost client connexion while respond")
+                    n = write_to_client(client, (char *) &response, sizeof(response_header_t));
+
+                    if( n <= 0 ) {
+                        perror("Error lost client connection while responding");
+                        free(header);
+                        close(client);
+                        end_session = true;
+                        break;
+                    }
 
                     free(header);
                     free(buff);
@@ -192,12 +196,16 @@ int main(int argc, char* argv[])
                 default :
                     perror("Error unknown client request type");
                     response.errnum = EBADE; // invalide exchange
+                    n = write_to_client(client, (char *) &response, sizeof(response_header_t));
 
-                    if (write(client, (char *) &response, sizeof(response_header_t)) < 0)
-                        ERR_FATALE("Error lost client connexion")
-
+                    if( n <= 0 ) {
+                        perror("Error lost client connection while responding");
+                        free(header);
+                        close(client);
+                        end_session = true;
+                        break;
+                    }
             }
-
 
         } while ( !end_session);
 

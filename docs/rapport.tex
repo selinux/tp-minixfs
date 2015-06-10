@@ -157,7 +157,7 @@ ITI 2\up{ème} soir \\
 
 Le but de ce travail est d'implémenter un système MinixFS V1 en python en proposant une API standard et de modifier un fichier \emph{formaté} en minixfs via cet interface.\\
 
-Dans un deuxième temps, les modifications seront faites à  travers le réseau. Un server (écrit en C) modifiera le fichier par block reçu via des sockets AF\_INET. On réutilisera le travail fait en python et son API mais les block seront transmis au server selon un protocole relativement simple.
+Dans un deuxième temps, les modifications seront faites à travers le réseau. Un programme de test simple écrit en python utilise l'API mais les lectures/écritures sont faite par un server de blocs. Le server (écrit en C) modifiera le fichier selon les commandes reçues à travers d'une sockets AF\_INET. On réutilisera le travail fait en python et son API mais les block seront transmis au server selon un protocole relativement simple.
  
 \begin{figure}[H]
 \begin{center}
@@ -168,11 +168,13 @@ Dans un deuxième temps, les modifications seront faites à  travers le réseau.
 \end{figure}
 
 
-Un seul client est traité à la fois ce qui évite les problèmes d'accès concurrent - traité dans d'autres cours. Le principe est simple. le client fait une requête, le server y répond.\\
+Un seul client est traité à la fois ce qui évite les problèmes d'accès concurrent - traité dans d'autres cours. Le principe est simple; le client fait une requête, le server y répond.\\
 
 
 
 \section{Implémentation python}
+
+L'API implémentée est une version simplifiée d'un système de fichiers actuelle. On y retrouve les même méthodes et le fonctionnement global est le même.\\
 
 \subsection{description de l'API}
 
@@ -413,6 +415,48 @@ Tant que le client ne se déconnecte pas, le server bloc sur le premier read. Si
 
  C'est cette solution qui a été mise en place (dans une boucle infinie) mais elle ne permet pas de se protéger d'un client malveillant. Si un client ne respecte pas le protocole le server peut être 
 
+
+\begin{lstlisting}[language=C, caption=pseudo code server]
+
+while (1){
+	accept new client;
+	
+	do 
+		read header request;
+		si prob read:
+			session = false;
+			break;
+		
+		prepare header response;
+	
+		switch
+			case read:
+				read disk;
+
+				si fatal:
+					session = false;
+					break;			
+				si erreur:
+					modifie response;
+				write header response to client;
+				si no erreur:
+					write response to client
+		
+			case write:
+				read client payload;
+				si fatal:
+					session = false
+					break;
+				sinon:
+					write payload to disk;
+					si erreur:
+						modifie response;
+			
+				write response to client;
+	while session;
+}			
+
+\end{lstlisting}
 \begin{figure}[H]
 \begin{center}
 \includegraphics[scale=.6]{imgs/schema_server}
