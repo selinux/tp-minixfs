@@ -13,8 +13,7 @@ __status__ = "TP minix fs"
 
 from minix_inode import *
 from bloc_device import *
-import errno
-
+from minix_exception import MinixfsException
 
 class minix_file_system(object):
     """
@@ -151,6 +150,14 @@ class minix_file_system(object):
         :param blk: the block number ( 0,.., n-1)
         :return: the corresponding block number on disk
         """
+
+        size = inode.i_size
+
+        # the data block (>firstdatazone) must fit the inode size
+        if self.is_file(inode) or self.is_link(inode):
+            if blk > int(size / self.disk.blksize):
+                raise MinixfsException('Error block is out of file boundary')
+
         # direct blocks
         if blk < 7:
             return inode.i_zone[blk]
@@ -200,12 +207,15 @@ class minix_file_system(object):
 
             # pick next data block
             blk += 1
-            data_block = self.bmap(dinode, blk)
+            try:
+                data_block = self.bmap(dinode, blk)
+            except:
+                data_block = False
 
         # return name in dict (raise error if not fund)
         try:
             return d_entry[name]
-        except KeyError:
+        except:
             return False
 
     def namei(self, path):
@@ -352,8 +362,11 @@ class minix_file_system(object):
 
         inode = self.lookup_entry(dinode, name)
 
+        if not inode:
+            raise MinixfsException('Error del_entry: File not found')
+
         if not self.ifree(inode):
-            raise MinixfsException('Error del_entry: Inode not freed')
+            raise MinixfsException('Error del_entry: Inode not free')
 
         if not self.is_dir(dinode):
             raise MinixfsException('Error del_entry: This is not a dir')
@@ -363,10 +376,10 @@ class minix_file_system(object):
         # while dir block search inode
         while dir_block:
             blk += 1
-            # try:
-            dir_block = self.bmap(dinode, blk)
-            # except:
-            #     raise DelEntryError('Error deleting entry filename not found')
+            try:
+                dir_block = self.bmap(dinode, blk)
+            except:
+                raise MinixfsException('Error deleting entry filename not found')
 
             # take a block
             dir_content = bytearray(self.disk.read_bloc(dir_block))
@@ -416,35 +429,35 @@ class minix_file_system(object):
         :param inode:
         :return: True if inode is a file
         """
-        return True if (self.inodes_list[inode].i_mode >> 12) == 8 else False
+        return True if (inode.i_mode >> 12) == 8 else False
 
     def is_device(self, inode):
         """ Test if inode is a device
         :param inode:
         :return: True if inode is a device
         """
-        return True if (self.inodes_list[inode].i_mode >> 12) == 2 else False
+        return True if (inode.i_mode >> 12) == 2 else False
 
     def is_pipe(self, inode):
         """ Test if inode is a pipe
         :param inode:
         :return: True if inode is a pipe
         """
-        return True if (self.inodes_list[inode].i_mode >> 12) == 1 else False
+        return True if (inode.i_mode >> 12) == 1 else False
 
     def is_device_bloc(self, inode):
         """ Test if inode is a device bloc
         :param inode:
         :return: True if inode is a device block
         """
-        return True if (self.inodes_list[inode].i_mode >> 12) == 6 else False
+        return True if (inode.i_mode >> 12) == 6 else False
 
     def is_link(self, inode):
         """ Test if inode is a device link
         :param inode:
         :return: True if inode is a link
         """
-        return True if (self.inodes_list[inode].i_mode >> 12) == 10 else False
+        return True if (inode.i_mode >> 12) == 10 else False
 
     def update_bmap(self):
         """ Write bitarray map of data to disk
@@ -473,9 +486,3 @@ class minix_file_system(object):
         log.info('Close minix filesystem')
 
 
-class MinixfsException(Exception):
-    """ Class minixfs exceptions  """
-
-    def __init__(self, message):
-        super(MinixfsException, self).__init__(message)
-        log.error(message)

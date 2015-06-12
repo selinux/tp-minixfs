@@ -157,7 +157,7 @@ ITI 2\up{ème} soir \\
 
 Le but de ce travail est d'implémenter un système MinixFS V1 en python en proposant une API standard et de modifier un fichier \emph{formaté} en minixfs via cet interface.\\
 
-Dans un deuxième temps, les modifications seront faites à travers le réseau. Un programme de test simple écrit en python utilise l'API mais les lectures/écritures sont faite par un server de blocs. Le server (écrit en C) modifiera le fichier selon les commandes reçues à travers d'une sockets AF\_INET. On réutilisera le travail fait en python et son API mais les block seront transmis au server selon un protocole relativement simple.
+Dans un deuxième temps, les modifications seront faites à travers le réseau. Un programme de test simple écrit en python utilise l'API mais les lectures/écritures sont faite par un server de blocs. Le server (écrit en C) modifiera le fichier selon les commandes reçues au travers d'une sockets AF\_INET. On réutilisera le travail fait en python et son API mais les block seront transmis au server selon un protocole relativement simple.
  
 \begin{figure}[H]
 \begin{center}
@@ -171,6 +171,35 @@ Dans un deuxième temps, les modifications seront faites à travers le réseau. 
 Un seul client est traité à la fois ce qui évite les problèmes d'accès concurrent - traité dans d'autres cours. Le principe est simple; le client fait une requête, le server y répond.\\
 
 
+\subsection{Exécution du programme}
+
+Fonctionnement du programme. Toutes les commandes peuvent être lancées avec make.\\
+
+\begin{lstlisting}[language=bash,caption={lancer le server}]
+
+pour les tests en local
+
+	$ make test1
+ou
+	$ make test2
+	
+pour lancer la doc
+	$ make doc
+
+	$ ./server
+	Usage : ./server <port> <file>
+	
+	
+pour lancer le server avec make
+	$ make server && make run
+ou avec strace
+	$ make server && make run_debug
+	
+dans un autre terminal
+	$ make test_server
+
+\end{lstlisting}
+
 
 \section{Implémentation python}
 
@@ -181,9 +210,9 @@ L'API implémentée est une version simplifiée d'un système de fichiers actuel
 
 \begin{description}
 \item[ialloc()] \hfill \\
-	alloue un inode - puisqu'il contient peut-être d'ancienne donnée, il est remis à zéro
+	alloue le premier inode de libre - puisqu'il contient peut-être d'ancienne donnée, il est remplacé par un nouvel inode vierge.
 \item[ifree(inodenum)] \hfill \\
-	change l'état de l'inode à libre dans la bitmap des inodes
+	change l'état de l'inode à \emph{libre} dans la bitmap des inodes. Cet inode sera donc libre pour une nouvelle allocation.
 \item[balloc()] \hfill \\
 	recherche et renvoie le premier block libre dans la bitmap des data block
 \item[bfree(blocknum)] \hfill \\
@@ -201,113 +230,22 @@ L'API implémentée est une version simplifiée d'un système de fichiers actuel
 \end{description}
 
 
-\subsection*{ialloc()}
+\subsection{Complément sur certaines méthodes}
 
-\begin{lstlisting}[language=C, caption=pseudo code ialloc()()]
-ialloc(){
+\subsubsection*{bmap()}
 
-	recherche premier libre dans inode_map
-	
-	si not trouve:
-		raise error plus aucun inode de libre
-	
-	inode trouve = occupe
-	del ancien inode
-	new inode
-	
-	return numero inode
-}
+Il y a un problème avec le test unitaire numéro 8. Si \emph{bmap()} vérifie la taille du fichier (valeur de l'inode). Le test echoue en effet, les 3 zones de l'inode sont testées. Une boucle va de 0 à 6 (direct), une autre de 7 à 518 (indirect) et la troisième va de 519 à 1024 (dbl\_indirect) or la taille du fichier est de 659'384 octets et occupe donc 644 blocks. Pour passer le test, il faut soit tester de 0 à 643, soit commenter les lignes suivantes.\\
+
+
+\begin{lstlisting}[language=python, caption=test inode\_size in bmap]
+        # the data block (>firstdatazone) must fit the inode size
+        if self.is_file(inode) or self.is_link(inode):
+            if blk > int(size / self.disk.blksize):
+                raise MinixfsException('Error block is out of file boundary')
 \end{lstlisting}
 
-\subsection*{ifree(inode)}
 
-\begin{lstlisting}[language=C, caption=pseudo code ifree()()]
-ifree( inode ){
-
-	inode = libre
-	return est-ce que inode est libre?
-}
-\end{lstlisting}
-
-\subsection*{balloc()}
-
-\begin{lstlisting}[language=C, caption=pseudo code balloc()()]
-balloc( ){
-
-	recherche premier block dans block map
-	si non trouver:
-		raise error plus de place sur disk
-	
-	block = occuper
-
-	return numero de block
-}
-\end{lstlisting}
-
-\subsection*{bfree(blocknum)}
-
-\begin{lstlisting}[language=C, caption=pseudo code bfree()()]
-bfree( data block ){
-
-	data block = libre
-	return est-ce que data block est libre?
-}
-\end{lstlisting}
-
-\subsection*{bmap()}
-
-\begin{lstlisting}[language=C, caption=pseudo code bmap()()]
-bmap( numero inode, position relative block ){
-
-	si block < 7:
-		return position du nieme block direct
-		
-	block -= 7
-	si block < nombre inode par block:
-		return position du nieme block de indirect
-	
-	block -= nombre inode par block
-	si block < (nombre inode par block)^2:
-		adresse	data block = block / nombre inode par block
-		position block = block mod nombre inode par block
-		
-		return numero block a adresse.posistion
-		
-	sinon:
-		raise error depassement de capacite
-}
-\end{lstlisting}
-
-\subsection*{add\_entry()}
-
-\begin{lstlisting}[language=C, caption=pseudo code add\_entry()]
-add_entry(inode dossier, nom fichier a inserer, inode du nouveau fichier){
-	si nom de fichier non conforme;
-		raise error
-	si nom de fichier existe deja dans dossier:
-		raise error
-		
-	tant que not done:
-		prendre block dossier:
-			si place libre:
-				inserer inode et nom
-				changer taille dossier
-				done
-
-			sinon:
-				si not next block:
-					creer nouveau block
-					si plus possible creer:
-						break
-						
-	si done:
-		valider modification sur disk
-	sinon:
-		raise error plus de place
-}
-\end{lstlisting}
-
-\subsection*{del\_entry()}
+\subsubsection*{del\_entry()}
 
 On commence par rechercher l'inode de l'entrée dans le dir et on raise une error si le nom n'existe pas.
 
@@ -344,9 +282,12 @@ del_entry(inode dossier, nom fichier a supprimer){
 \end{lstlisting}
 
 
-\subsection*{ialloc\_bloc()}
+\subsubsection*{ialloc\_bloc()}
 
-Cette fonction attribue un block à n'importe quel position - dans un nouvel inode, on peut vouloir commencer par écrire le block \emph{2452} (dans la zone doublement indirect). Si le block indirect ou doublement indirect n'existe pas, il faut penser à pouvoir l'allouer à n'importe quel moment.\\
+Cette fonction attribue un block à n'importe quel position - dans un nouvel inode, on peut vouloir commencer par écrire le block \emph{2452} (dans la zone doublement indirect). Si le block doublement indirect indirect n'existe pas, il faut le créer, mettre l'adresse du nouveau bloc du fichier dedans et placer l'adresse du bloc dbl\_indirect dans le blocs dbl\_indirect.\\
+
+Plus généralement, en allouant un bloc il faut faire des vérifications.\\
+
 
 \subsection{Logs et exceptions}
 
@@ -375,20 +316,6 @@ class MinixfsException(Exception):
 \end{lstlisting}
 
 
-\subsection*{read()}
-
-\begin{itemize}
-\item la requête client est un read + un offset + length
-\item le server return ack + payload
-\end{itemize}
-
-\subsection*{write()}
-
-\begin{itemize}
-\item la requête client est un write + un offset + payload
-\item le server return un ack
-\end{itemize}
-
 \subsection{Problèmes rencontrés}
 
 Une difficulté vient de la taille du fichier (dans l'inode). Savoir s'il faut la modifier la taille ou si c'est à l'appel system \emph{write()} de le faire - p.ex en attribuant un block avec \emph{ialloc\_bloc()} faut-il corrigé la taille à ce moment là? Avec des commandes tel que truncate est-ce vraiment au filesystem de se maintenir?
@@ -403,13 +330,13 @@ Une difficulté vient de la taille du fichier (dans l'inode). Savoir s'il faut l
 
 Détecter la déconnexion d'un client n'est pas trivial. En effet, lors d'un \emph{shutdown()} , 
 
-\subsection{Principe de fonctionnement}
+\subsection{Principe de fonctionnement du server}
 
 La communication est bidirectionnelle mais le client initie toujours la communication. Le server ne fait que répondre aux requêtes.\\
 
-Dans ce travail, il n'y a pas de concurrence, un seul client est traité à la fois.\\
+Dans ce travail, il n'y a pas de concurrence à gérer, un seul client est traité à la fois.\\
 
-Un client se connecte (\emph{accept()} et le server rentre dans une boucle. On aurait également pu faire un fork ou lancer un thread pour traiter le client.\\
+Un client se connecte et le server (\emph{accept()} puis rentre dans une boucle. On aurait également pu faire un fork ou lancer un thread pour traiter le client.\\
 
 Tant que le client ne se déconnecte pas, le server bloc sur le premier read. Si read renvoi \emph{0}, le server ferme la connexion, sort de la boucle intérieur et bloque sur \emph{accept()} en attente d'un nouveau client.\\
 
@@ -546,10 +473,114 @@ OK
 
 \end{lstlisting}
 
-%\shellcmd{python2 tester_server.py\\
-%INFO:remote file system opened successfully\\
-%INFO:socket closed\\
-%INFO:remote file system opened successfully}
+
+\section{Annexes}
+
+\subsection*{ialloc()}
+
+\begin{lstlisting}[language=C, caption=pseudo code ialloc()()]
+ialloc(){
+
+	recherche premier libre dans inode_map
+	
+	si not trouve:
+		raise error plus aucun inode de libre
+	
+	inode trouve = occupe
+	del ancien inode
+	new inode
+	
+	return numero inode
+}
+\end{lstlisting}
+
+\subsection*{ifree(inode)}
+
+\begin{lstlisting}[language=C, caption=pseudo code ifree()()]
+ifree( inode ){
+
+	inode = libre
+	return est-ce que inode est libre?
+}
+\end{lstlisting}
+
+\subsection*{balloc()}
+
+\begin{lstlisting}[language=C, caption=pseudo code balloc()()]
+balloc( ){
+
+	recherche premier block dans block map
+	si non trouver:
+		raise error plus de place sur disk
+	
+	block = occuper
+
+	return numero de block
+}
+\end{lstlisting}
+
+\subsection*{bfree(blocknum)}
+
+\begin{lstlisting}[language=C, caption=pseudo code bfree()()]
+bfree( data block ){
+
+	data block = libre
+	return est-ce que data block est libre?
+}
+\end{lstlisting}
+
+\subsection*{bmap()}
+
+\begin{lstlisting}[language=C, caption=pseudo code bmap()()]
+bmap( numero inode, position relative block ){
+
+	si block < 7:
+		return position du nieme block direct
+		
+	block -= 7
+	si block < nombre inode par block:
+		return position du nieme block de indirect
+	
+	block -= nombre inode par block
+	si block < (nombre inode par block)^2:
+		adresse	data block = block / nombre inode par block
+		position block = block mod nombre inode par block
+		
+		return numero block a adresse.posistion
+		
+	sinon:
+		raise error depassement de capacite
+}
+\end{lstlisting}
+
+\subsection*{add\_entry()}
+
+\begin{lstlisting}[language=C, caption=pseudo code add\_entry()]
+add_entry(inode dossier, nom fichier a inserer, inode du nouveau fichier){
+	si nom de fichier non conforme;
+		raise error
+	si nom de fichier existe deja dans dossier:
+		raise error
+		
+	tant que not done:
+		prendre block dossier:
+			si place libre:
+				inserer inode et nom
+				changer taille dossier
+				done
+
+			sinon:
+				si not next block:
+					creer nouveau block
+					si plus possible creer:
+						break
+						
+	si done:
+		valider modification sur disk
+	sinon:
+		raise error plus de place
+}
+\end{lstlisting}
 
 
 \end{document} 

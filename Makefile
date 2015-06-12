@@ -19,12 +19,21 @@ run_debug: server
 	cp $(ORG) $(NEW)
 	strace ./server $(port) $(NEW)
 
-run_doc: 
+test1: 
+	python2 tester.py
+
+test2:
+	python2 tester2.py
+
+test_server:
+	python2 tester_server.py
+
+doc: 
 	pydoc -b
 
 
 # Efface fichiers objets et exécutable
 clean:
 	rm server
-	rm $(NEW)
 
+.PHONY: clean test1 test2 test_server

@@ -14,10 +14,11 @@ __status__ = "TP minix fs"
 
 
 from minix_superbloc import *
+from minix_exception import BlocDeviceException
+
 import socket
 import random as rand
 import logging as log
-
 # init the log
 
 #LOG_FILENAME = 'minixfs_tester.log'
@@ -195,6 +196,7 @@ class remote_bloc_device(object):
 
             log.debug("A response has been received")
 
+            # TODO passer le code d'erreur en signed
             h = struct.unpack('!III', response)
 
             if h == (magic_resp, 0, handle):
@@ -295,10 +297,3 @@ class remote_bloc_device(object):
             log.info("socket closed")
         except:
             raise BlocDeviceException("Error closing socket")
-
-
-class BlocDeviceException(Exception):
-    """ Class minixfs exceptions  """
-    def __init__(self, message):
-        super(BlocDeviceException, self).__init__(message)
-        log.error(message)
