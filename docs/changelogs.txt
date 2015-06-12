@@ -16,4 +16,4 @@
 [06.06.2015]  included ipython notebook for presentation
 [06.06.2015]  modified tester (open object need del object)
 [06.06.2015]  added doxygen doc
-
+[12.06.2015]  put python exceptions in separate own file

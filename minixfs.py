@@ -151,12 +151,12 @@ class minix_file_system(object):
         :return: the corresponding block number on disk
         """
 
-        size = inode.i_size
+        # size = inode.i_size
 
-        # the data block (>firstdatazone) must fit the inode size
-        if self.is_file(inode) or self.is_link(inode):
-            if blk > int(size / self.disk.blksize):
-                raise MinixfsException('Error block is out of file boundary')
+        # # the data block (>firstdatazone) must fit the inode size
+        # if self.is_file(inode) or self.is_link(inode):
+        #     if blk > int(size / self.disk.blksize):
+        #         raise MinixfsException('Error block is out of file boundary')
 
         # direct blocks
         if blk < 7:
@@ -200,22 +200,20 @@ class minix_file_system(object):
             content = self.disk.read_bloc(data_block)
             for off in xrange(0, BLOCK_SIZE, DIRSIZE):
                 inode = struct.unpack_from('H', content, off)[0]
-                self.name = content[off + 2:off + DIRSIZE].split('\x00')[0]
+                entry_name = content[off + 2:off + DIRSIZE].split('\x00')[0]
                 if inode != 0:
                     # add entry to dictionary
-                    d_entry.update({self.name: inode})
+                    print(entry_name)
+                    d_entry.update({entry_name: inode})
 
             # pick next data block
             blk += 1
-            try:
-                data_block = self.bmap(dinode, blk)
-            except:
-                data_block = False
+            data_block = self.bmap(dinode, blk)
 
         # return name in dict (raise error if not fund)
         try:
             return d_entry[name]
-        except:
+        except KeyError:
             return False
 
     def namei(self, path):
@@ -366,16 +364,18 @@ class minix_file_system(object):
             raise MinixfsException('Error del_entry: File not found')
 
         if not self.ifree(inode):
-            raise MinixfsException('Error del_entry: Inode not free')
+            raise MinixfsException('Error del_entry: unable to free inode')
 
         if not self.is_dir(dinode):
-            raise MinixfsException('Error del_entry: This is not a dir')
+            raise MinixfsException('Error del_entry: Could only del entry from a dir')
 
         dir_block = 1
 
         # while dir block search inode
         while dir_block:
+            # take next block in loop
             blk += 1
+
             try:
                 dir_block = self.bmap(dinode, blk)
             except:
@@ -388,7 +388,6 @@ class minix_file_system(object):
             for i in xrange(0, BLOCK_SIZE, DIRSIZE):
                 if inode == struct.unpack_from('H', dir_content, i)[0]:
                     # remove entry
-                    # dir_content[i:i+DIRSIZE] = "".ljust(DIRSIZE, '\x00')
                     dir_content[i:i + 2] = "".ljust(2, '\x00')
                     self.bfree(dir_block)
                     if self.inodes_list[inode].i_nlinks > 1:
