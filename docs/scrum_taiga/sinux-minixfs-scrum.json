@@ -607,24 +607,24 @@
                             1,
                             0
                         ],
-                        "status": [
-                            213986,
-                            213987
-                        ],
                         "assigned_to": [
                             null,
                             "sebastien.chassot@etu.hesge.ch"
+                        ],
+                        "status": [
+                            213986,
+                            213987
                         ]
                     },
                     "snapshot": null,
                     "values": {
+                        "users": [
+                            "sebastien.chassot@etu.hesge.ch"
+                        ],
                         "status": {
                             "213987": "In progress",
                             "213986": "New"
-                        },
-                        "users": [
-                            "sebastien.chassot@etu.hesge.ch"
-                        ]
+                        }
                     },
                     "comment": "",
                     "delete_comment_date": null,
@@ -644,13 +644,13 @@
                             "",
                             "<p>remplaced by sprint </p>"
                         ],
-                        "blocked_note": [
-                            "",
-                            "remplaced by sprint "
-                        ],
                         "is_blocked": [
                             false,
                             true
+                        ],
+                        "blocked_note": [
+                            "",
+                            "remplaced by sprint "
                         ]
                     },
                     "snapshot": null,
@@ -662,26 +662,145 @@
                     "type": 1,
                     "is_hidden": false,
                     "is_snapshot": false
+                },
+                {
+                    "user": [
+                        "sebastien.chassot@etu.hesge.ch",
+                        "Sebastien chassot"
+                    ],
+                    "diff": {
+                        "blocked_note_html": [
+                            "<p>remplaced by sprint </p>",
+                            ""
+                        ],
+                        "blocked_note": [
+                            "remplaced by sprint ",
+                            ""
+                        ],
+                        "is_blocked": [
+                            true,
+                            false
+                        ]
+                    },
+                    "snapshot": null,
+                    "values": {},
+                    "comment": "",
+                    "delete_comment_date": null,
+                    "delete_comment_user": [],
+                    "created_at": "2015-05-30T16:02:45+0000",
+                    "type": 1,
+                    "is_hidden": false,
+                    "is_snapshot": false
+                },
+                {
+                    "user": [
+                        "sebastien.chassot@etu.hesge.ch",
+                        "Sebastien chassot"
+                    ],
+                    "diff": {
+                        "taskboard_order": [
+                            0,
+                            1
+                        ],
+                        "status": [
+                            213987,
+                            213986
+                        ]
+                    },
+                    "snapshot": null,
+                    "values": {
+                        "status": {
+                            "213987": "In progress",
+                            "213986": "New"
+                        }
+                    },
+                    "comment": "",
+                    "delete_comment_date": null,
+                    "delete_comment_user": [],
+                    "created_at": "2015-05-30T16:03:24+0000",
+                    "type": 1,
+                    "is_hidden": false,
+                    "is_snapshot": false
+                },
+                {
+                    "user": [
+                        "sebastien.chassot@etu.hesge.ch",
+                        "Sebastien chassot"
+                    ],
+                    "diff": {
+                        "taskboard_order": [
+                            9,
+                            1
+                        ],
+                        "status": [
+                            213986,
+                            213987
+                        ]
+                    },
+                    "snapshot": null,
+                    "values": {
+                        "status": {
+                            "213987": "In progress",
+                            "213986": "New"
+                        }
+                    },
+                    "comment": "",
+                    "delete_comment_date": null,
+                    "delete_comment_user": [],
+                    "created_at": "2015-06-06T10:45:31+0000",
+                    "type": 1,
+                    "is_hidden": false,
+                    "is_snapshot": false
+                },
+                {
+                    "user": [
+                        "sebastien.chassot@etu.hesge.ch",
+                        "Sebastien chassot"
+                    ],
+                    "diff": {
+                        "taskboard_order": [
+                            1,
+                            4
+                        ],
+                        "status": [
+                            213987,
+                            213989
+                        ]
+                    },
+                    "snapshot": null,
+                    "values": {
+                        "status": {
+                            "213989": "Closed",
+                            "213987": "In progress"
+                        }
+                    },
+                    "comment": "",
+                    "delete_comment_date": null,
+                    "delete_comment_user": [],
+                    "created_at": "2015-06-07T14:52:29+0000",
+                    "type": 1,
+                    "is_hidden": false,
+                    "is_snapshot": false
                 }
             ],
             "attachments": [],
             "owner": "sebastien.chassot@etu.hesge.ch",
-            "status": "In progress",
+            "status": "Closed",
             "user_story": null,
             "milestone": "Client afinet python",
             "assigned_to": "sebastien.chassot@etu.hesge.ch",
             "watchers": [],
-            "modified_date": "2015-05-30T13:00:44+0000",
+            "modified_date": "2015-06-07T14:52:29+0000",
             "tags": "[]",
-            "version": 4,
-            "is_blocked": true,
-            "blocked_note": "remplaced by sprint ",
+            "version": 9,
+            "is_blocked": false,
+            "blocked_note": "",
             "ref": 3,
             "created_date": "2015-05-23T07:27:51+0000",
             "finished_date": null,
             "subject": "clean TODO",
             "us_order": 1,
-            "taskboard_order": 0,
+            "taskboard_order": 6,
             "description": "",
             "is_iocaine": false,
             "external_reference": null
@@ -776,18 +895,185 @@
                     "type": 1,
                     "is_hidden": false,
                     "is_snapshot": false
+                },
+                {
+                    "user": [
+                        "sebastien.chassot@etu.hesge.ch",
+                        "Sebastien chassot"
+                    ],
+                    "diff": {
+                        "status": [
+                            213986,
+                            213987
+                        ],
+                        "taskboard_order": [
+                            0,
+                            1
+                        ]
+                    },
+                    "snapshot": null,
+                    "values": {
+                        "status": {
+                            "213987": "In progress",
+                            "213986": "New"
+                        }
+                    },
+                    "comment": "",
+                    "delete_comment_date": null,
+                    "delete_comment_user": [],
+                    "created_at": "2015-05-30T16:01:49+0000",
+                    "type": 1,
+                    "is_hidden": false,
+                    "is_snapshot": false
+                },
+                {
+                    "user": [
+                        "sebastien.chassot@etu.hesge.ch",
+                        "Sebastien chassot"
+                    ],
+                    "diff": {
+                        "is_iocaine": [
+                            true,
+                            false
+                        ]
+                    },
+                    "snapshot": null,
+                    "values": {},
+                    "comment": "",
+                    "delete_comment_date": null,
+                    "delete_comment_user": [],
+                    "created_at": "2015-05-30T16:02:53+0000",
+                    "type": 1,
+                    "is_hidden": false,
+                    "is_snapshot": false
+                },
+                {
+                    "user": [
+                        "sebastien.chassot@etu.hesge.ch",
+                        "Sebastien chassot"
+                    ],
+                    "diff": {
+                        "taskboard_order": [
+                            1,
+                            7
+                        ],
+                        "status": [
+                            213987,
+                            213986
+                        ]
+                    },
+                    "snapshot": null,
+                    "values": {
+                        "status": {
+                            "213987": "In progress",
+                            "213986": "New"
+                        }
+                    },
+                    "comment": "",
+                    "delete_comment_date": null,
+                    "delete_comment_user": [],
+                    "created_at": "2015-05-30T16:02:59+0000",
+                    "type": 1,
+                    "is_hidden": false,
+                    "is_snapshot": false
+                },
+                {
+                    "user": [
+                        "sebastien.chassot@etu.hesge.ch",
+                        "Sebastien chassot"
+                    ],
+                    "diff": {
+                        "status": [
+                            213986,
+                            213987
+                        ]
+                    },
+                    "snapshot": null,
+                    "values": {
+                        "status": {
+                            "213987": "In progress",
+                            "213986": "New"
+                        }
+                    },
+                    "comment": "",
+                    "delete_comment_date": null,
+                    "delete_comment_user": [],
+                    "created_at": "2015-05-30T16:03:21+0000",
+                    "type": 1,
+                    "is_hidden": false,
+                    "is_snapshot": false
+                },
+                {
+                    "user": [
+                        "sebastien.chassot@etu.hesge.ch",
+                        "Sebastien chassot"
+                    ],
+                    "diff": {
+                        "taskboard_order": [
+                            0,
+                            2
+                        ],
+                        "status": [
+                            213987,
+                            213986
+                        ]
+                    },
+                    "snapshot": null,
+                    "values": {
+                        "status": {
+                            "213987": "In progress",
+                            "213986": "New"
+                        }
+                    },
+                    "comment": "",
+                    "delete_comment_date": null,
+                    "delete_comment_user": [],
+                    "created_at": "2015-06-06T10:45:19+0000",
+                    "type": 1,
+                    "is_hidden": false,
+                    "is_snapshot": false
+                },
+                {
+                    "user": [
+                        "sebastien.chassot@etu.hesge.ch",
+                        "Sebastien chassot"
+                    ],
+                    "diff": {
+                        "status": [
+                            213986,
+                            213990
+                        ],
+                        "taskboard_order": [
+                            2,
+                            0
+                        ]
+                    },
+                    "snapshot": null,
+                    "values": {
+                        "status": {
+                            "213986": "New",
+                            "213990": "Needs Info"
+                        }
+                    },
+                    "comment": "",
+                    "delete_comment_date": null,
+                    "delete_comment_user": [],
+                    "created_at": "2015-06-07T14:49:58+0000",
+                    "type": 1,
+                    "is_hidden": false,
+                    "is_snapshot": false
                 }
             ],
             "attachments": [],
             "owner": "sebastien.chassot@etu.hesge.ch",
-            "status": "New",
+            "status": "Needs Info",
             "user_story": null,
             "milestone": "Client afinet python",
             "assigned_to": "sebastien.chassot@etu.hesge.ch",
             "watchers": [],
-            "modified_date": "2015-05-30T12:57:29+0000",
+            "modified_date": "2015-06-07T14:49:58+0000",
             "tags": "[]",
-            "version": 4,
+            "version": 12,
             "is_blocked": false,
             "blocked_note": "",
             "ref": 4,
@@ -797,7 +1083,7 @@
             "us_order": 1,
             "taskboard_order": 0,
             "description": "",
-            "is_iocaine": true,
+            "is_iocaine": false,
             "external_reference": null
         },
         {
@@ -851,8 +1137,8 @@
                     "snapshot": null,
                     "values": {
                         "status": {
-                            "213986": "New",
-                            "213989": "Closed"
+                            "213989": "Closed",
+                            "213986": "New"
                         }
                     },
                     "comment": "",
@@ -940,31 +1226,6 @@
         },
         {
             "custom_attributes_values": {},
-            "history": [],
-            "attachments": [],
-            "owner": "sebastien.chassot@etu.hesge.ch",
-            "status": "New",
-            "user_story": null,
-            "milestone": "Client afinet python",
-            "assigned_to": "sebastien.chassot@etu.hesge.ch",
-            "watchers": [],
-            "modified_date": "2015-05-30T12:47:38+0000",
-            "tags": "[]",
-            "version": 1,
-            "is_blocked": false,
-            "blocked_note": "",
-            "ref": 7,
-            "created_date": "2015-05-30T12:47:38+0000",
-            "finished_date": null,
-            "subject": "Clean et ajoute des log lors de l'execution",
-            "us_order": 1,
-            "taskboard_order": 1,
-            "description": "",
-            "is_iocaine": false,
-            "external_reference": null
-        },
-        {
-            "custom_attributes_values": {},
             "history": [
                 {
                     "user": [
@@ -980,8 +1241,8 @@
                     "snapshot": null,
                     "values": {
                         "status": {
-                            "213990": "Needs Info",
-                            "213986": "New"
+                            "213986": "New",
+                            "213990": "Needs Info"
                         }
                     },
                     "comment": "",
@@ -991,18 +1252,108 @@
                     "type": 1,
                     "is_hidden": false,
                     "is_snapshot": false
+                },
+                {
+                    "user": [
+                        "sebastien.chassot@etu.hesge.ch",
+                        "Sebastien chassot"
+                    ],
+                    "diff": {
+                        "taskboard_order": [
+                            2,
+                            3
+                        ],
+                        "status": [
+                            213990,
+                            213986
+                        ]
+                    },
+                    "snapshot": null,
+                    "values": {
+                        "status": {
+                            "213986": "New",
+                            "213990": "Needs Info"
+                        }
+                    },
+                    "comment": "",
+                    "delete_comment_date": null,
+                    "delete_comment_user": [],
+                    "created_at": "2015-05-31T08:33:54+0000",
+                    "type": 1,
+                    "is_hidden": false,
+                    "is_snapshot": false
+                },
+                {
+                    "user": [
+                        "sebastien.chassot@etu.hesge.ch",
+                        "Sebastien chassot"
+                    ],
+                    "diff": {
+                        "taskboard_order": [
+                            5,
+                            1
+                        ],
+                        "status": [
+                            213986,
+                            213987
+                        ]
+                    },
+                    "snapshot": null,
+                    "values": {
+                        "status": {
+                            "213987": "In progress",
+                            "213986": "New"
+                        }
+                    },
+                    "comment": "",
+                    "delete_comment_date": null,
+                    "delete_comment_user": [],
+                    "created_at": "2015-06-07T14:52:42+0000",
+                    "type": 1,
+                    "is_hidden": false,
+                    "is_snapshot": false
+                },
+                {
+                    "user": [
+                        "sebastien.chassot@etu.hesge.ch",
+                        "Sebastien chassot"
+                    ],
+                    "diff": {
+                        "taskboard_order": [
+                            1,
+                            4
+                        ],
+                        "status": [
+                            213987,
+                            213989
+                        ]
+                    },
+                    "snapshot": null,
+                    "values": {
+                        "status": {
+                            "213989": "Closed",
+                            "213987": "In progress"
+                        }
+                    },
+                    "comment": "",
+                    "delete_comment_date": null,
+                    "delete_comment_user": [],
+                    "created_at": "2015-06-12T12:14:58+0000",
+                    "type": 1,
+                    "is_hidden": false,
+                    "is_snapshot": false
                 }
             ],
             "attachments": [],
             "owner": "sebastien.chassot@etu.hesge.ch",
-            "status": "Needs Info",
+            "status": "Closed",
             "user_story": null,
             "milestone": "Client afinet python",
             "assigned_to": "sebastien.chassot@etu.hesge.ch",
             "watchers": [],
-            "modified_date": "2015-05-30T13:02:06+0000",
+            "modified_date": "2015-06-12T12:14:58+0000",
             "tags": "[]",
-            "version": 2,
+            "version": 5,
             "is_blocked": false,
             "blocked_note": "",
             "ref": 8,
@@ -1010,24 +1361,51 @@
             "finished_date": null,
             "subject": "commenter function dans rapport",
             "us_order": 1,
-            "taskboard_order": 2,
+            "taskboard_order": 4,
             "description": "",
             "is_iocaine": false,
             "external_reference": null
         },
         {
             "custom_attributes_values": {},
-            "history": [],
+            "history": [
+                {
+                    "user": [
+                        "sebastien.chassot@etu.hesge.ch",
+                        "Sebastien chassot"
+                    ],
+                    "diff": {
+                        "status": [
+                            213986,
+                            213989
+                        ]
+                    },
+                    "snapshot": null,
+                    "values": {
+                        "status": {
+                            "213989": "Closed",
+                            "213986": "New"
+                        }
+                    },
+                    "comment": "",
+                    "delete_comment_date": null,
+                    "delete_comment_user": [],
+                    "created_at": "2015-05-30T16:39:03+0000",
+                    "type": 1,
+                    "is_hidden": false,
+                    "is_snapshot": false
+                }
+            ],
             "attachments": [],
             "owner": "sebastien.chassot@etu.hesge.ch",
-            "status": "New",
+            "status": "Closed",
             "user_story": null,
             "milestone": "Client afinet python",
             "assigned_to": "sebastien.chassot@etu.hesge.ch",
             "watchers": [],
-            "modified_date": "2015-05-30T12:51:21+0000",
+            "modified_date": "2015-05-30T16:39:03+0000",
             "tags": "[]",
-            "version": 1,
+            "version": 2,
             "is_blocked": false,
             "blocked_note": "",
             "ref": 9,
@@ -1050,15 +1428,71 @@
             "milestone": "Client afinet python",
             "assigned_to": "sebastien.chassot@etu.hesge.ch",
             "watchers": [],
-            "modified_date": "2015-05-30T12:53:49+0000",
+            "modified_date": "2015-05-31T08:32:15+0000",
             "tags": "[]",
-            "version": 1,
+            "version": 2,
             "is_blocked": false,
             "blocked_note": "",
             "ref": 10,
             "created_date": "2015-05-30T12:53:49+0000",
             "finished_date": null,
             "subject": "creer fonction rearrange data block quand remove block dossier",
+            "us_order": 1,
+            "taskboard_order": 0,
+            "description": "",
+            "is_iocaine": false,
+            "external_reference": null
+        },
+        {
+            "custom_attributes_values": {},
+            "history": [
+                {
+                    "user": [
+                        "sebastien.chassot@etu.hesge.ch",
+                        "Sebastien chassot"
+                    ],
+                    "diff": {
+                        "status": [
+                            213986,
+                            213990
+                        ],
+                        "taskboard_order": [
+                            6,
+                            4
+                        ]
+                    },
+                    "snapshot": null,
+                    "values": {
+                        "status": {
+                            "213986": "New",
+                            "213990": "Needs Info"
+                        }
+                    },
+                    "comment": "",
+                    "delete_comment_date": null,
+                    "delete_comment_user": [],
+                    "created_at": "2015-06-07T14:50:23+0000",
+                    "type": 1,
+                    "is_hidden": false,
+                    "is_snapshot": false
+                }
+            ],
+            "attachments": [],
+            "owner": "sebastien.chassot@etu.hesge.ch",
+            "status": "Needs Info",
+            "user_story": null,
+            "milestone": "Client afinet python",
+            "assigned_to": "sebastien.chassot@etu.hesge.ch",
+            "watchers": [],
+            "modified_date": "2015-06-07T14:50:23+0000",
+            "tags": "[]",
+            "version": 2,
+            "is_blocked": false,
+            "blocked_note": "",
+            "ref": 11,
+            "created_date": "2015-05-30T12:54:32+0000",
+            "finished_date": null,
+            "subject": "pseudo code ialloc_bloc",
             "us_order": 1,
             "taskboard_order": 4,
             "description": "",
@@ -1067,42 +1501,48 @@
         },
         {
             "custom_attributes_values": {},
-            "history": [],
+            "history": [
+                {
+                    "user": [
+                        "sebastien.chassot@etu.hesge.ch",
+                        "Sebastien chassot"
+                    ],
+                    "diff": {
+                        "taskboard_order": [
+                            8,
+                            2
+                        ],
+                        "status": [
+                            213986,
+                            213990
+                        ]
+                    },
+                    "snapshot": null,
+                    "values": {
+                        "status": {
+                            "213986": "New",
+                            "213990": "Needs Info"
+                        }
+                    },
+                    "comment": "",
+                    "delete_comment_date": null,
+                    "delete_comment_user": [],
+                    "created_at": "2015-06-07T14:51:27+0000",
+                    "type": 1,
+                    "is_hidden": false,
+                    "is_snapshot": false
+                }
+            ],
             "attachments": [],
             "owner": "sebastien.chassot@etu.hesge.ch",
-            "status": "New",
+            "status": "Needs Info",
             "user_story": null,
             "milestone": "Client afinet python",
             "assigned_to": "sebastien.chassot@etu.hesge.ch",
             "watchers": [],
-            "modified_date": "2015-05-30T12:54:32+0000",
+            "modified_date": "2015-06-07T14:51:27+0000",
             "tags": "[]",
-            "version": 1,
-            "is_blocked": false,
-            "blocked_note": "",
-            "ref": 11,
-            "created_date": "2015-05-30T12:54:32+0000",
-            "finished_date": null,
-            "subject": "pseudo code ialloc_bloc",
-            "us_order": 1,
-            "taskboard_order": 5,
-            "description": "",
-            "is_iocaine": false,
-            "external_reference": null
-        },
-        {
-            "custom_attributes_values": {},
-            "history": [],
-            "attachments": [],
-            "owner": "sebastien.chassot@etu.hesge.ch",
-            "status": "New",
-            "user_story": null,
-            "milestone": "Client afinet python",
-            "assigned_to": "sebastien.chassot@etu.hesge.ch",
-            "watchers": [],
-            "modified_date": "2015-05-30T12:55:54+0000",
-            "tags": "[]",
-            "version": 1,
+            "version": 2,
             "is_blocked": false,
             "blocked_note": "",
             "ref": 12,
@@ -1110,24 +1550,55 @@
             "finished_date": null,
             "subject": "pseudo code namei",
             "us_order": 1,
-            "taskboard_order": 6,
+            "taskboard_order": 1,
             "description": "",
             "is_iocaine": false,
             "external_reference": null
         },
         {
             "custom_attributes_values": {},
-            "history": [],
+            "history": [
+                {
+                    "user": [
+                        "sebastien.chassot@etu.hesge.ch",
+                        "Sebastien chassot"
+                    ],
+                    "diff": {
+                        "taskboard_order": [
+                            7,
+                            3
+                        ],
+                        "status": [
+                            213986,
+                            213990
+                        ]
+                    },
+                    "snapshot": null,
+                    "values": {
+                        "status": {
+                            "213986": "New",
+                            "213990": "Needs Info"
+                        }
+                    },
+                    "comment": "",
+                    "delete_comment_date": null,
+                    "delete_comment_user": [],
+                    "created_at": "2015-06-07T14:51:29+0000",
+                    "type": 1,
+                    "is_hidden": false,
+                    "is_snapshot": false
+                }
+            ],
             "attachments": [],
             "owner": "sebastien.chassot@etu.hesge.ch",
-            "status": "New",
+            "status": "Needs Info",
             "user_story": null,
             "milestone": "Client afinet python",
             "assigned_to": "sebastien.chassot@etu.hesge.ch",
             "watchers": [],
-            "modified_date": "2015-05-30T12:56:13+0000",
+            "modified_date": "2015-06-07T14:51:29+0000",
             "tags": "[]",
-            "version": 1,
+            "version": 3,
             "is_blocked": false,
             "blocked_note": "",
             "ref": 13,
@@ -1135,7 +1606,337 @@
             "finished_date": null,
             "subject": "pseudo code lookup_entry",
             "us_order": 1,
+            "taskboard_order": 3,
+            "description": "",
+            "is_iocaine": false,
+            "external_reference": null
+        },
+        {
+            "custom_attributes_values": {},
+            "history": [
+                {
+                    "user": [
+                        "sebastien.chassot@etu.hesge.ch",
+                        "Sebastien chassot"
+                    ],
+                    "diff": {
+                        "taskboard_order": [
+                            4,
+                            1
+                        ],
+                        "status": [
+                            213986,
+                            213990
+                        ]
+                    },
+                    "snapshot": null,
+                    "values": {
+                        "status": {
+                            "213986": "New",
+                            "213990": "Needs Info"
+                        }
+                    },
+                    "comment": "",
+                    "delete_comment_date": null,
+                    "delete_comment_user": [],
+                    "created_at": "2015-06-07T14:51:17+0000",
+                    "type": 1,
+                    "is_hidden": false,
+                    "is_snapshot": false
+                }
+            ],
+            "attachments": [],
+            "owner": "sebastien.chassot@etu.hesge.ch",
+            "status": "Needs Info",
+            "user_story": null,
+            "milestone": "Client afinet python",
+            "assigned_to": "sebastien.chassot@etu.hesge.ch",
+            "watchers": [],
+            "modified_date": "2015-06-08T18:31:35+0000",
+            "tags": "[]",
+            "version": 4,
+            "is_blocked": false,
+            "blocked_note": "",
+            "ref": 15,
+            "created_date": "2015-05-30T15:57:20+0000",
+            "finished_date": null,
+            "subject": "checker la portée des variables de class, d'instance",
+            "us_order": 1,
+            "taskboard_order": 2,
+            "description": "",
+            "is_iocaine": false,
+            "external_reference": null
+        },
+        {
+            "custom_attributes_values": {},
+            "history": [
+                {
+                    "user": [
+                        "sebastien.chassot@etu.hesge.ch",
+                        "Sebastien chassot"
+                    ],
+                    "diff": {
+                        "assigned_to": [
+                            null,
+                            "sebastien.chassot@etu.hesge.ch"
+                        ]
+                    },
+                    "snapshot": null,
+                    "values": {
+                        "users": [
+                            "sebastien.chassot@etu.hesge.ch"
+                        ]
+                    },
+                    "comment": "",
+                    "delete_comment_date": null,
+                    "delete_comment_user": [],
+                    "created_at": "2015-06-01T18:16:20+0000",
+                    "type": 1,
+                    "is_hidden": false,
+                    "is_snapshot": false
+                },
+                {
+                    "user": [
+                        "sebastien.chassot@etu.hesge.ch",
+                        "Sebastien chassot"
+                    ],
+                    "diff": {
+                        "status": [
+                            213988,
+                            213986
+                        ],
+                        "taskboard_order": [
+                            0,
+                            1
+                        ]
+                    },
+                    "snapshot": null,
+                    "values": {
+                        "status": {
+                            "213986": "New",
+                            "213988": "Ready for test"
+                        }
+                    },
+                    "comment": "",
+                    "delete_comment_date": null,
+                    "delete_comment_user": [],
+                    "created_at": "2015-06-08T18:31:32+0000",
+                    "type": 1,
+                    "is_hidden": false,
+                    "is_snapshot": false
+                },
+                {
+                    "user": [
+                        "sebastien.chassot@etu.hesge.ch",
+                        "Sebastien chassot"
+                    ],
+                    "diff": {
+                        "taskboard_order": [
+                            3,
+                            0
+                        ],
+                        "status": [
+                            213986,
+                            213988
+                        ]
+                    },
+                    "snapshot": null,
+                    "values": {
+                        "status": {
+                            "213986": "New",
+                            "213988": "Ready for test"
+                        }
+                    },
+                    "comment": "",
+                    "delete_comment_date": null,
+                    "delete_comment_user": [],
+                    "created_at": "2015-06-08T18:32:38+0000",
+                    "type": 1,
+                    "is_hidden": false,
+                    "is_snapshot": false
+                }
+            ],
+            "attachments": [],
+            "owner": "sebastien.chassot@etu.hesge.ch",
+            "status": "New",
+            "user_story": null,
+            "milestone": "Client afinet python",
+            "assigned_to": "sebastien.chassot@etu.hesge.ch",
+            "watchers": [],
+            "modified_date": "2015-06-08T18:31:32+0000",
+            "tags": "[]",
+            "version": 4,
+            "is_blocked": false,
+            "blocked_note": "",
+            "ref": 16,
+            "created_date": "2015-06-01T18:16:11+0000",
+            "finished_date": null,
+            "subject": "ajouter un select type watchdogpour eviter qu'un client nous bloque",
+            "us_order": 1,
+            "taskboard_order": 1,
+            "description": "",
+            "is_iocaine": false,
+            "external_reference": null
+        },
+        {
+            "custom_attributes_values": {},
+            "history": [
+                {
+                    "user": [
+                        "sebastien.chassot@etu.hesge.ch",
+                        "Sebastien chassot"
+                    ],
+                    "diff": {
+                        "subject": [
+                            "Ajouter make  run pour labcer le server de block",
+                            "Ajouter make  run et make run_debug pour lancer le server de block"
+                        ]
+                    },
+                    "snapshot": null,
+                    "values": {},
+                    "comment": "",
+                    "delete_comment_date": null,
+                    "delete_comment_user": [],
+                    "created_at": "2015-06-06T07:52:00+0000",
+                    "type": 1,
+                    "is_hidden": false,
+                    "is_snapshot": false
+                },
+                {
+                    "user": [
+                        "sebastien.chassot@etu.hesge.ch",
+                        "Sebastien chassot"
+                    ],
+                    "diff": {
+                        "taskboard_order": [
+                            1,
+                            4
+                        ],
+                        "status": [
+                            213987,
+                            213989
+                        ]
+                    },
+                    "snapshot": null,
+                    "values": {
+                        "status": {
+                            "213989": "Closed",
+                            "213987": "In progress"
+                        }
+                    },
+                    "comment": "",
+                    "delete_comment_date": null,
+                    "delete_comment_user": [],
+                    "created_at": "2015-06-06T07:53:14+0000",
+                    "type": 1,
+                    "is_hidden": false,
+                    "is_snapshot": false
+                }
+            ],
+            "attachments": [],
+            "owner": "sebastien.chassot@etu.hesge.ch",
+            "status": "Closed",
+            "user_story": null,
+            "milestone": "Client afinet python",
+            "assigned_to": "sebastien.chassot@etu.hesge.ch",
+            "watchers": [],
+            "modified_date": "2015-06-06T07:53:14+0000",
+            "tags": "[]",
+            "version": 3,
+            "is_blocked": false,
+            "blocked_note": "",
+            "ref": 18,
+            "created_date": "2015-06-06T07:31:45+0000",
+            "finished_date": null,
+            "subject": "Ajouter make  run et make run_debug pour lancer le server de block",
+            "us_order": 1,
             "taskboard_order": 7,
+            "description": "",
+            "is_iocaine": false,
+            "external_reference": null
+        },
+        {
+            "custom_attributes_values": {},
+            "history": [
+                {
+                    "user": [
+                        "sebastien.chassot@etu.hesge.ch",
+                        "Sebastien chassot"
+                    ],
+                    "diff": {
+                        "taskboard_order": [
+                            1,
+                            0
+                        ],
+                        "status": [
+                            213986,
+                            213987
+                        ]
+                    },
+                    "snapshot": null,
+                    "values": {
+                        "status": {
+                            "213987": "In progress",
+                            "213986": "New"
+                        }
+                    },
+                    "comment": "",
+                    "delete_comment_date": null,
+                    "delete_comment_user": [],
+                    "created_at": "2015-06-07T14:52:33+0000",
+                    "type": 1,
+                    "is_hidden": false,
+                    "is_snapshot": false
+                },
+                {
+                    "user": [
+                        "sebastien.chassot@etu.hesge.ch",
+                        "Sebastien chassot"
+                    ],
+                    "diff": {
+                        "status": [
+                            213987,
+                            213989
+                        ],
+                        "taskboard_order": [
+                            0,
+                            4
+                        ]
+                    },
+                    "snapshot": null,
+                    "values": {
+                        "status": {
+                            "213989": "Closed",
+                            "213987": "In progress"
+                        }
+                    },
+                    "comment": "",
+                    "delete_comment_date": null,
+                    "delete_comment_user": [],
+                    "created_at": "2015-06-12T12:13:47+0000",
+                    "type": 1,
+                    "is_hidden": false,
+                    "is_snapshot": false
+                }
+            ],
+            "attachments": [],
+            "owner": "sebastien.chassot@etu.hesge.ch",
+            "status": "Closed",
+            "user_story": null,
+            "milestone": "Client afinet python",
+            "assigned_to": "sebastien.chassot@etu.hesge.ch",
+            "watchers": [],
+            "modified_date": "2015-06-12T12:13:47+0000",
+            "tags": "[]",
+            "version": 3,
+            "is_blocked": false,
+            "blocked_note": "",
+            "ref": 19,
+            "created_date": "2015-06-06T09:33:57+0000",
+            "finished_date": null,
+            "subject": "Faire une doc propre",
+            "us_order": 1,
+            "taskboard_order": 5,
             "description": "",
             "is_iocaine": false,
             "external_reference": null
@@ -1145,468 +1946,323 @@
     "tags_colors": [],
     "anon_permissions": [],
     "public_permissions": [],
-    "modified_date": "2015-05-30T13:02:06+0000",
+    "modified_date": "2015-06-12T12:15:43+0000",
     "timeline": [
         {
             "data": {
-                "comment_html": "",
-                "task": {
-                    "ref": 8,
-                    "subject": "commenter function dans rapport",
-                    "id": 117223
+                "values_diff": {
+                    "taskboard_order": [
+                        0,
+                        4
+                    ],
+                    "status": [
+                        "In progress",
+                        "Closed"
+                    ]
                 },
                 "comment": "",
+                "comment_html": "",
                 "user": {
                     "email": "sebastien.chassot@etu.hesge.ch"
                 },
                 "project": {
-                    "slug": "sinux-minixfs",
+                    "id": 42722,
                     "name": "minixfs",
                     "description": "TP minixfs ITI2",
-                    "id": 42722
+                    "slug": "sinux-minixfs"
                 },
+                "task": {
+                    "ref": 19,
+                    "id": 123200,
+                    "subject": "Faire une doc propre"
+                }
+            },
+            "content_type": 10,
+            "event_type": "tasks.task.change",
+            "data_content_type": 22,
+            "created": "2015-06-12T12:14:55+0000"
+        },
+        {
+            "data": {
+                "values_diff": {},
+                "comment": "",
+                "comment_html": "",
+                "user": {
+                    "email": "sebastien.chassot@etu.hesge.ch"
+                },
+                "project": {
+                    "id": 42722,
+                    "name": "minixfs",
+                    "description": "TP minixfs ITI2",
+                    "slug": "sinux-minixfs"
+                },
+                "task": {
+                    "ref": 20,
+                    "id": 124645,
+                    "subject": "dlksjflks"
+                }
+            },
+            "content_type": 10,
+            "event_type": "tasks.task.delete",
+            "data_content_type": 22,
+            "created": "2015-06-12T12:14:35+0000"
+        },
+        {
+            "data": {
+                "values_diff": {},
+                "comment": "",
+                "comment_html": "",
+                "user": {
+                    "email": "sebastien.chassot@etu.hesge.ch"
+                },
+                "project": {
+                    "id": 42722,
+                    "name": "minixfs",
+                    "description": "TP minixfs ITI2",
+                    "slug": "sinux-minixfs"
+                },
+                "task": {
+                    "ref": 7,
+                    "id": 117222,
+                    "subject": "Clean et ajoute des log lors de l'execution"
+                }
+            },
+            "content_type": 10,
+            "event_type": "tasks.task.delete",
+            "data_content_type": 22,
+            "created": "2015-06-12T12:14:20+0000"
+        },
+        {
+            "data": {
+                "values_diff": {
+                    "status": [
+                        "In progress",
+                        "Closed"
+                    ],
+                    "taskboard_order": [
+                        1,
+                        4
+                    ]
+                },
+                "comment": "",
+                "comment_html": "",
+                "user": {
+                    "email": "sebastien.chassot@etu.hesge.ch"
+                },
+                "project": {
+                    "id": 42722,
+                    "name": "minixfs",
+                    "description": "TP minixfs ITI2",
+                    "slug": "sinux-minixfs"
+                },
+                "task": {
+                    "ref": 8,
+                    "id": 117223,
+                    "subject": "commenter function dans rapport"
+                }
+            },
+            "content_type": 10,
+            "event_type": "tasks.task.change",
+            "data_content_type": 22,
+            "created": "2015-06-12T12:13:50+0000"
+        },
+        {
+            "data": {
+                "values_diff": {},
+                "comment": "",
+                "comment_html": "",
+                "user": {
+                    "email": "sebastien.chassot@etu.hesge.ch"
+                },
+                "project": {
+                    "id": 42722,
+                    "name": "minixfs",
+                    "description": "TP minixfs ITI2",
+                    "slug": "sinux-minixfs"
+                },
+                "task": {
+                    "ref": 20,
+                    "id": 124645,
+                    "subject": "dlksjflks"
+                }
+            },
+            "content_type": 10,
+            "event_type": "tasks.task.create",
+            "data_content_type": 22,
+            "created": "2015-06-08T18:32:59+0000"
+        },
+        {
+            "data": {
+                "values_diff": {
+                    "taskboard_order": [
+                        0,
+                        1
+                    ],
+                    "status": [
+                        "Ready for test",
+                        "New"
+                    ]
+                },
+                "comment": "",
+                "task": {
+                    "ref": 16,
+                    "id": 118849,
+                    "subject": "ajouter un select type watchdogpour eviter qu'un client nous bloque"
+                },
+                "user": {
+                    "email": "sebastien.chassot@etu.hesge.ch"
+                },
+                "project": {
+                    "id": 42722,
+                    "name": "minixfs",
+                    "description": "TP minixfs ITI2",
+                    "slug": "sinux-minixfs"
+                },
+                "comment_html": ""
+            },
+            "content_type": 10,
+            "event_type": "tasks.task.change",
+            "data_content_type": 22,
+            "created": "2015-06-08T18:31:32+0000"
+        },
+        {
+            "data": {
+                "values_diff": {
+                    "taskboard_order": [
+                        3,
+                        0
+                    ],
+                    "status": [
+                        "New",
+                        "Ready for test"
+                    ]
+                },
+                "comment": "",
+                "task": {
+                    "ref": 16,
+                    "id": 118849,
+                    "subject": "ajouter un select type watchdogpour eviter qu'un client nous bloque"
+                },
+                "user": {
+                    "email": "sebastien.chassot@etu.hesge.ch"
+                },
+                "project": {
+                    "id": 42722,
+                    "name": "minixfs",
+                    "description": "TP minixfs ITI2",
+                    "slug": "sinux-minixfs"
+                },
+                "comment_html": ""
+            },
+            "content_type": 10,
+            "event_type": "tasks.task.change",
+            "data_content_type": 22,
+            "created": "2015-06-08T18:31:30+0000"
+        },
+        {
+            "data": {
+                "values_diff": {
+                    "status": [
+                        "In progress",
+                        "Closed"
+                    ],
+                    "taskboard_order": [
+                        0,
+                        5
+                    ]
+                },
+                "comment": "",
+                "comment_html": "",
+                "user": {
+                    "email": "sebastien.chassot@etu.hesge.ch"
+                },
+                "project": {
+                    "id": 42722,
+                    "name": "minixfs",
+                    "description": "TP minixfs ITI2",
+                    "slug": "sinux-minixfs"
+                },
+                "task": {
+                    "ref": 7,
+                    "id": 117222,
+                    "subject": "Clean et ajoute des log lors de l'execution"
+                }
+            },
+            "content_type": 10,
+            "event_type": "tasks.task.change",
+            "data_content_type": 22,
+            "created": "2015-06-07T14:51:37+0000"
+        },
+        {
+            "data": {
+                "values_diff": {
+                    "taskboard_order": [
+                        5,
+                        1
+                    ],
+                    "status": [
+                        "New",
+                        "In progress"
+                    ]
+                },
+                "comment": "",
+                "task": {
+                    "ref": 8,
+                    "id": 117223,
+                    "subject": "commenter function dans rapport"
+                },
+                "user": {
+                    "email": "sebastien.chassot@etu.hesge.ch"
+                },
+                "project": {
+                    "id": 42722,
+                    "name": "minixfs",
+                    "description": "TP minixfs ITI2",
+                    "slug": "sinux-minixfs"
+                },
+                "comment_html": ""
+            },
+            "content_type": 10,
+            "event_type": "tasks.task.change",
+            "data_content_type": 22,
+            "created": "2015-06-07T14:51:34+0000"
+        },
+        {
+            "data": {
                 "values_diff": {
                     "status": [
                         "New",
                         "Needs Info"
-                    ]
-                }
-            },
-            "content_type": 10,
-            "event_type": "tasks.task.change",
-            "data_content_type": 22,
-            "created": "2015-05-30T13:02:06+0000"
-        },
-        {
-            "data": {
-                "comment_html": "",
-                "task": {
-                    "ref": 14,
-                    "subject": "test",
-                    "id": 117229
-                },
-                "comment": "",
-                "user": {
-                    "email": "sebastien.chassot@etu.hesge.ch"
-                },
-                "project": {
-                    "slug": "sinux-minixfs",
-                    "name": "minixfs",
-                    "description": "TP minixfs ITI2",
-                    "id": 42722
-                },
-                "values_diff": {}
-            },
-            "content_type": 10,
-            "event_type": "tasks.task.delete",
-            "data_content_type": 22,
-            "created": "2015-05-30T13:01:40+0000"
-        },
-        {
-            "data": {
-                "comment_html": "",
-                "task": {
-                    "ref": 14,
-                    "subject": "test",
-                    "id": 117229
-                },
-                "comment": "",
-                "user": {
-                    "email": "sebastien.chassot@etu.hesge.ch"
-                },
-                "project": {
-                    "slug": "sinux-minixfs",
-                    "name": "minixfs",
-                    "description": "TP minixfs ITI2",
-                    "id": 42722
-                },
-                "values_diff": {}
-            },
-            "content_type": 10,
-            "event_type": "tasks.task.create",
-            "data_content_type": 22,
-            "created": "2015-05-30T13:01:11+0000"
-        },
-        {
-            "data": {
-                "comment_html": "",
-                "task": {
-                    "ref": 4,
-                    "subject": "improve or remove request list fifo",
-                    "id": 112028
-                },
-                "comment": "",
-                "user": {
-                    "email": "sebastien.chassot@etu.hesge.ch"
-                },
-                "project": {
-                    "slug": "sinux-minixfs",
-                    "name": "minixfs",
-                    "description": "TP minixfs ITI2",
-                    "id": 42722
-                },
-                "values_diff": {
+                    ],
                     "taskboard_order": [
-                        1,
-                        0
-                    ],
-                    "is_iocaine": [
-                        false,
-                        true
+                        6,
+                        4
                     ]
-                }
-            },
-            "content_type": 10,
-            "event_type": "tasks.task.change",
-            "data_content_type": 22,
-            "created": "2015-05-30T13:00:15+0000"
-        },
-        {
-            "data": {
-                "comment_html": "",
-                "task": {
-                    "ref": 3,
-                    "subject": "clean TODO",
-                    "id": 112027
                 },
                 "comment": "",
+                "comment_html": "",
                 "user": {
                     "email": "sebastien.chassot@etu.hesge.ch"
                 },
                 "project": {
-                    "slug": "sinux-minixfs",
+                    "id": 42722,
                     "name": "minixfs",
                     "description": "TP minixfs ITI2",
-                    "id": 42722
+                    "slug": "sinux-minixfs"
                 },
-                "values_diff": {
-                    "blocked_note_html": [
-                        "",
-                        "<p>remplaced by sprint </p>"
-                    ],
-                    "blocked_note_diff": [
-                        null,
-                        "<ins style=\"background:#e6ffe6;\">remplaced by sprint </ins>"
-                    ],
-                    "is_blocked": [
-                        false,
-                        true
-                    ]
-                }
-            },
-            "content_type": 10,
-            "event_type": "tasks.task.change",
-            "data_content_type": 22,
-            "created": "2015-05-30T12:59:36+0000"
-        },
-        {
-            "data": {
-                "comment_html": "",
-                "task": {
-                    "ref": 4,
-                    "subject": "improve or remove request list fifo",
-                    "id": 112028
-                },
-                "comment": "",
-                "user": {
-                    "email": "sebastien.chassot@etu.hesge.ch"
-                },
-                "project": {
-                    "slug": "sinux-minixfs",
-                    "name": "minixfs",
-                    "description": "TP minixfs ITI2",
-                    "id": 42722
-                },
-                "values_diff": {
-                    "is_iocaine": [
-                        true,
-                        false
-                    ]
-                }
-            },
-            "content_type": 10,
-            "event_type": "tasks.task.change",
-            "data_content_type": 22,
-            "created": "2015-05-30T12:58:34+0000"
-        },
-        {
-            "data": {
-                "comment_html": "",
-                "task": {
-                    "ref": 4,
-                    "subject": "improve or remove request list fifo",
-                    "id": 112028
-                },
-                "comment": "",
-                "user": {
-                    "email": "sebastien.chassot@etu.hesge.ch"
-                },
-                "project": {
-                    "slug": "sinux-minixfs",
-                    "name": "minixfs",
-                    "description": "TP minixfs ITI2",
-                    "id": 42722
-                },
-                "values_diff": {
-                    "is_iocaine": [
-                        false,
-                        true
-                    ]
-                }
-            },
-            "content_type": 10,
-            "event_type": "tasks.task.change",
-            "data_content_type": 22,
-            "created": "2015-05-30T12:57:41+0000"
-        },
-        {
-            "data": {
-                "comment_html": "",
-                "task": {
-                    "ref": 4,
-                    "subject": "improve or remove request list fifo",
-                    "id": 112028
-                },
-                "comment": "",
-                "user": {
-                    "email": "sebastien.chassot@etu.hesge.ch"
-                },
-                "project": {
-                    "slug": "sinux-minixfs",
-                    "name": "minixfs",
-                    "description": "TP minixfs ITI2",
-                    "id": 42722
-                },
-                "values_diff": {
-                    "is_iocaine": [
-                        false,
-                        true
-                    ]
-                }
-            },
-            "content_type": 10,
-            "event_type": "tasks.task.change",
-            "data_content_type": 22,
-            "created": "2015-05-30T12:57:29+0000"
-        },
-        {
-            "data": {
-                "comment_html": "",
-                "task": {
-                    "ref": 12,
-                    "subject": "pseudo code namei",
-                    "id": 117227
-                },
-                "comment": "",
-                "user": {
-                    "email": "sebastien.chassot@etu.hesge.ch"
-                },
-                "project": {
-                    "slug": "sinux-minixfs",
-                    "name": "minixfs",
-                    "description": "TP minixfs ITI2",
-                    "id": 42722
-                },
-                "values_diff": {}
-            },
-            "content_type": 10,
-            "event_type": "tasks.task.create",
-            "data_content_type": 22,
-            "created": "2015-05-30T12:55:54+0000"
-        },
-        {
-            "data": {
-                "comment_html": "",
-                "task": {
-                    "ref": 13,
-                    "subject": "pseudo code lookup_entry",
-                    "id": 117228
-                },
-                "comment": "",
-                "user": {
-                    "email": "sebastien.chassot@etu.hesge.ch"
-                },
-                "project": {
-                    "slug": "sinux-minixfs",
-                    "name": "minixfs",
-                    "description": "TP minixfs ITI2",
-                    "id": 42722
-                },
-                "values_diff": {}
-            },
-            "content_type": 10,
-            "event_type": "tasks.task.create",
-            "data_content_type": 22,
-            "created": "2015-05-30T12:55:05+0000"
-        },
-        {
-            "data": {
-                "comment_html": "",
                 "task": {
                     "ref": 11,
-                    "subject": "pseudo code ialloc_bloc",
-                    "id": 117226
-                },
-                "comment": "",
-                "user": {
-                    "email": "sebastien.chassot@etu.hesge.ch"
-                },
-                "project": {
-                    "slug": "sinux-minixfs",
-                    "name": "minixfs",
-                    "description": "TP minixfs ITI2",
-                    "id": 42722
-                },
-                "values_diff": {}
+                    "id": 117226,
+                    "subject": "pseudo code ialloc_bloc"
+                }
             },
             "content_type": 10,
-            "event_type": "tasks.task.create",
+            "event_type": "tasks.task.change",
             "data_content_type": 22,
-            "created": "2015-05-30T12:54:32+0000"
+            "created": "2015-06-07T14:51:31+0000"
         },
         {
             "data": {
-                "comment_html": "",
-                "task": {
-                    "ref": 2,
-                    "subject": "client failsafe ack",
-                    "id": 112025
-                },
-                "comment": "",
-                "user": {
-                    "email": "sebastien.chassot@etu.hesge.ch"
-                },
-                "project": {
-                    "slug": "sinux-minixfs",
-                    "name": "minixfs",
-                    "description": "TP minixfs ITI2",
-                    "id": 42722
-                },
-                "values_diff": {}
-            },
-            "content_type": 10,
-            "event_type": "tasks.task.delete",
-            "data_content_type": 22,
-            "created": "2015-05-30T12:54:07+0000"
-        },
-        {
-            "data": {
-                "comment_html": "",
-                "task": {
-                    "ref": 10,
-                    "subject": "creer fonction rearrange data block quand remove block dossier",
-                    "id": 117225
-                },
-                "comment": "",
-                "user": {
-                    "email": "sebastien.chassot@etu.hesge.ch"
-                },
-                "project": {
-                    "slug": "sinux-minixfs",
-                    "name": "minixfs",
-                    "description": "TP minixfs ITI2",
-                    "id": 42722
-                },
-                "values_diff": {}
-            },
-            "content_type": 10,
-            "event_type": "tasks.task.create",
-            "data_content_type": 22,
-            "created": "2015-05-30T12:53:49+0000"
-        },
-        {
-            "data": {
-                "comment_html": "",
-                "task": {
-                    "ref": 9,
-                    "subject": "trouver pourquoi raise error est en erreur dans pycharm",
-                    "id": 117224
-                },
-                "comment": "",
-                "user": {
-                    "email": "sebastien.chassot@etu.hesge.ch"
-                },
-                "project": {
-                    "slug": "sinux-minixfs",
-                    "name": "minixfs",
-                    "description": "TP minixfs ITI2",
-                    "id": 42722
-                },
-                "values_diff": {}
-            },
-            "content_type": 10,
-            "event_type": "tasks.task.create",
-            "data_content_type": 22,
-            "created": "2015-05-30T12:50:13+0000"
-        },
-        {
-            "data": {
-                "comment_html": "",
-                "task": {
-                    "ref": 8,
-                    "subject": "commenter function dans rapport",
-                    "id": 117223
-                },
-                "comment": "",
-                "user": {
-                    "email": "sebastien.chassot@etu.hesge.ch"
-                },
-                "project": {
-                    "slug": "sinux-minixfs",
-                    "name": "minixfs",
-                    "description": "TP minixfs ITI2",
-                    "id": 42722
-                },
-                "values_diff": {}
-            },
-            "content_type": 10,
-            "event_type": "tasks.task.create",
-            "data_content_type": 22,
-            "created": "2015-05-30T12:49:50+0000"
-        },
-        {
-            "data": {
-                "comment_html": "",
-                "task": {
-                    "ref": 7,
-                    "subject": "Clean et ajoute des log lors de l'execution",
-                    "id": 117222
-                },
-                "comment": "",
-                "user": {
-                    "email": "sebastien.chassot@etu.hesge.ch"
-                },
-                "project": {
-                    "slug": "sinux-minixfs",
-                    "name": "minixfs",
-                    "description": "TP minixfs ITI2",
-                    "id": 42722
-                },
-                "values_diff": {}
-            },
-            "content_type": 10,
-            "event_type": "tasks.task.create",
-            "data_content_type": 22,
-            "created": "2015-05-30T12:47:38+0000"
-        },
-        {
-            "data": {
-                "comment_html": "",
-                "task": {
-                    "ref": 3,
-                    "subject": "clean TODO",
-                    "id": 112027
-                },
-                "comment": "",
-                "user": {
-                    "email": "sebastien.chassot@etu.hesge.ch"
-                },
-                "project": {
-                    "slug": "sinux-minixfs",
-                    "name": "minixfs",
-                    "description": "TP minixfs ITI2",
-                    "id": 42722
-                },
                 "values_diff": {
                     "taskboard_order": [
                         1,
@@ -1615,12 +2271,1882 @@
                     "status": [
                         "New",
                         "In progress"
+                    ]
+                },
+                "comment": "",
+                "task": {
+                    "ref": 19,
+                    "id": 123200,
+                    "subject": "Faire une doc propre"
+                },
+                "user": {
+                    "email": "sebastien.chassot@etu.hesge.ch"
+                },
+                "project": {
+                    "id": 42722,
+                    "name": "minixfs",
+                    "description": "TP minixfs ITI2",
+                    "slug": "sinux-minixfs"
+                },
+                "comment_html": ""
+            },
+            "content_type": 10,
+            "event_type": "tasks.task.change",
+            "data_content_type": 22,
+            "created": "2015-06-07T14:51:25+0000"
+        },
+        {
+            "data": {
+                "values_diff": {
+                    "taskboard_order": [
+                        1,
+                        4
                     ],
+                    "status": [
+                        "In progress",
+                        "Closed"
+                    ]
+                },
+                "comment": "",
+                "task": {
+                    "ref": 3,
+                    "id": 112027,
+                    "subject": "clean TODO"
+                },
+                "user": {
+                    "email": "sebastien.chassot@etu.hesge.ch"
+                },
+                "project": {
+                    "id": 42722,
+                    "name": "minixfs",
+                    "description": "TP minixfs ITI2",
+                    "slug": "sinux-minixfs"
+                },
+                "comment_html": ""
+            },
+            "content_type": 10,
+            "event_type": "tasks.task.change",
+            "data_content_type": 22,
+            "created": "2015-06-07T14:51:20+0000"
+        },
+        {
+            "data": {
+                "values_diff": {
+                    "status": [
+                        "New",
+                        "Needs Info"
+                    ],
+                    "taskboard_order": [
+                        4,
+                        1
+                    ]
+                },
+                "comment": "",
+                "comment_html": "",
+                "user": {
+                    "email": "sebastien.chassot@etu.hesge.ch"
+                },
+                "project": {
+                    "id": 42722,
+                    "name": "minixfs",
+                    "description": "TP minixfs ITI2",
+                    "slug": "sinux-minixfs"
+                },
+                "task": {
+                    "ref": 15,
+                    "id": 117252,
+                    "subject": "checker la portée des variables de class, d'instance"
+                }
+            },
+            "content_type": 10,
+            "event_type": "tasks.task.change",
+            "data_content_type": 22,
+            "created": "2015-06-07T14:51:17+0000"
+        },
+        {
+            "data": {
+                "values_diff": {
+                    "taskboard_order": [
+                        7,
+                        3
+                    ],
+                    "status": [
+                        "New",
+                        "Needs Info"
+                    ]
+                },
+                "comment": "",
+                "task": {
+                    "ref": 13,
+                    "id": 117228,
+                    "subject": "pseudo code lookup_entry"
+                },
+                "user": {
+                    "email": "sebastien.chassot@etu.hesge.ch"
+                },
+                "project": {
+                    "id": 42722,
+                    "name": "minixfs",
+                    "description": "TP minixfs ITI2",
+                    "slug": "sinux-minixfs"
+                },
+                "comment_html": ""
+            },
+            "content_type": 10,
+            "event_type": "tasks.task.change",
+            "data_content_type": 22,
+            "created": "2015-06-07T14:50:21+0000"
+        },
+        {
+            "data": {
+                "values_diff": {
+                    "taskboard_order": [
+                        8,
+                        2
+                    ],
+                    "status": [
+                        "New",
+                        "Needs Info"
+                    ]
+                },
+                "comment": "",
+                "task": {
+                    "ref": 12,
+                    "id": 117227,
+                    "subject": "pseudo code namei"
+                },
+                "user": {
+                    "email": "sebastien.chassot@etu.hesge.ch"
+                },
+                "project": {
+                    "id": 42722,
+                    "name": "minixfs",
+                    "description": "TP minixfs ITI2",
+                    "slug": "sinux-minixfs"
+                },
+                "comment_html": ""
+            },
+            "content_type": 10,
+            "event_type": "tasks.task.change",
+            "data_content_type": 22,
+            "created": "2015-06-07T14:50:19+0000"
+        },
+        {
+            "data": {
+                "values_diff": {
+                    "taskboard_order": [
+                        2,
+                        0
+                    ],
+                    "status": [
+                        "New",
+                        "Needs Info"
+                    ]
+                },
+                "comment": "",
+                "task": {
+                    "ref": 4,
+                    "id": 112028,
+                    "subject": "improve or remove request list fifo"
+                },
+                "user": {
+                    "email": "sebastien.chassot@etu.hesge.ch"
+                },
+                "project": {
+                    "id": 42722,
+                    "name": "minixfs",
+                    "description": "TP minixfs ITI2",
+                    "slug": "sinux-minixfs"
+                },
+                "comment_html": ""
+            },
+            "content_type": 10,
+            "event_type": "tasks.task.change",
+            "data_content_type": 22,
+            "created": "2015-06-07T14:49:58+0000"
+        },
+        {
+            "data": {
+                "values_diff": {
+                    "status": [
+                        "New",
+                        "In progress"
+                    ],
+                    "taskboard_order": [
+                        9,
+                        1
+                    ]
+                },
+                "comment": "",
+                "comment_html": "",
+                "user": {
+                    "email": "sebastien.chassot@etu.hesge.ch"
+                },
+                "project": {
+                    "id": 42722,
+                    "name": "minixfs",
+                    "description": "TP minixfs ITI2",
+                    "slug": "sinux-minixfs"
+                },
+                "task": {
+                    "ref": 3,
+                    "id": 112027,
+                    "subject": "clean TODO"
+                }
+            },
+            "content_type": 10,
+            "event_type": "tasks.task.change",
+            "data_content_type": 22,
+            "created": "2015-06-06T10:45:31+0000"
+        },
+        {
+            "data": {
+                "values_diff": {
+                    "status": [
+                        "New",
+                        "In progress"
+                    ]
+                },
+                "comment": "",
+                "comment_html": "",
+                "user": {
+                    "email": "sebastien.chassot@etu.hesge.ch"
+                },
+                "project": {
+                    "id": 42722,
+                    "name": "minixfs",
+                    "description": "TP minixfs ITI2",
+                    "slug": "sinux-minixfs"
+                },
+                "task": {
+                    "ref": 7,
+                    "id": 117222,
+                    "subject": "Clean et ajoute des log lors de l'execution"
+                }
+            },
+            "content_type": 10,
+            "event_type": "tasks.task.change",
+            "data_content_type": 22,
+            "created": "2015-06-06T10:45:15+0000"
+        },
+        {
+            "data": {
+                "values_diff": {
+                    "taskboard_order": [
+                        0,
+                        2
+                    ],
+                    "status": [
+                        "In progress",
+                        "New"
+                    ]
+                },
+                "comment": "",
+                "task": {
+                    "ref": 4,
+                    "id": 112028,
+                    "subject": "improve or remove request list fifo"
+                },
+                "user": {
+                    "email": "sebastien.chassot@etu.hesge.ch"
+                },
+                "project": {
+                    "id": 42722,
+                    "name": "minixfs",
+                    "description": "TP minixfs ITI2",
+                    "slug": "sinux-minixfs"
+                },
+                "comment_html": ""
+            },
+            "content_type": 10,
+            "event_type": "tasks.task.change",
+            "data_content_type": 22,
+            "created": "2015-06-06T10:44:11+0000"
+        },
+        {
+            "data": {
+                "values_diff": {},
+                "comment": "",
+                "comment_html": "",
+                "user": {
+                    "email": "sebastien.chassot@etu.hesge.ch"
+                },
+                "project": {
+                    "id": 42722,
+                    "name": "minixfs",
+                    "description": "TP minixfs ITI2",
+                    "slug": "sinux-minixfs"
+                },
+                "task": {
+                    "ref": 19,
+                    "id": 123200,
+                    "subject": "Faire une doc propre"
+                }
+            },
+            "content_type": 10,
+            "event_type": "tasks.task.create",
+            "data_content_type": 22,
+            "created": "2015-06-06T09:33:57+0000"
+        },
+        {
+            "data": {
+                "values_diff": {
+                    "subject": [
+                        "Ajouter make  run pour labcer le server de block",
+                        "Ajouter make  run et make run_debug pour lancer le server de block"
+                    ]
+                },
+                "comment": "",
+                "comment_html": "",
+                "user": {
+                    "email": "sebastien.chassot@etu.hesge.ch"
+                },
+                "project": {
+                    "id": 42722,
+                    "name": "minixfs",
+                    "description": "TP minixfs ITI2",
+                    "slug": "sinux-minixfs"
+                },
+                "task": {
+                    "ref": 18,
+                    "id": 123181,
+                    "subject": "Ajouter make  run et make run_debug pour lancer le server de block"
+                }
+            },
+            "content_type": 10,
+            "event_type": "tasks.task.change",
+            "data_content_type": 22,
+            "created": "2015-06-06T07:53:09+0000"
+        },
+        {
+            "data": {
+                "values_diff": {
+                    "taskboard_order": [
+                        1,
+                        4
+                    ],
+                    "status": [
+                        "In progress",
+                        "Closed"
+                    ]
+                },
+                "comment": "",
+                "task": {
+                    "ref": 18,
+                    "id": 123181,
+                    "subject": "Ajouter make  run et make run_debug pour lancer le server de block"
+                },
+                "user": {
+                    "email": "sebastien.chassot@etu.hesge.ch"
+                },
+                "project": {
+                    "id": 42722,
+                    "name": "minixfs",
+                    "description": "TP minixfs ITI2",
+                    "slug": "sinux-minixfs"
+                },
+                "comment_html": ""
+            },
+            "content_type": 10,
+            "event_type": "tasks.task.change",
+            "data_content_type": 22,
+            "created": "2015-06-06T07:52:06+0000"
+        },
+        {
+            "data": {
+                "values_diff": {},
+                "comment": "",
+                "task": {
+                    "ref": 18,
+                    "id": 123181,
+                    "subject": "Ajouter make  run pour labcer le server de block"
+                },
+                "user": {
+                    "email": "sebastien.chassot@etu.hesge.ch"
+                },
+                "project": {
+                    "id": 42722,
+                    "name": "minixfs",
+                    "description": "TP minixfs ITI2",
+                    "slug": "sinux-minixfs"
+                },
+                "comment_html": ""
+            },
+            "content_type": 10,
+            "event_type": "tasks.task.create",
+            "data_content_type": 22,
+            "created": "2015-06-06T07:30:37+0000"
+        },
+        {
+            "data": {
+                "values_diff": {},
+                "comment": "",
+                "task": {
+                    "ref": 17,
+                    "id": 121202,
+                    "subject": "test khfds"
+                },
+                "user": {
+                    "email": "sebastien.chassot@etu.hesge.ch"
+                },
+                "project": {
+                    "id": 42722,
+                    "name": "minixfs",
+                    "description": "TP minixfs ITI2",
+                    "slug": "sinux-minixfs"
+                },
+                "comment_html": ""
+            },
+            "content_type": 10,
+            "event_type": "tasks.task.delete",
+            "data_content_type": 22,
+            "created": "2015-06-05T13:48:17+0000"
+        },
+        {
+            "data": {
+                "values_diff": {
+                    "is_blocked": [
+                        true,
+                        false
+                    ],
+                    "is_iocaine": [
+                        true,
+                        false
+                    ]
+                },
+                "comment": "",
+                "task": {
+                    "ref": 17,
+                    "id": 121202,
+                    "subject": "test khfds"
+                },
+                "user": {
+                    "email": "sebastien.chassot@etu.hesge.ch"
+                },
+                "project": {
+                    "id": 42722,
+                    "name": "minixfs",
+                    "description": "TP minixfs ITI2",
+                    "slug": "sinux-minixfs"
+                },
+                "comment_html": ""
+            },
+            "content_type": 10,
+            "event_type": "tasks.task.change",
+            "data_content_type": 22,
+            "created": "2015-06-05T13:48:06+0000"
+        },
+        {
+            "data": {
+                "values_diff": {
+                    "taskboard_order": [
+                        1,
+                        2
+                    ],
+                    "status": [
+                        "In progress",
+                        "New"
+                    ]
+                },
+                "comment": "",
+                "task": {
+                    "ref": 17,
+                    "id": 121202,
+                    "subject": "test khfds"
+                },
+                "user": {
+                    "email": "sebastien.chassot@etu.hesge.ch"
+                },
+                "project": {
+                    "id": 42722,
+                    "name": "minixfs",
+                    "description": "TP minixfs ITI2",
+                    "slug": "sinux-minixfs"
+                },
+                "comment_html": ""
+            },
+            "content_type": 10,
+            "event_type": "tasks.task.change",
+            "data_content_type": 22,
+            "created": "2015-06-05T13:47:54+0000"
+        },
+        {
+            "data": {
+                "values_diff": {
+                    "status": [
+                        "In progress",
+                        "Needs Info"
+                    ],
+                    "taskboard_order": [
+                        1,
+                        0
+                    ]
+                },
+                "comment": "",
+                "comment_html": "",
+                "user": {
+                    "email": "sebastien.chassot@etu.hesge.ch"
+                },
+                "project": {
+                    "id": 42722,
+                    "name": "minixfs",
+                    "description": "TP minixfs ITI2",
+                    "slug": "sinux-minixfs"
+                },
+                "task": {
+                    "ref": 17,
+                    "id": 121202,
+                    "subject": "test khfds"
+                }
+            },
+            "content_type": 10,
+            "event_type": "tasks.task.change",
+            "data_content_type": 22,
+            "created": "2015-06-03T18:47:58+0000"
+        },
+        {
+            "data": {
+                "values_diff": {
+                    "is_iocaine": [
+                        false,
+                        true
+                    ]
+                },
+                "comment": "",
+                "comment_html": "",
+                "user": {
+                    "email": "sebastien.chassot@etu.hesge.ch"
+                },
+                "project": {
+                    "id": 42722,
+                    "name": "minixfs",
+                    "description": "TP minixfs ITI2",
+                    "slug": "sinux-minixfs"
+                },
+                "task": {
+                    "ref": 17,
+                    "id": 121202,
+                    "subject": "test khfds"
+                }
+            },
+            "content_type": 10,
+            "event_type": "tasks.task.change",
+            "data_content_type": 22,
+            "created": "2015-06-03T18:47:32+0000"
+        },
+        {
+            "data": {
+                "values_diff": {
+                    "assigned_to": [
+                        "Sebastien chassot",
+                        null
+                    ]
+                },
+                "comment": "",
+                "comment_html": "",
+                "user": {
+                    "email": "sebastien.chassot@etu.hesge.ch"
+                },
+                "project": {
+                    "id": 42722,
+                    "name": "minixfs",
+                    "description": "TP minixfs ITI2",
+                    "slug": "sinux-minixfs"
+                },
+                "task": {
+                    "ref": 17,
+                    "id": 121202,
+                    "subject": "test khfds"
+                }
+            },
+            "content_type": 10,
+            "event_type": "tasks.task.change",
+            "data_content_type": 22,
+            "created": "2015-06-03T18:47:14+0000"
+        },
+        {
+            "data": {
+                "values_diff": {
+                    "taskboard_order": [
+                        0,
+                        1
+                    ],
+                    "status": [
+                        "Needs Info",
+                        "In progress"
+                    ]
+                },
+                "comment": "",
+                "task": {
+                    "ref": 17,
+                    "id": 121202,
+                    "subject": "test khfds"
+                },
+                "user": {
+                    "email": "sebastien.chassot@etu.hesge.ch"
+                },
+                "project": {
+                    "id": 42722,
+                    "name": "minixfs",
+                    "description": "TP minixfs ITI2",
+                    "slug": "sinux-minixfs"
+                },
+                "comment_html": ""
+            },
+            "content_type": 10,
+            "event_type": "tasks.task.change",
+            "data_content_type": 22,
+            "created": "2015-06-03T18:46:54+0000"
+        },
+        {
+            "data": {
+                "values_diff": {
+                    "status": [
+                        "New",
+                        "In progress"
+                    ],
+                    "taskboard_order": [
+                        3,
+                        1
+                    ]
+                },
+                "comment": "",
+                "comment_html": "",
+                "user": {
+                    "email": "sebastien.chassot@etu.hesge.ch"
+                },
+                "project": {
+                    "id": 42722,
+                    "name": "minixfs",
+                    "description": "TP minixfs ITI2",
+                    "slug": "sinux-minixfs"
+                },
+                "task": {
+                    "ref": 17,
+                    "id": 121202,
+                    "subject": "test khfds"
+                }
+            },
+            "content_type": 10,
+            "event_type": "tasks.task.change",
+            "data_content_type": 22,
+            "created": "2015-06-03T18:46:31+0000"
+        },
+        {
+            "data": {
+                "values_diff": {
+                    "status": [
+                        "New",
+                        "In progress"
+                    ],
+                    "taskboard_order": [
+                        3,
+                        1
+                    ]
+                },
+                "comment": "",
+                "comment_html": "",
+                "user": {
+                    "email": "sebastien.chassot@etu.hesge.ch"
+                },
+                "project": {
+                    "id": 42722,
+                    "name": "minixfs",
+                    "description": "TP minixfs ITI2",
+                    "slug": "sinux-minixfs"
+                },
+                "task": {
+                    "ref": 17,
+                    "id": 121202,
+                    "subject": "test khfds"
+                }
+            },
+            "content_type": 10,
+            "event_type": "tasks.task.change",
+            "data_content_type": 22,
+            "created": "2015-06-03T18:46:26+0000"
+        },
+        {
+            "data": {
+                "values_diff": {
                     "assigned_to": [
                         null,
                         "Sebastien chassot"
                     ]
+                },
+                "comment": "",
+                "task": {
+                    "ref": 17,
+                    "id": 121202,
+                    "subject": "test khfds"
+                },
+                "user": {
+                    "email": "sebastien.chassot@etu.hesge.ch"
+                },
+                "project": {
+                    "id": 42722,
+                    "name": "minixfs",
+                    "description": "TP minixfs ITI2",
+                    "slug": "sinux-minixfs"
+                },
+                "comment_html": ""
+            },
+            "content_type": 10,
+            "event_type": "tasks.task.change",
+            "data_content_type": 22,
+            "created": "2015-06-03T18:46:00+0000"
+        },
+        {
+            "data": {
+                "values_diff": {
+                    "taskboard_order": [
+                        3,
+                        1
+                    ],
+                    "is_blocked": [
+                        false,
+                        true
+                    ],
+                    "status": [
+                        "New",
+                        "In progress"
+                    ]
+                },
+                "comment": "",
+                "task": {
+                    "ref": 17,
+                    "id": 121202,
+                    "subject": "test khfds"
+                },
+                "user": {
+                    "email": "sebastien.chassot@etu.hesge.ch"
+                },
+                "project": {
+                    "id": 42722,
+                    "name": "minixfs",
+                    "description": "TP minixfs ITI2",
+                    "slug": "sinux-minixfs"
+                },
+                "comment_html": ""
+            },
+            "content_type": 10,
+            "event_type": "tasks.task.change",
+            "data_content_type": 22,
+            "created": "2015-06-03T18:45:38+0000"
+        },
+        {
+            "data": {
+                "values_diff": {},
+                "comment": "",
+                "task": {
+                    "ref": 17,
+                    "id": 121202,
+                    "subject": "test khfds"
+                },
+                "user": {
+                    "email": "sebastien.chassot@etu.hesge.ch"
+                },
+                "project": {
+                    "id": 42722,
+                    "name": "minixfs",
+                    "description": "TP minixfs ITI2",
+                    "slug": "sinux-minixfs"
+                },
+                "comment_html": ""
+            },
+            "content_type": 10,
+            "event_type": "tasks.task.create",
+            "data_content_type": 22,
+            "created": "2015-06-03T18:44:36+0000"
+        },
+        {
+            "data": {
+                "values_diff": {},
+                "comment": "",
+                "comment_html": "",
+                "user": {
+                    "email": "sebastien.chassot@etu.hesge.ch"
+                },
+                "project": {
+                    "id": 42722,
+                    "name": "minixfs",
+                    "description": "TP minixfs ITI2",
+                    "slug": "sinux-minixfs"
+                },
+                "task": {
+                    "ref": 16,
+                    "id": 118849,
+                    "subject": "ajouter un select type watchdogpour eviter qu'un client nous bloque"
                 }
+            },
+            "content_type": 10,
+            "event_type": "tasks.task.create",
+            "data_content_type": 22,
+            "created": "2015-06-01T18:16:11+0000"
+        },
+        {
+            "data": {
+                "values_diff": {
+                    "assigned_to": [
+                        null,
+                        "Sebastien chassot"
+                    ]
+                },
+                "task": {
+                    "ref": 16,
+                    "id": 118849,
+                    "subject": "ajouter un select type watchdogpour eviter qu'un client nous bloque"
+                },
+                "comment": "",
+                "user": {
+                    "email": "sebastien.chassot@etu.hesge.ch"
+                },
+                "project": {
+                    "id": 42722,
+                    "name": "minixfs",
+                    "description": "TP minixfs ITI2",
+                    "slug": "sinux-minixfs"
+                },
+                "comment_html": ""
+            },
+            "content_type": 10,
+            "event_type": "tasks.task.change",
+            "data_content_type": 22,
+            "created": "2015-06-01T18:15:12+0000"
+        },
+        {
+            "data": {
+                "values_diff": {
+                    "taskboard_order": [
+                        2,
+                        3
+                    ],
+                    "status": [
+                        "Needs Info",
+                        "New"
+                    ]
+                },
+                "comment": "",
+                "task": {
+                    "ref": 8,
+                    "id": 117223,
+                    "subject": "commenter function dans rapport",
+                    "userstory": {
+                        "userstory": {
+                            "ref": 59,
+                            "id": 69926,
+                            "subject": "As a user I want to easily see Sale Agreed / Sold / Let / Let Agreed statuses so that I know not to contact the agent about it. (410)"
+                        },
+                        "project": {
+                            "id": 837,
+                            "name": "PropertyPal Test",
+                            "description": "The propertypal system",
+                            "slug": "propertypal"
+                        },
+                        "milestone": {
+                            "id": 10810,
+                            "name": "Sprint X - Final 2 week sprint",
+                            "slug": "sprint-x-final-2-week-sprint"
+                        }
+                    }
+                },
+                "user": {
+                    "email": "sebastien.chassot@etu.hesge.ch"
+                },
+                "project": {
+                    "id": 42722,
+                    "name": "minixfs",
+                    "description": "TP minixfs ITI2",
+                    "slug": "sinux-minixfs"
+                },
+                "comment_html": ""
+            },
+            "content_type": 10,
+            "event_type": "tasks.task.change",
+            "data_content_type": 22,
+            "created": "2015-05-31T08:33:54+0000"
+        },
+        {
+            "data": {
+                "values_diff": {
+                    "status": [
+                        "New",
+                        "Closed"
+                    ]
+                },
+                "comment": "",
+                "task": {
+                    "ref": 9,
+                    "id": 117224,
+                    "subject": "trouver pourquoi raise error est en erreur dans pycharm",
+                    "userstory": {
+                        "userstory": {
+                            "ref": 59,
+                            "id": 69926,
+                            "subject": "As a user I want to easily see Sale Agreed / Sold / Let / Let Agreed statuses so that I know not to contact the agent about it. (410)"
+                        },
+                        "project": {
+                            "id": 837,
+                            "name": "PropertyPal Test",
+                            "description": "The propertypal system",
+                            "slug": "propertypal"
+                        },
+                        "milestone": {
+                            "id": 10810,
+                            "name": "Sprint X - Final 2 week sprint",
+                            "slug": "sprint-x-final-2-week-sprint"
+                        }
+                    }
+                },
+                "user": {
+                    "email": "sebastien.chassot@etu.hesge.ch"
+                },
+                "project": {
+                    "id": 42722,
+                    "name": "minixfs",
+                    "description": "TP minixfs ITI2",
+                    "slug": "sinux-minixfs"
+                },
+                "comment_html": ""
+            },
+            "content_type": 10,
+            "event_type": "tasks.task.change",
+            "data_content_type": 22,
+            "created": "2015-05-30T16:37:55+0000"
+        },
+        {
+            "data": {
+                "values_diff": {
+                    "status": [
+                        "New",
+                        "In progress"
+                    ]
+                },
+                "comment": "",
+                "task": {
+                    "ref": 4,
+                    "id": 112028,
+                    "subject": "improve or remove request list fifo",
+                    "userstory": {
+                        "userstory": {
+                            "ref": 59,
+                            "id": 69926,
+                            "subject": "As a user I want to easily see Sale Agreed / Sold / Let / Let Agreed statuses so that I know not to contact the agent about it. (410)"
+                        },
+                        "project": {
+                            "id": 837,
+                            "name": "PropertyPal Test",
+                            "description": "The propertypal system",
+                            "slug": "propertypal"
+                        },
+                        "milestone": {
+                            "id": 10810,
+                            "name": "Sprint X - Final 2 week sprint",
+                            "slug": "sprint-x-final-2-week-sprint"
+                        }
+                    }
+                },
+                "user": {
+                    "email": "sebastien.chassot@etu.hesge.ch"
+                },
+                "project": {
+                    "id": 42722,
+                    "name": "minixfs",
+                    "description": "TP minixfs ITI2",
+                    "slug": "sinux-minixfs"
+                },
+                "comment_html": ""
+            },
+            "content_type": 10,
+            "event_type": "tasks.task.change",
+            "data_content_type": 22,
+            "created": "2015-05-30T16:04:29+0000"
+        },
+        {
+            "data": {
+                "values_diff": {
+                    "is_iocaine": [
+                        true,
+                        false
+                    ]
+                },
+                "comment": "",
+                "task": {
+                    "ref": 4,
+                    "id": 112028,
+                    "subject": "improve or remove request list fifo",
+                    "userstory": {
+                        "userstory": {
+                            "ref": 59,
+                            "id": 69926,
+                            "subject": "As a user I want to easily see Sale Agreed / Sold / Let / Let Agreed statuses so that I know not to contact the agent about it. (410)"
+                        },
+                        "project": {
+                            "id": 837,
+                            "name": "PropertyPal Test",
+                            "description": "The propertypal system",
+                            "slug": "propertypal"
+                        },
+                        "milestone": {
+                            "id": 10810,
+                            "name": "Sprint X - Final 2 week sprint",
+                            "slug": "sprint-x-final-2-week-sprint"
+                        }
+                    }
+                },
+                "user": {
+                    "email": "sebastien.chassot@etu.hesge.ch"
+                },
+                "project": {
+                    "id": 42722,
+                    "name": "minixfs",
+                    "description": "TP minixfs ITI2",
+                    "slug": "sinux-minixfs"
+                },
+                "comment_html": ""
+            },
+            "content_type": 10,
+            "event_type": "tasks.task.change",
+            "data_content_type": 22,
+            "created": "2015-05-30T16:04:01+0000"
+        },
+        {
+            "data": {
+                "values_diff": {
+                    "blocked_note_diff": [
+                        null,
+                        "<del style=\"background:#ffe6e6;\">remplaced by sprint </del>"
+                    ],
+                    "blocked_note_html": [
+                        "<p>remplaced by sprint </p>",
+                        ""
+                    ],
+                    "is_blocked": [
+                        true,
+                        false
+                    ]
+                },
+                "comment": "",
+                "task": {
+                    "ref": 3,
+                    "id": 112027,
+                    "subject": "clean TODO",
+                    "userstory": {
+                        "userstory": {
+                            "ref": 59,
+                            "id": 69926,
+                            "subject": "As a user I want to easily see Sale Agreed / Sold / Let / Let Agreed statuses so that I know not to contact the agent about it. (410)"
+                        },
+                        "project": {
+                            "id": 837,
+                            "name": "PropertyPal Test",
+                            "description": "The propertypal system",
+                            "slug": "propertypal"
+                        },
+                        "milestone": {
+                            "id": 10810,
+                            "name": "Sprint X - Final 2 week sprint",
+                            "slug": "sprint-x-final-2-week-sprint"
+                        }
+                    }
+                },
+                "user": {
+                    "email": "sebastien.chassot@etu.hesge.ch"
+                },
+                "project": {
+                    "id": 42722,
+                    "name": "minixfs",
+                    "description": "TP minixfs ITI2",
+                    "slug": "sinux-minixfs"
+                },
+                "comment_html": ""
+            },
+            "content_type": 10,
+            "event_type": "tasks.task.change",
+            "data_content_type": 22,
+            "created": "2015-05-30T16:03:53+0000"
+        },
+        {
+            "data": {
+                "values_diff": {
+                    "taskboard_order": [
+                        1,
+                        7
+                    ],
+                    "status": [
+                        "In progress",
+                        "New"
+                    ]
+                },
+                "comment": "",
+                "task": {
+                    "ref": 4,
+                    "id": 112028,
+                    "subject": "improve or remove request list fifo",
+                    "userstory": {
+                        "userstory": {
+                            "ref": 59,
+                            "id": 69926,
+                            "subject": "As a user I want to easily see Sale Agreed / Sold / Let / Let Agreed statuses so that I know not to contact the agent about it. (410)"
+                        },
+                        "project": {
+                            "id": 837,
+                            "name": "PropertyPal Test",
+                            "description": "The propertypal system",
+                            "slug": "propertypal"
+                        },
+                        "milestone": {
+                            "id": 10810,
+                            "name": "Sprint X - Final 2 week sprint",
+                            "slug": "sprint-x-final-2-week-sprint"
+                        }
+                    }
+                },
+                "user": {
+                    "email": "sebastien.chassot@etu.hesge.ch"
+                },
+                "project": {
+                    "id": 42722,
+                    "name": "minixfs",
+                    "description": "TP minixfs ITI2",
+                    "slug": "sinux-minixfs"
+                },
+                "comment_html": ""
+            },
+            "content_type": 10,
+            "event_type": "tasks.task.change",
+            "data_content_type": 22,
+            "created": "2015-05-30T16:02:59+0000"
+        },
+        {
+            "data": {
+                "values_diff": {
+                    "taskboard_order": [
+                        0,
+                        1
+                    ],
+                    "status": [
+                        "In progress",
+                        "New"
+                    ]
+                },
+                "comment": "",
+                "task": {
+                    "ref": 3,
+                    "id": 112027,
+                    "subject": "clean TODO",
+                    "userstory": {
+                        "userstory": {
+                            "ref": 59,
+                            "id": 69926,
+                            "subject": "As a user I want to easily see Sale Agreed / Sold / Let / Let Agreed statuses so that I know not to contact the agent about it. (410)"
+                        },
+                        "project": {
+                            "id": 837,
+                            "name": "PropertyPal Test",
+                            "description": "The propertypal system",
+                            "slug": "propertypal"
+                        },
+                        "milestone": {
+                            "id": 10810,
+                            "name": "Sprint X - Final 2 week sprint",
+                            "slug": "sprint-x-final-2-week-sprint"
+                        }
+                    }
+                },
+                "user": {
+                    "email": "sebastien.chassot@etu.hesge.ch"
+                },
+                "project": {
+                    "id": 42722,
+                    "name": "minixfs",
+                    "description": "TP minixfs ITI2",
+                    "slug": "sinux-minixfs"
+                },
+                "comment_html": ""
+            },
+            "content_type": 10,
+            "event_type": "tasks.task.change",
+            "data_content_type": 22,
+            "created": "2015-05-30T16:02:16+0000"
+        },
+        {
+            "data": {
+                "values_diff": {
+                    "taskboard_order": [
+                        0,
+                        1
+                    ],
+                    "status": [
+                        "New",
+                        "In progress"
+                    ]
+                },
+                "comment": "",
+                "task": {
+                    "ref": 4,
+                    "id": 112028,
+                    "subject": "improve or remove request list fifo",
+                    "userstory": {
+                        "userstory": {
+                            "ref": 59,
+                            "id": 69926,
+                            "subject": "As a user I want to easily see Sale Agreed / Sold / Let / Let Agreed statuses so that I know not to contact the agent about it. (410)"
+                        },
+                        "project": {
+                            "id": 837,
+                            "name": "PropertyPal Test",
+                            "description": "The propertypal system",
+                            "slug": "propertypal"
+                        },
+                        "milestone": {
+                            "id": 10810,
+                            "name": "Sprint X - Final 2 week sprint",
+                            "slug": "sprint-x-final-2-week-sprint"
+                        }
+                    }
+                },
+                "user": {
+                    "email": "sebastien.chassot@etu.hesge.ch"
+                },
+                "project": {
+                    "id": 42722,
+                    "name": "minixfs",
+                    "description": "TP minixfs ITI2",
+                    "slug": "sinux-minixfs"
+                },
+                "comment_html": ""
+            },
+            "content_type": 10,
+            "event_type": "tasks.task.change",
+            "data_content_type": 22,
+            "created": "2015-05-30T16:01:49+0000"
+        },
+        {
+            "data": {
+                "values_diff": {},
+                "task": {
+                    "ref": 15,
+                    "id": 117252,
+                    "subject": "checker la portée des variables de class, d'instance"
+                },
+                "comment": "",
+                "user": {
+                    "email": "sebastien.chassot@etu.hesge.ch"
+                },
+                "project": {
+                    "id": 42722,
+                    "name": "minixfs",
+                    "description": "TP minixfs ITI2",
+                    "slug": "sinux-minixfs"
+                },
+                "comment_html": ""
+            },
+            "content_type": 10,
+            "event_type": "tasks.task.create",
+            "data_content_type": 22,
+            "created": "2015-05-30T15:58:28+0000"
+        },
+        {
+            "data": {
+                "values_diff": {
+                    "status": [
+                        "New",
+                        "Needs Info"
+                    ]
+                },
+                "comment": "",
+                "task": {
+                    "ref": 8,
+                    "id": 117223,
+                    "subject": "commenter function dans rapport",
+                    "userstory": {
+                        "userstory": {
+                            "ref": 59,
+                            "id": 69926,
+                            "subject": "As a user I want to easily see Sale Agreed / Sold / Let / Let Agreed statuses so that I know not to contact the agent about it. (410)"
+                        },
+                        "project": {
+                            "id": 837,
+                            "name": "PropertyPal Test",
+                            "description": "The propertypal system",
+                            "slug": "propertypal"
+                        },
+                        "milestone": {
+                            "id": 10810,
+                            "name": "Sprint X - Final 2 week sprint",
+                            "slug": "sprint-x-final-2-week-sprint"
+                        }
+                    }
+                },
+                "user": {
+                    "email": "sebastien.chassot@etu.hesge.ch"
+                },
+                "project": {
+                    "id": 42722,
+                    "name": "minixfs",
+                    "description": "TP minixfs ITI2",
+                    "slug": "sinux-minixfs"
+                },
+                "comment_html": ""
+            },
+            "content_type": 10,
+            "event_type": "tasks.task.change",
+            "data_content_type": 22,
+            "created": "2015-05-30T13:02:06+0000"
+        },
+        {
+            "data": {
+                "values_diff": {},
+                "task": {
+                    "ref": 14,
+                    "id": 117229,
+                    "subject": "test"
+                },
+                "comment": "",
+                "user": {
+                    "email": "sebastien.chassot@etu.hesge.ch"
+                },
+                "project": {
+                    "id": 42722,
+                    "name": "minixfs",
+                    "description": "TP minixfs ITI2",
+                    "slug": "sinux-minixfs"
+                },
+                "comment_html": ""
+            },
+            "content_type": 10,
+            "event_type": "tasks.task.delete",
+            "data_content_type": 22,
+            "created": "2015-05-30T13:01:40+0000"
+        },
+        {
+            "data": {
+                "values_diff": {},
+                "task": {
+                    "ref": 14,
+                    "id": 117229,
+                    "subject": "test"
+                },
+                "comment": "",
+                "user": {
+                    "email": "sebastien.chassot@etu.hesge.ch"
+                },
+                "project": {
+                    "id": 42722,
+                    "name": "minixfs",
+                    "description": "TP minixfs ITI2",
+                    "slug": "sinux-minixfs"
+                },
+                "comment_html": ""
+            },
+            "content_type": 10,
+            "event_type": "tasks.task.create",
+            "data_content_type": 22,
+            "created": "2015-05-30T13:01:11+0000"
+        },
+        {
+            "data": {
+                "values_diff": {
+                    "taskboard_order": [
+                        1,
+                        0
+                    ],
+                    "is_iocaine": [
+                        false,
+                        true
+                    ]
+                },
+                "comment": "",
+                "task": {
+                    "ref": 4,
+                    "id": 112028,
+                    "subject": "improve or remove request list fifo",
+                    "userstory": {
+                        "userstory": {
+                            "ref": 59,
+                            "id": 69926,
+                            "subject": "As a user I want to easily see Sale Agreed / Sold / Let / Let Agreed statuses so that I know not to contact the agent about it. (410)"
+                        },
+                        "project": {
+                            "id": 837,
+                            "name": "PropertyPal Test",
+                            "description": "The propertypal system",
+                            "slug": "propertypal"
+                        },
+                        "milestone": {
+                            "id": 10810,
+                            "name": "Sprint X - Final 2 week sprint",
+                            "slug": "sprint-x-final-2-week-sprint"
+                        }
+                    }
+                },
+                "user": {
+                    "email": "sebastien.chassot@etu.hesge.ch"
+                },
+                "project": {
+                    "id": 42722,
+                    "name": "minixfs",
+                    "description": "TP minixfs ITI2",
+                    "slug": "sinux-minixfs"
+                },
+                "comment_html": ""
+            },
+            "content_type": 10,
+            "event_type": "tasks.task.change",
+            "data_content_type": 22,
+            "created": "2015-05-30T13:00:15+0000"
+        },
+        {
+            "data": {
+                "values_diff": {
+                    "blocked_note_diff": [
+                        null,
+                        "<ins style=\"background:#e6ffe6;\">remplaced by sprint </ins>"
+                    ],
+                    "blocked_note_html": [
+                        "",
+                        "<p>remplaced by sprint </p>"
+                    ],
+                    "is_blocked": [
+                        false,
+                        true
+                    ]
+                },
+                "comment": "",
+                "task": {
+                    "ref": 3,
+                    "id": 112027,
+                    "subject": "clean TODO",
+                    "userstory": {
+                        "userstory": {
+                            "ref": 59,
+                            "id": 69926,
+                            "subject": "As a user I want to easily see Sale Agreed / Sold / Let / Let Agreed statuses so that I know not to contact the agent about it. (410)"
+                        },
+                        "project": {
+                            "id": 837,
+                            "name": "PropertyPal Test",
+                            "description": "The propertypal system",
+                            "slug": "propertypal"
+                        },
+                        "milestone": {
+                            "id": 10810,
+                            "name": "Sprint X - Final 2 week sprint",
+                            "slug": "sprint-x-final-2-week-sprint"
+                        }
+                    }
+                },
+                "user": {
+                    "email": "sebastien.chassot@etu.hesge.ch"
+                },
+                "project": {
+                    "id": 42722,
+                    "name": "minixfs",
+                    "description": "TP minixfs ITI2",
+                    "slug": "sinux-minixfs"
+                },
+                "comment_html": ""
+            },
+            "content_type": 10,
+            "event_type": "tasks.task.change",
+            "data_content_type": 22,
+            "created": "2015-05-30T12:59:36+0000"
+        },
+        {
+            "data": {
+                "values_diff": {
+                    "is_iocaine": [
+                        true,
+                        false
+                    ]
+                },
+                "comment": "",
+                "task": {
+                    "ref": 4,
+                    "id": 112028,
+                    "subject": "improve or remove request list fifo",
+                    "userstory": {
+                        "userstory": {
+                            "ref": 59,
+                            "id": 69926,
+                            "subject": "As a user I want to easily see Sale Agreed / Sold / Let / Let Agreed statuses so that I know not to contact the agent about it. (410)"
+                        },
+                        "project": {
+                            "id": 837,
+                            "name": "PropertyPal Test",
+                            "description": "The propertypal system",
+                            "slug": "propertypal"
+                        },
+                        "milestone": {
+                            "id": 10810,
+                            "name": "Sprint X - Final 2 week sprint",
+                            "slug": "sprint-x-final-2-week-sprint"
+                        }
+                    }
+                },
+                "user": {
+                    "email": "sebastien.chassot@etu.hesge.ch"
+                },
+                "project": {
+                    "id": 42722,
+                    "name": "minixfs",
+                    "description": "TP minixfs ITI2",
+                    "slug": "sinux-minixfs"
+                },
+                "comment_html": ""
+            },
+            "content_type": 10,
+            "event_type": "tasks.task.change",
+            "data_content_type": 22,
+            "created": "2015-05-30T12:58:34+0000"
+        },
+        {
+            "data": {
+                "values_diff": {
+                    "is_iocaine": [
+                        false,
+                        true
+                    ]
+                },
+                "comment": "",
+                "task": {
+                    "ref": 4,
+                    "id": 112028,
+                    "subject": "improve or remove request list fifo",
+                    "userstory": {
+                        "userstory": {
+                            "ref": 59,
+                            "id": 69926,
+                            "subject": "As a user I want to easily see Sale Agreed / Sold / Let / Let Agreed statuses so that I know not to contact the agent about it. (410)"
+                        },
+                        "project": {
+                            "id": 837,
+                            "name": "PropertyPal Test",
+                            "description": "The propertypal system",
+                            "slug": "propertypal"
+                        },
+                        "milestone": {
+                            "id": 10810,
+                            "name": "Sprint X - Final 2 week sprint",
+                            "slug": "sprint-x-final-2-week-sprint"
+                        }
+                    }
+                },
+                "user": {
+                    "email": "sebastien.chassot@etu.hesge.ch"
+                },
+                "project": {
+                    "id": 42722,
+                    "name": "minixfs",
+                    "description": "TP minixfs ITI2",
+                    "slug": "sinux-minixfs"
+                },
+                "comment_html": ""
+            },
+            "content_type": 10,
+            "event_type": "tasks.task.change",
+            "data_content_type": 22,
+            "created": "2015-05-30T12:57:41+0000"
+        },
+        {
+            "data": {
+                "values_diff": {
+                    "is_iocaine": [
+                        false,
+                        true
+                    ]
+                },
+                "comment": "",
+                "task": {
+                    "ref": 4,
+                    "id": 112028,
+                    "subject": "improve or remove request list fifo",
+                    "userstory": {
+                        "userstory": {
+                            "ref": 59,
+                            "id": 69926,
+                            "subject": "As a user I want to easily see Sale Agreed / Sold / Let / Let Agreed statuses so that I know not to contact the agent about it. (410)"
+                        },
+                        "project": {
+                            "id": 837,
+                            "name": "PropertyPal Test",
+                            "description": "The propertypal system",
+                            "slug": "propertypal"
+                        },
+                        "milestone": {
+                            "id": 10810,
+                            "name": "Sprint X - Final 2 week sprint",
+                            "slug": "sprint-x-final-2-week-sprint"
+                        }
+                    }
+                },
+                "user": {
+                    "email": "sebastien.chassot@etu.hesge.ch"
+                },
+                "project": {
+                    "id": 42722,
+                    "name": "minixfs",
+                    "description": "TP minixfs ITI2",
+                    "slug": "sinux-minixfs"
+                },
+                "comment_html": ""
+            },
+            "content_type": 10,
+            "event_type": "tasks.task.change",
+            "data_content_type": 22,
+            "created": "2015-05-30T12:57:29+0000"
+        },
+        {
+            "data": {
+                "values_diff": {},
+                "task": {
+                    "ref": 12,
+                    "id": 117227,
+                    "subject": "pseudo code namei"
+                },
+                "comment": "",
+                "user": {
+                    "email": "sebastien.chassot@etu.hesge.ch"
+                },
+                "project": {
+                    "id": 42722,
+                    "name": "minixfs",
+                    "description": "TP minixfs ITI2",
+                    "slug": "sinux-minixfs"
+                },
+                "comment_html": ""
+            },
+            "content_type": 10,
+            "event_type": "tasks.task.create",
+            "data_content_type": 22,
+            "created": "2015-05-30T12:55:54+0000"
+        },
+        {
+            "data": {
+                "values_diff": {},
+                "comment": "",
+                "task": {
+                    "ref": 13,
+                    "id": 117228,
+                    "subject": "pseudo code lookup_entry"
+                },
+                "user": {
+                    "email": "sebastien.chassot@etu.hesge.ch"
+                },
+                "project": {
+                    "id": 42722,
+                    "name": "minixfs",
+                    "description": "TP minixfs ITI2",
+                    "slug": "sinux-minixfs"
+                },
+                "comment_html": ""
+            },
+            "content_type": 10,
+            "event_type": "tasks.task.create",
+            "data_content_type": 22,
+            "created": "2015-05-30T12:55:05+0000"
+        },
+        {
+            "data": {
+                "values_diff": {},
+                "comment": "",
+                "task": {
+                    "ref": 11,
+                    "id": 117226,
+                    "subject": "pseudo code ialloc_bloc"
+                },
+                "user": {
+                    "email": "sebastien.chassot@etu.hesge.ch"
+                },
+                "project": {
+                    "id": 42722,
+                    "name": "minixfs",
+                    "description": "TP minixfs ITI2",
+                    "slug": "sinux-minixfs"
+                },
+                "comment_html": ""
+            },
+            "content_type": 10,
+            "event_type": "tasks.task.create",
+            "data_content_type": 22,
+            "created": "2015-05-30T12:54:32+0000"
+        },
+        {
+            "data": {
+                "values_diff": {},
+                "task": {
+                    "ref": 2,
+                    "id": 112025,
+                    "subject": "client failsafe ack"
+                },
+                "comment": "",
+                "user": {
+                    "email": "sebastien.chassot@etu.hesge.ch"
+                },
+                "project": {
+                    "id": 42722,
+                    "name": "minixfs",
+                    "description": "TP minixfs ITI2",
+                    "slug": "sinux-minixfs"
+                },
+                "comment_html": ""
+            },
+            "content_type": 10,
+            "event_type": "tasks.task.delete",
+            "data_content_type": 22,
+            "created": "2015-05-30T12:54:07+0000"
+        },
+        {
+            "data": {
+                "values_diff": {},
+                "comment": "",
+                "task": {
+                    "ref": 10,
+                    "id": 117225,
+                    "subject": "creer fonction rearrange data block quand remove block dossier"
+                },
+                "user": {
+                    "email": "sebastien.chassot@etu.hesge.ch"
+                },
+                "project": {
+                    "id": 42722,
+                    "name": "minixfs",
+                    "description": "TP minixfs ITI2",
+                    "slug": "sinux-minixfs"
+                },
+                "comment_html": ""
+            },
+            "content_type": 10,
+            "event_type": "tasks.task.create",
+            "data_content_type": 22,
+            "created": "2015-05-30T12:53:49+0000"
+        },
+        {
+            "data": {
+                "values_diff": {},
+                "comment": "",
+                "task": {
+                    "ref": 9,
+                    "id": 117224,
+                    "subject": "trouver pourquoi raise error est en erreur dans pycharm"
+                },
+                "user": {
+                    "email": "sebastien.chassot@etu.hesge.ch"
+                },
+                "project": {
+                    "id": 42722,
+                    "name": "minixfs",
+                    "description": "TP minixfs ITI2",
+                    "slug": "sinux-minixfs"
+                },
+                "comment_html": ""
+            },
+            "content_type": 10,
+            "event_type": "tasks.task.create",
+            "data_content_type": 22,
+            "created": "2015-05-30T12:50:13+0000"
+        },
+        {
+            "data": {
+                "values_diff": {},
+                "task": {
+                    "ref": 8,
+                    "id": 117223,
+                    "subject": "commenter function dans rapport"
+                },
+                "comment": "",
+                "user": {
+                    "email": "sebastien.chassot@etu.hesge.ch"
+                },
+                "project": {
+                    "id": 42722,
+                    "name": "minixfs",
+                    "description": "TP minixfs ITI2",
+                    "slug": "sinux-minixfs"
+                },
+                "comment_html": ""
+            },
+            "content_type": 10,
+            "event_type": "tasks.task.create",
+            "data_content_type": 22,
+            "created": "2015-05-30T12:49:50+0000"
+        },
+        {
+            "data": {
+                "values_diff": {},
+                "comment": "",
+                "task": {
+                    "ref": 7,
+                    "id": 117222,
+                    "subject": "Clean et ajoute des log lors de l'execution"
+                },
+                "user": {
+                    "email": "sebastien.chassot@etu.hesge.ch"
+                },
+                "project": {
+                    "id": 42722,
+                    "name": "minixfs",
+                    "description": "TP minixfs ITI2",
+                    "slug": "sinux-minixfs"
+                },
+                "comment_html": ""
+            },
+            "content_type": 10,
+            "event_type": "tasks.task.create",
+            "data_content_type": 22,
+            "created": "2015-05-30T12:47:38+0000"
+        },
+        {
+            "data": {
+                "values_diff": {
+                    "taskboard_order": [
+                        1,
+                        0
+                    ],
+                    "assigned_to": [
+                        null,
+                        "Sebastien chassot"
+                    ],
+                    "status": [
+                        "New",
+                        "In progress"
+                    ]
+                },
+                "comment": "",
+                "task": {
+                    "ref": 3,
+                    "id": 112027,
+                    "subject": "clean TODO",
+                    "userstory": {
+                        "userstory": {
+                            "ref": 59,
+                            "id": 69926,
+                            "subject": "As a user I want to easily see Sale Agreed / Sold / Let / Let Agreed statuses so that I know not to contact the agent about it. (410)"
+                        },
+                        "project": {
+                            "id": 837,
+                            "name": "PropertyPal Test",
+                            "description": "The propertypal system",
+                            "slug": "propertypal"
+                        },
+                        "milestone": {
+                            "id": 10810,
+                            "name": "Sprint X - Final 2 week sprint",
+                            "slug": "sprint-x-final-2-week-sprint"
+                        }
+                    }
+                },
+                "user": {
+                    "email": "sebastien.chassot@etu.hesge.ch"
+                },
+                "project": {
+                    "id": 42722,
+                    "name": "minixfs",
+                    "description": "TP minixfs ITI2",
+                    "slug": "sinux-minixfs"
+                },
+                "comment_html": ""
             },
             "content_type": 10,
             "event_type": "tasks.task.change",
@@ -1629,22 +4155,6 @@
         },
         {
             "data": {
-                "comment_html": "",
-                "task": {
-                    "ref": 5,
-                    "subject": "increase dir capacity with indir and double indir",
-                    "id": 112048
-                },
-                "comment": "",
-                "user": {
-                    "email": "sebastien.chassot@etu.hesge.ch"
-                },
-                "project": {
-                    "slug": "sinux-minixfs",
-                    "name": "minixfs",
-                    "description": "TP minixfs ITI2",
-                    "id": 42722
-                },
                 "values_diff": {
                     "taskboard_order": [
                         1,
@@ -1654,6 +4164,40 @@
                         "New",
                         "Closed"
                     ]
+                },
+                "comment": "",
+                "comment_html": "",
+                "user": {
+                    "email": "sebastien.chassot@etu.hesge.ch"
+                },
+                "project": {
+                    "id": 42722,
+                    "name": "minixfs",
+                    "description": "TP minixfs ITI2",
+                    "slug": "sinux-minixfs"
+                },
+                "task": {
+                    "ref": 5,
+                    "id": 112048,
+                    "subject": "increase dir capacity with indir and double indir",
+                    "userstory": {
+                        "userstory": {
+                            "ref": 59,
+                            "id": 69926,
+                            "subject": "As a user I want to easily see Sale Agreed / Sold / Let / Let Agreed statuses so that I know not to contact the agent about it. (410)"
+                        },
+                        "project": {
+                            "id": 837,
+                            "name": "PropertyPal Test",
+                            "description": "The propertypal system",
+                            "slug": "propertypal"
+                        },
+                        "milestone": {
+                            "id": 10810,
+                            "name": "Sprint X - Final 2 week sprint",
+                            "slug": "sprint-x-final-2-week-sprint"
+                        }
+                    }
                 }
             },
             "content_type": 10,
@@ -1663,27 +4207,45 @@
         },
         {
             "data": {
-                "comment_html": "",
-                "task": {
-                    "ref": 6,
-                    "subject": "corriger algorithme p9 cours",
-                    "id": 112051
-                },
-                "comment": "",
-                "user": {
-                    "email": "sebastien.chassot@etu.hesge.ch"
-                },
-                "project": {
-                    "slug": "sinux-minixfs",
-                    "name": "minixfs",
-                    "description": "TP minixfs ITI2",
-                    "id": 42722
-                },
                 "values_diff": {
                     "status": [
                         "New",
                         "Closed"
                     ]
+                },
+                "comment": "",
+                "comment_html": "",
+                "user": {
+                    "email": "sebastien.chassot@etu.hesge.ch"
+                },
+                "project": {
+                    "id": 42722,
+                    "name": "minixfs",
+                    "description": "TP minixfs ITI2",
+                    "slug": "sinux-minixfs"
+                },
+                "task": {
+                    "ref": 6,
+                    "id": 112051,
+                    "subject": "corriger algorithme p9 cours",
+                    "userstory": {
+                        "userstory": {
+                            "ref": 59,
+                            "id": 69926,
+                            "subject": "As a user I want to easily see Sale Agreed / Sold / Let / Let Agreed statuses so that I know not to contact the agent about it. (410)"
+                        },
+                        "project": {
+                            "id": 837,
+                            "name": "PropertyPal Test",
+                            "description": "The propertypal system",
+                            "slug": "propertypal"
+                        },
+                        "milestone": {
+                            "id": 10810,
+                            "name": "Sprint X - Final 2 week sprint",
+                            "slug": "sprint-x-final-2-week-sprint"
+                        }
+                    }
                 }
             },
             "content_type": 10,
@@ -1693,23 +4255,23 @@
         },
         {
             "data": {
-                "comment_html": "",
+                "values_diff": {},
                 "task": {
                     "ref": 6,
-                    "subject": "corriger algorithme p9 cours",
-                    "id": 112051
+                    "id": 112051,
+                    "subject": "corriger algorithme p9 cours"
                 },
                 "comment": "",
                 "user": {
                     "email": "sebastien.chassot@etu.hesge.ch"
                 },
                 "project": {
-                    "slug": "sinux-minixfs",
+                    "id": 42722,
                     "name": "minixfs",
                     "description": "TP minixfs ITI2",
-                    "id": 42722
+                    "slug": "sinux-minixfs"
                 },
-                "values_diff": {}
+                "comment_html": ""
             },
             "content_type": 10,
             "event_type": "tasks.task.create",
@@ -1718,22 +4280,6 @@
         },
         {
             "data": {
-                "comment_html": "",
-                "task": {
-                    "ref": 5,
-                    "subject": "increase dir capacity with indir and double indir",
-                    "id": 112048
-                },
-                "comment": "",
-                "user": {
-                    "email": "sebastien.chassot@etu.hesge.ch"
-                },
-                "project": {
-                    "slug": "sinux-minixfs",
-                    "name": "minixfs",
-                    "description": "TP minixfs ITI2",
-                    "id": 42722
-                },
                 "values_diff": {
                     "taskboard_order": [
                         1,
@@ -1743,6 +4289,40 @@
                         "New",
                         "In progress"
                     ]
+                },
+                "comment": "",
+                "comment_html": "",
+                "user": {
+                    "email": "sebastien.chassot@etu.hesge.ch"
+                },
+                "project": {
+                    "id": 42722,
+                    "name": "minixfs",
+                    "description": "TP minixfs ITI2",
+                    "slug": "sinux-minixfs"
+                },
+                "task": {
+                    "ref": 5,
+                    "id": 112048,
+                    "subject": "increase dir capacity with indir and double indir",
+                    "userstory": {
+                        "userstory": {
+                            "ref": 59,
+                            "id": 69926,
+                            "subject": "As a user I want to easily see Sale Agreed / Sold / Let / Let Agreed statuses so that I know not to contact the agent about it. (410)"
+                        },
+                        "project": {
+                            "id": 837,
+                            "name": "PropertyPal Test",
+                            "description": "The propertypal system",
+                            "slug": "propertypal"
+                        },
+                        "milestone": {
+                            "id": 10810,
+                            "name": "Sprint X - Final 2 week sprint",
+                            "slug": "sprint-x-final-2-week-sprint"
+                        }
+                    }
                 }
             },
             "content_type": 10,
@@ -1752,23 +4332,23 @@
         },
         {
             "data": {
-                "comment_html": "",
+                "values_diff": {},
                 "task": {
                     "ref": 5,
-                    "subject": "increase dir capacity with indir and double indir",
-                    "id": 112048
+                    "id": 112048,
+                    "subject": "increase dir capacity with indir and double indir"
                 },
                 "comment": "",
                 "user": {
                     "email": "sebastien.chassot@etu.hesge.ch"
                 },
                 "project": {
-                    "slug": "sinux-minixfs",
+                    "id": 42722,
                     "name": "minixfs",
                     "description": "TP minixfs ITI2",
-                    "id": 42722
+                    "slug": "sinux-minixfs"
                 },
-                "values_diff": {}
+                "comment_html": ""
             },
             "content_type": 10,
             "event_type": "tasks.task.create",
@@ -1777,23 +4357,23 @@
         },
         {
             "data": {
-                "comment_html": "",
+                "values_diff": {},
                 "task": {
                     "ref": 4,
-                    "subject": "improve or remove request list fifo",
-                    "id": 112028
+                    "id": 112028,
+                    "subject": "improve or remove request list fifo"
                 },
                 "comment": "",
                 "user": {
                     "email": "sebastien.chassot@etu.hesge.ch"
                 },
                 "project": {
-                    "slug": "sinux-minixfs",
+                    "id": 42722,
                     "name": "minixfs",
                     "description": "TP minixfs ITI2",
-                    "id": 42722
+                    "slug": "sinux-minixfs"
                 },
-                "values_diff": {}
+                "comment_html": ""
             },
             "content_type": 10,
             "event_type": "tasks.task.create",
@@ -1802,27 +4382,45 @@
         },
         {
             "data": {
-                "comment_html": "",
-                "task": {
-                    "ref": 3,
-                    "subject": "clean TODO",
-                    "id": 112027
-                },
-                "comment": "",
-                "user": {
-                    "email": "sebastien.chassot@etu.hesge.ch"
-                },
-                "project": {
-                    "slug": "sinux-minixfs",
-                    "name": "minixfs",
-                    "description": "TP minixfs ITI2",
-                    "id": 42722
-                },
                 "values_diff": {
                     "assigned_to": [
                         null,
                         "Sebastien chassot"
                     ]
+                },
+                "comment": "",
+                "comment_html": "",
+                "user": {
+                    "email": "sebastien.chassot@etu.hesge.ch"
+                },
+                "project": {
+                    "id": 42722,
+                    "name": "minixfs",
+                    "description": "TP minixfs ITI2",
+                    "slug": "sinux-minixfs"
+                },
+                "task": {
+                    "ref": 3,
+                    "id": 112027,
+                    "subject": "clean TODO",
+                    "userstory": {
+                        "userstory": {
+                            "ref": 59,
+                            "id": 69926,
+                            "subject": "As a user I want to easily see Sale Agreed / Sold / Let / Let Agreed statuses so that I know not to contact the agent about it. (410)"
+                        },
+                        "project": {
+                            "id": 837,
+                            "name": "PropertyPal Test",
+                            "description": "The propertypal system",
+                            "slug": "propertypal"
+                        },
+                        "milestone": {
+                            "id": 10810,
+                            "name": "Sprint X - Final 2 week sprint",
+                            "slug": "sprint-x-final-2-week-sprint"
+                        }
+                    }
                 }
             },
             "content_type": 10,
@@ -1832,27 +4430,45 @@
         },
         {
             "data": {
-                "comment_html": "",
-                "task": {
-                    "ref": 2,
-                    "subject": "client failsafe ack",
-                    "id": 112025
-                },
-                "comment": "",
-                "user": {
-                    "email": "sebastien.chassot@etu.hesge.ch"
-                },
-                "project": {
-                    "slug": "sinux-minixfs",
-                    "name": "minixfs",
-                    "description": "TP minixfs ITI2",
-                    "id": 42722
-                },
                 "values_diff": {
                     "assigned_to": [
                         null,
                         "Sebastien chassot"
                     ]
+                },
+                "comment": "",
+                "comment_html": "",
+                "user": {
+                    "email": "sebastien.chassot@etu.hesge.ch"
+                },
+                "project": {
+                    "id": 42722,
+                    "name": "minixfs",
+                    "description": "TP minixfs ITI2",
+                    "slug": "sinux-minixfs"
+                },
+                "task": {
+                    "ref": 2,
+                    "id": 112025,
+                    "subject": "client failsafe ack",
+                    "userstory": {
+                        "userstory": {
+                            "ref": 59,
+                            "id": 69926,
+                            "subject": "As a user I want to easily see Sale Agreed / Sold / Let / Let Agreed statuses so that I know not to contact the agent about it. (410)"
+                        },
+                        "project": {
+                            "id": 837,
+                            "name": "PropertyPal Test",
+                            "description": "The propertypal system",
+                            "slug": "propertypal"
+                        },
+                        "milestone": {
+                            "id": 10810,
+                            "name": "Sprint X - Final 2 week sprint",
+                            "slug": "sprint-x-final-2-week-sprint"
+                        }
+                    }
                 }
             },
             "content_type": 10,
@@ -1862,23 +4478,23 @@
         },
         {
             "data": {
-                "comment_html": "",
+                "values_diff": {},
                 "task": {
                     "ref": 2,
-                    "subject": "client failsafe ack",
-                    "id": 112025
+                    "id": 112025,
+                    "subject": "client failsafe ack"
                 },
                 "comment": "",
                 "user": {
                     "email": "sebastien.chassot@etu.hesge.ch"
                 },
                 "project": {
-                    "slug": "sinux-minixfs",
+                    "id": 42722,
                     "name": "minixfs",
                     "description": "TP minixfs ITI2",
-                    "id": 42722
+                    "slug": "sinux-minixfs"
                 },
-                "values_diff": {}
+                "comment_html": ""
             },
             "content_type": 10,
             "event_type": "tasks.task.create",
@@ -1887,23 +4503,23 @@
         },
         {
             "data": {
-                "comment_html": "",
+                "values_diff": {},
                 "task": {
                     "ref": 3,
-                    "subject": "clean TODO",
-                    "id": 112027
+                    "id": 112027,
+                    "subject": "clean TODO"
                 },
                 "comment": "",
                 "user": {
                     "email": "sebastien.chassot@etu.hesge.ch"
                 },
                 "project": {
-                    "slug": "sinux-minixfs",
+                    "id": 42722,
                     "name": "minixfs",
                     "description": "TP minixfs ITI2",
-                    "id": 42722
+                    "slug": "sinux-minixfs"
                 },
-                "values_diff": {}
+                "comment_html": ""
             },
             "content_type": 10,
             "event_type": "tasks.task.create",
@@ -1912,27 +4528,45 @@
         },
         {
             "data": {
-                "comment_html": "",
-                "task": {
-                    "ref": 1,
-                    "subject": "Creer la class",
-                    "id": 99689
-                },
-                "comment": "",
-                "user": {
-                    "email": "sebastien.chassot@etu.hesge.ch"
-                },
-                "project": {
-                    "slug": "sinux-minixfs",
-                    "name": "minixfs",
-                    "description": "TP minixfs ITI2",
-                    "id": 42722
-                },
                 "values_diff": {
                     "status": [
                         "Ready for test",
                         "Closed"
                     ]
+                },
+                "comment": "",
+                "comment_html": "",
+                "user": {
+                    "email": "sebastien.chassot@etu.hesge.ch"
+                },
+                "project": {
+                    "id": 42722,
+                    "name": "minixfs",
+                    "description": "TP minixfs ITI2",
+                    "slug": "sinux-minixfs"
+                },
+                "task": {
+                    "ref": 1,
+                    "id": 99689,
+                    "subject": "Creer la class",
+                    "userstory": {
+                        "userstory": {
+                            "ref": 59,
+                            "id": 69926,
+                            "subject": "As a user I want to easily see Sale Agreed / Sold / Let / Let Agreed statuses so that I know not to contact the agent about it. (410)"
+                        },
+                        "project": {
+                            "id": 837,
+                            "name": "PropertyPal Test",
+                            "description": "The propertypal system",
+                            "slug": "propertypal"
+                        },
+                        "milestone": {
+                            "id": 10810,
+                            "name": "Sprint X - Final 2 week sprint",
+                            "slug": "sprint-x-final-2-week-sprint"
+                        }
+                    }
                 }
             },
             "content_type": 10,
@@ -1942,28 +4576,46 @@
         },
         {
             "data": {
-                "comment_html": "",
-                "task": {
-                    "ref": 1,
-                    "subject": "Creer la class",
-                    "id": 99689
-                },
-                "comment": "",
-                "user": {
-                    "email": "sebastien.chassot@etu.hesge.ch"
-                },
-                "project": {
-                    "slug": "sinux-minixfs",
-                    "name": "minixfs",
-                    "description": "TP minixfs ITI2",
-                    "id": 42722
-                },
                 "values_diff": {
                     "status": [
                         "New",
                         "Ready for test"
                     ]
-                }
+                },
+                "comment": "",
+                "task": {
+                    "ref": 1,
+                    "id": 99689,
+                    "subject": "Creer la class",
+                    "userstory": {
+                        "userstory": {
+                            "ref": 59,
+                            "id": 69926,
+                            "subject": "As a user I want to easily see Sale Agreed / Sold / Let / Let Agreed statuses so that I know not to contact the agent about it. (410)"
+                        },
+                        "project": {
+                            "id": 837,
+                            "name": "PropertyPal Test",
+                            "description": "The propertypal system",
+                            "slug": "propertypal"
+                        },
+                        "milestone": {
+                            "id": 10810,
+                            "name": "Sprint X - Final 2 week sprint",
+                            "slug": "sprint-x-final-2-week-sprint"
+                        }
+                    }
+                },
+                "user": {
+                    "email": "sebastien.chassot@etu.hesge.ch"
+                },
+                "project": {
+                    "id": 42722,
+                    "name": "minixfs",
+                    "description": "TP minixfs ITI2",
+                    "slug": "sinux-minixfs"
+                },
+                "comment_html": ""
             },
             "content_type": 10,
             "event_type": "tasks.task.change",
@@ -1972,23 +4624,23 @@
         },
         {
             "data": {
-                "comment_html": "",
+                "values_diff": {},
                 "task": {
                     "ref": 1,
-                    "subject": "Creer la class",
-                    "id": 99689
+                    "id": 99689,
+                    "subject": "Creer la class"
                 },
                 "comment": "",
                 "user": {
                     "email": "sebastien.chassot@etu.hesge.ch"
                 },
                 "project": {
-                    "slug": "sinux-minixfs",
+                    "id": 42722,
                     "name": "minixfs",
                     "description": "TP minixfs ITI2",
-                    "id": 42722
+                    "slug": "sinux-minixfs"
                 },
-                "values_diff": {}
+                "comment_html": ""
             },
             "content_type": 10,
             "event_type": "tasks.task.create",
@@ -1997,23 +4649,23 @@
         },
         {
             "data": {
-                "comment_html": "",
+                "values_diff": {},
                 "comment": "",
-                "user": {
-                    "email": "sebastien.chassot@etu.hesge.ch"
-                },
                 "milestone": {
-                    "slug": "client-afinet-python",
+                    "id": 19829,
                     "name": "Client afinet python",
-                    "id": 19829
+                    "slug": "client-afinet-python"
                 },
+                "comment_html": "",
                 "project": {
-                    "slug": "sinux-minixfs",
+                    "id": 42722,
                     "name": "minixfs",
                     "description": "TP minixfs ITI2",
-                    "id": 42722
+                    "slug": "sinux-minixfs"
                 },
-                "values_diff": {}
+                "user": {
+                    "email": "sebastien.chassot@etu.hesge.ch"
+                }
             },
             "content_type": 10,
             "event_type": "milestones.milestone.create",
@@ -2022,16 +4674,16 @@
         },
         {
             "data": {
-                "user": {
-                    "email": "sebastien.chassot@etu.hesge.ch"
-                },
+                "values_diff": {},
                 "project": {
-                    "slug": "sinux-minixfs",
+                    "id": 42722,
                     "name": "minixfs",
                     "description": "TP minixfs ITI2",
-                    "id": 42722
+                    "slug": "sinux-minixfs"
                 },
-                "values_diff": {}
+                "user": {
+                    "email": "sebastien.chassot@etu.hesge.ch"
+                }
             },
             "content_type": 10,
             "event_type": "projects.project.create",

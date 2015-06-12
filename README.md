@@ -1,6 +1,30 @@
-## Mini-projet de programmation Système/Systèmes d’exploitation ##
+# Mini-projet de programmation Système/Systèmes d’exploitation 
 
-### Une image Minix-FS version 1.0 accessible localement et à distance ###
+## Utilisation 
+
+
+```
+# build the c server
+
+    $ make server
+
+# run self test
+
+    $ make test1          # or test2
+
+# run server (befor client)
+
+    $ make run            # or run_debug
+    $ make test_server    # in other terminal
+
+# see doc in browser
+
+    $ make doc
+
+```
+
+
+## Une image Minix-FS version 1.0 accessible localement et à distance 
 
 MINIX-FS est un système de fichier créé par Andrew Tanenbaum en 1987, il se base sur le système
 de fichiers UNIX dont les aspects complexes ont été retirés pour garder une structure simple et
