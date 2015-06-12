@@ -1,4 +1,4 @@
-CFLAGS=-g -Wall -std=c99 
+CFLAGS=-g -Wall -std=c99  -DDEBUG
 CC=gcc
 SRC= server.c server.h
 FILESYSTEM=./filesystems

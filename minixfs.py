@@ -203,7 +203,6 @@ class minix_file_system(object):
                 entry_name = content[off + 2:off + DIRSIZE].split('\x00')[0]
                 if inode != 0:
                     # add entry to dictionary
-                    print(entry_name)
                     d_entry.update({entry_name: inode})
 
             # pick next data block

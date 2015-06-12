@@ -26,7 +26,6 @@
 
 #include "server.h"
 
-#define DEBUG
 
 int main(int argc, char* argv[])
 {
@@ -69,7 +68,7 @@ int main(int argc, char* argv[])
 
     do {
 
-        client = accept(s, (struct sockaddr *) &addr_client, (socklen_t *) &s_len);
+        client = accept(s, (struct sockaddr *) &addr_client, (socklen_t *)&s_len);
 
         if(write(1, "Client connected\n", 17) < 0)
             ERR_FATALE("Error writing stdout");
@@ -87,7 +86,9 @@ int main(int argc, char* argv[])
             query_header_t * header = calloc(sizeof(query_header_t), 1);
             response_header_t response;
 
-            /* read a new request */
+            /*************************************
+             * read a new request
+             *************************************/
             int n = read_header(client, &header);
 
             if ( n < 0)
@@ -114,7 +115,9 @@ int main(int argc, char* argv[])
 
                 case 0 :  /* read case */
 
-                    /* read request on disk */
+                    /*******************************
+                     * read request on disk
+                     *******************************/
                     n = read_response_on_fs(fd, &buff, header->offset, header->length);
                     if ( n < 0) {
                         perror("Error unable to read file system");
@@ -123,7 +126,9 @@ int main(int argc, char* argv[])
                         buff = NULL;
                     }
 
-                    /* send response header */
+                    /********************************
+                     * send response header
+                     *******************************/
                     n = write_to_client(client, (char *) &response, sizeof(response_header_t));
 
                     if( n <= 0 ) {
@@ -134,8 +139,16 @@ int main(int argc, char* argv[])
                         end_session = true;
                         break;
                     }
-
-                    /* send response if any */
+#ifdef DEBUG
+    printf("Write to client (header) :\n\n");
+    printf("Signature = %x\n",response.sign);
+    printf("Error     = %d\n",response.errnum);
+    printf("Handel    = %x\n",response.handle);
+    printf("\n=================================\n\n");
+#endif
+                    /*******************************
+                     * send response if any
+                     *******************************/
                     if (buff) {
                         n = write_to_client(client, (char *) buff, header->length);
 
@@ -154,7 +167,9 @@ int main(int argc, char* argv[])
 
                 case 1 :  /* write case */
 
-                    /* read the payload */
+                    /*****************************
+                     * read the payload
+                     *****************************/
                     n = read_client_payload(client, &buff, header->length);
                     if ( n < 0) {
                         perror("Error reading payload");
@@ -171,16 +186,27 @@ int main(int argc, char* argv[])
                         break;
 
                     } else {
-                        /* write payload to disk */
+
+                        /*****************************
+                         * write payload to disk
+                         *****************************/
                         if (write_to_disk(fd, (char *)buff, header->offset, header->length) < 0) {
                             perror("Error unable to write payload to disk");
                             response.errnum = errno;
                         }
                     }
 
-                    /* send response to client */
+                    /****************************
+                     * send response to client
+                     ****************************/
                     n = write_to_client(client, (char *) &response, sizeof(response_header_t));
-
+#ifdef DEBUG
+    printf("Write to client (header) :\n\n");
+    printf("Signature = %x\n",response.sign);
+    printf("Error     = %d\n",response.errnum);
+    printf("Handel    = %x\n",response.handle);
+    printf("\n=================================\n\n");
+#endif
                     if( n <= 0 ) {
                         perror("Error lost client connection while responding");
                         free(header);
@@ -205,6 +231,8 @@ int main(int argc, char* argv[])
                         end_session = true;
                         break;
                     }
+
+
             }
 
         } while ( !end_session);
@@ -274,6 +302,16 @@ int read_header(int socket, query_header_t ** header)
     (*header)->offset = ntohl(tmp_header->offset);
     (*header)->length = ntohl(tmp_header->length);
 
+#ifdef DEBUG
+    system("clear");
+    printf("Read from client (header) :\n\n");
+    printf("Signature = %x\n",tmp_header->sign);
+    printf("Handel    = %x\n",tmp_header->handle);
+    printf("Offset    = %d\n",tmp_header->offset);
+    printf("Lenght    = %d\n",tmp_header->length);
+    printf("\n=================================\n\n");
+#endif
+
     return r;
 }
 
@@ -312,6 +350,10 @@ int read_response_on_fs(int fd, void **buff, uint32_t offset, uint32_t length)
 
     }while( r < length);
 
+//#ifdef DEBUG
+//    printf("\nRead \t %d bytes on disk at pos %d\n", r, offset);
+//#endif
+
     return r;
 }
 
@@ -341,6 +383,10 @@ int read_client_payload(int socket, void **buff, uint32_t length)
         }
 
     } while (r < length);
+
+//#ifdef DEBUG
+//    printf("\nRead \t %d more bytes from client\n", r);
+//#endif
 
     return r;
 }
@@ -379,6 +425,10 @@ int write_to_disk(int fd, void *buff, uint32_t offset, uint32_t length)
         }
 
     }while( r < length);
+
+//#ifdef DEBUG
+//    printf("\nWrote \t %d bytes to disk (bloc %d)\n", r, offset/1024);
+//#endif
 
     return r;
 }

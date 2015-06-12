@@ -183,7 +183,7 @@ class remote_bloc_device(object):
 
             # read response
             response = ""
-            response_size = struct.calcsize('!III')
+            response_size = struct.calcsize('!IiI')
             to_recv = 0
 
             while to_recv < response_size:
@@ -197,7 +197,7 @@ class remote_bloc_device(object):
             log.debug("A response has been received")
 
             # TODO passer le code d'erreur en signed
-            h = struct.unpack('!III', response)
+            h = struct.unpack('!IiI', response)
 
             if h == (magic_resp, 0, handle):
             
@@ -253,7 +253,7 @@ class remote_bloc_device(object):
 
         # read response
         responce = ''
-        response_size = struct.calcsize('!III')
+        response_size = struct.calcsize('!IiI')
         to_recv = 0
 
         while to_recv < response_size:
@@ -264,7 +264,7 @@ class remote_bloc_device(object):
             to_recv += len(b)
 
         # Error treatment
-        h = struct.unpack('!III', responce)
+        h = struct.unpack('!IiI', responce)
 
         if h[0] != magic_resp:
             raise BlocDeviceException('Error write_bloc: Server response unknown')
