@@ -359,14 +359,14 @@ class minix_file_system(object):
 
         inode = self.lookup_entry(dinode, name)
 
+        if not self.is_dir(dinode):
+            raise MinixfsException('Error del_entry: Could only del entry from a dir')
+
         if not inode:
             raise MinixfsException('Error del_entry: File not found')
 
         if not self.ifree(inode):
             raise MinixfsException('Error del_entry: unable to free inode')
-
-        if not self.is_dir(dinode):
-            raise MinixfsException('Error del_entry: Could only del entry from a dir')
 
         dir_block = 1
 
@@ -410,6 +410,7 @@ class minix_file_system(object):
                     dinode.i_size -= DIRSIZE
                     break
 
+            # after deleting entry, if dir_content is empty free the empty data bloc
             if dir_content == "".ljust(BLOCK_SIZE, '\x00'):
                 self.bfree(dir_block)
 

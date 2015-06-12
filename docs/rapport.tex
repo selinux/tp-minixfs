@@ -67,7 +67,7 @@
 % ligne vide
 \newcommand{\emptyLine}[1][1]{\par\leavevmode\par}
 
-\input{inputs/inc_lst_c}
+\input{inputs/inc_lst_c_2}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %		DEBUT DU DOCUMENT
@@ -155,10 +155,13 @@ ITI 2\up{ème} soir \\
 
 \section{Introduction}
 
-Le but de ce travail est d'implémenter un système MinixFS V1 en python en proposant une API standard et de modifier un fichier \emph{formaté} en minixfs via cet interface.\\
+\vspace{1cm}
+Le but de ce travail est d'implémenter un système MinixFS V1 en python en proposant une API standard et de modifier un fichier formaté en minixfs via cet interface.\\
 
-Dans un deuxième temps, les modifications seront faites à travers le réseau. Un programme de test simple écrit en python utilise l'API mais les lectures/écritures sont faite par un server de blocs. Le server (écrit en C) modifiera le fichier selon les commandes reçues au travers d'une sockets AF\_INET. On réutilisera le travail fait en python et son API mais les block seront transmis au server selon un protocole relativement simple.
- 
+Dans un deuxième temps, les modifications seront faites à travers le réseau. Un programme de test simple écrit en python utilise l'API mais les lectures/écritures sont faite par un server de blocs. Le server (écrit en C) modifiera le fichier selon les commandes reçues au travers d'une sockets AF\_INET. On réutilisera le travail fait en python et son API mais les blocs seront transmis au server selon un protocole relativement simple.
+
+\vspace{2cm}
+
 \begin{figure}[H]
 \begin{center}
 \includegraphics[scale=.6]{imgs/schema_client_server}
@@ -170,10 +173,13 @@ Dans un deuxième temps, les modifications seront faites à travers le réseau. 
 
 Un seul client est traité à la fois ce qui évite les problèmes d'accès concurrent - traité dans d'autres cours. Le principe est simple; le client fait une requête, le server y répond.\\
 
+\pagebreak
 
-\subsection{Exécution du programme}
+\section{Exécution du programme}
 
-Fonctionnement du programme. Toutes les commandes peuvent être lancées avec make.\\
+Toutes les commandes peuvent être lancées avec make.\\
+
+Le projet est hébergé sur \url{https://github.com/selinux/tp-minixfs}
 
 \begin{lstlisting}[language=bash,caption={lancer le server}]
 
@@ -192,6 +198,7 @@ pour lancer la doc
 	
 pour lancer le server avec make
 	$ make server && make run
+
 ou avec strace
 	$ make server && make run_debug
 	
@@ -200,12 +207,13 @@ dans un autre terminal
 
 \end{lstlisting}
 
+\pagebreak
 
 \section{Implémentation python}
 
 L'API implémentée est une version simplifiée d'un système de fichiers actuelle. On y retrouve les même méthodes et le fonctionnement global est le même.\\
 
-\subsection{description de l'API}
+\subsection{brève description de l'API}
 
 
 \begin{description}
@@ -238,47 +246,33 @@ Il y a un problème avec le test unitaire numéro 8. Si \emph{bmap()} vérifie l
 
 
 \begin{lstlisting}[language=python, caption=test inode\_size in bmap]
+        size = inode.i_size
+
         # the data block (>firstdatazone) must fit the inode size
         if self.is_file(inode) or self.is_link(inode):
             if blk > int(size / self.disk.blksize):
                 raise MinixfsException('Error block is out of file boundary')
 \end{lstlisting}
 
+Dans le test b, \emph{ialloc\_bloc()} ajoute deux blocks sans modifier la taille ce qui fait échouer le test également.\\
+
+\subsubsection*{lookup\_entry()}
+
+Cette fonction va parcourir tous le dinode et créer un dictionnaire inode;nom\_fichier. À la fin, on retourne simplement l'entrée du dictionnaire associée au nom (le numéro d'inode). Cette solution est lourde puisqu'un dictionnaire est créé à chaque appel. C'était juste pour tester les fonctionnalités de python mais il serait bien plus efficace de faire un break dès que l'entrée est trouvée.\\
+
 
 \subsubsection*{del\_entry()}
 
-On commence par rechercher l'inode de l'entrée dans le dir et on raise une error si le nom n'existe pas.
+Avant de supprimer une entrée, il est préférable de tester s'il s'agit bien d'un dossier (et pas un fichier). Vérifier avec lookup\_entry() que le fichier existe bien dans le dossier.\\
 
-Pour chaque block du dir (le dir peut occuper plusieurs block) on recherche l'inode.
+Il faut également vérifier que le lien soit à 1, sinon il faut simplement décrémenter les liens mais garder l'inode (un autre fichier pointe dessus).\\
 
-Si l'inode a plusieurs link, c'est qu'il est utilisé par un autre fichier il suffit donc de décrémenter le nombre de liens pointant sur lui.
+Une fois une entrée supprimée, le bloc est comparée à un bloc vide et supprimé s'il  n'est plus nécessaire.\\
 
-Sinon, on libère tous les blocks de l'inode.
-
-Dans les deux cas, on retire l'entrée.
-
-Si l'entrée était la dernière du dir on peut effacer ce block du dinode. Attention on pourrait créer 300 fichiers et effacer par hasard tous les fichiers du 3\up{e} block. Il faut donc supprimer le 3\up{e} mais décaler les suivants (la commande \emph{bmap()} renvoie les block qui se suivent)
-
-On écrit finalement le nouveau contenu du block dir.
-
-\begin{lstlisting}[language=C, caption=pseudo code del\_entry()]
-del_entry(inode dossier, nom fichier a supprimer){
-	rechercher_entree;
-	si (non trouve)
-		raise error;
-
-	tant que block dossier:
-		rechercher entree dans block dossier
-			trouver:
-				si plusieurs liens: reduire
-				sinon: effacer inode fichier
-			
-				enlever entree du block dossier;
-				reduire taille dossier
-				si dernier fichier du block dossier supprimer block inutile;
-	
-	valider modification sur disk;
-}
+\begin{lstlisting}[language=python, caption=test after del\_entry()]
+            # after deleting entry, if dir_content is empty free the empty data bloc
+            if dir_content == "".ljust(BLOCK_SIZE, '\x00'):
+                self.bfree(dir_block)
 \end{lstlisting}
 
 
@@ -286,12 +280,12 @@ del_entry(inode dossier, nom fichier a supprimer){
 
 Cette fonction attribue un block à n'importe quel position - dans un nouvel inode, on peut vouloir commencer par écrire le block \emph{2452} (dans la zone doublement indirect). Si le block doublement indirect indirect n'existe pas, il faut le créer, mettre l'adresse du nouveau bloc du fichier dedans et placer l'adresse du bloc dbl\_indirect dans le blocs dbl\_indirect.\\
 
-Plus généralement, en allouant un bloc il faut faire des vérifications.\\
+Plus généralement, en allouant un bloc il faut pouvoir le faire quel que soit sa position.\\
 
 
 \subsection{Logs et exceptions}
 
-Dans tous le code python, les erreurs lèvent une exception qui log une erreur \emph{log.error()}.\\
+Dans tous le code du client, les erreurs lèvent une exception qui log une erreur \emph{log.error()} et l'affiche.\\
 
 Dans le reste du programme, deux niveaux de log sont utilisé \emph{log.info()} et \emph{log.debug()}. Il suffit de changer \emph{log.basicConfig()} de \emph{level=log.INFO} à  \emph{level=log.DEBUG}.\\
 
@@ -316,11 +310,6 @@ class MinixfsException(Exception):
 \end{lstlisting}
 
 
-\subsection{Problèmes rencontrés}
-
-Une difficulté vient de la taille du fichier (dans l'inode). Savoir s'il faut la modifier la taille ou si c'est à l'appel system \emph{write()} de le faire - p.ex en attribuant un block avec \emph{ialloc\_bloc()} faut-il corrigé la taille à ce moment là? Avec des commandes tel que truncate est-ce vraiment au filesystem de se maintenir?
-
-
 \vspace{1cm}
 
 \section{Le serveur de blocs}
@@ -328,62 +317,40 @@ Une difficulté vient de la taille du fichier (dans l'inode). Savoir s'il faut l
 
 \subsection{la problématique de la connexion}
 
-Détecter la déconnexion d'un client n'est pas trivial. En effet, lors d'un \emph{shutdown()} , 
+Détecter la déconnexion d'un client est trivial (read() renvoit \emph{0}) mais comment réagir ? Le server en cas de déconnexion libère la mémoire et attend de nouveaux clients.\\
 
 \subsection{Principe de fonctionnement du server}
 
 La communication est bidirectionnelle mais le client initie toujours la communication. Le server ne fait que répondre aux requêtes.\\
 
-Dans ce travail, il n'y a pas de concurrence à gérer, un seul client est traité à la fois.\\
+Un client se connecte et le server accept() la connexion puis rentre dans une boucle - on aurait également pu faire un fork ou lancer un thread pour traiter le client.\\
 
-Un client se connecte et le server (\emph{accept()} puis rentre dans une boucle. On aurait également pu faire un fork ou lancer un thread pour traiter le client.\\
+Tant que le client ne se déconnecte pas, le server bloc sur le premier read et attend une requête.\\
 
-Tant que le client ne se déconnecte pas, le server bloc sur le premier read. Si read renvoi \emph{0}, le server ferme la connexion, sort de la boucle intérieur et bloque sur \emph{accept()} en attente d'un nouveau client.\\
+Le server tourne dans une boucle infinie (le code suivant la boucle est inaccessible dans l'état actuel). Puis rentre dans une boucle (traitement du client) qui fait successivement :\\
 
- C'est cette solution qui a été mise en place (dans une boucle infinie) mais elle ne permet pas de se protéger d'un client malveillant. Si un client ne respecte pas le protocole le server peut être 
+\begin{center}
+\begin{table}[H]
+\begin{tabular}{| c | c |}
+\hline
+\multicolumn{2}{| c |}{lecture header requête (20 octets)}\\
+\hline \hline
+\textbf{read()} & \textbf{write()}\\
+\hline \hline
+lecture disque selon demande client & Lecture payload client\\
+\hline
+écriture header réponse (12 octets )& écriture payload sur le disque\\
+\hline
+écrit le payload réponse & écrire header réponse au client (12 octets)\\
+\hline
+\end{tabular}
+\caption{Ordre lecture/écriture}
+\label{succession lecture/écriture}
+\end{table}
+\end{center}
 
+À chaque lecture ou écriture, si le client se déconnecte, le server revient à accept().\\
 
-\begin{lstlisting}[language=C, caption=pseudo code server]
-
-while (1){
-	accept new client;
-	
-	do 
-		read header request;
-		si prob read:
-			session = false;
-			break;
-		
-		prepare header response;
-	
-		switch
-			case read:
-				read disk;
-
-				si fatal:
-					session = false;
-					break;			
-				si erreur:
-					modifie response;
-				write header response to client;
-				si no erreur:
-					write response to client
-		
-			case write:
-				read client payload;
-				si fatal:
-					session = false
-					break;
-				sinon:
-					write payload to disk;
-					si erreur:
-						modifie response;
-			
-				write response to client;
-	while session;
-}			
-
-\end{lstlisting}
 \begin{figure}[H]
 \begin{center}
 \includegraphics[scale=.6]{imgs/schema_server}
@@ -392,195 +359,190 @@ while (1){
 \end{center}
 \end{figure}
 
+\subsection{Problème de sécurité}
+
+C'est cette solution qui a été mise en place (dans une boucle infinie) mais elle ne permet pas de se protéger d'un client malveillant. Si un client ne respecte pas le protocole, le server peut se retrouver bloqué. Si un client annonce un payload d'une certaine longueur mais envoit d'autres données, il décale le flux et la communication serait désynchronisée laissant le server bloqué sur un read().\\
+
+
 \subsection*{Solutions envisagées}
 
 Une des solutions les plus simple serait de traiter les demandes l'une après l'autre; le client se connecte, envoie une requête, reçoit la réponse et se déconnecte. Le server fait la même chose; attend sur \emph{accept()} qu'un client se connecte puis traite la requête et y répond et se déconnecte.\\
 
-Cette solution est simple, permet de mieux maîtriser l'état du client et du server mais est couteuse en connexions.\\
+Cette solution est simple, permet de mieux maîtriser la synchronisation  client/server mais est couteuse en connexions.\\
 
 
-Une alternative possible est d'ajouter au protocole une requête (un message) de déconnexion qui synchronise le client et le server. Complexifier le protocole.\\
+Une alternative possible est d'ajouter au protocole une requête (un message) de déconnexion qui synchronise le client et le server. On ajoute de la complexité au protocole.\\
 
 Une autre serait de faire une machine d'état afin de s'assurer de l'état dans lequel est le client et le server et le passage entre chaque état. Si un problème arrive, revenir dans un état connu.
 
-\subsection*{Problème de client malicieux}
 
-Si un client lance une requête et annonce une certaine longueur, le server va faire un read, tant que le client maintient la connexion et n'envoie pas les données, il bloque le server.\\
+\section{Conclusion}
 
-une solution serait de faire un \emph{select()} avant le read avec un timeout
+L'API python fonctionne bien et passe tous les tests unitaires. Il ne manquerait plus maintenant qu'à ajouter les appels systèmes en user space pour qu'il soit fonctionnel.\\
 
-\begin{lstlisting}[language=C, caption=pseudo code del\_entry()]
-struct timeval tv;
-fd_set readfds;
-int state;
-
-FD_ZERO(&readfds);
-
-tv.tv_sec = 5;
-tv.tv_usec = 0;
-
-client = accept(s, (struct sockaddr *) &addr_client, (socklen_t *) &s_len);
-
-FD_SET(client, &readfds);
-
-boucle {
-
-	state = select(n, &readfds, NULL, NULL, &tv);
-	
-	if(FD_ISSET(client, &readfds))
-		read_socket();
-	else
-		continue;
-
-...
-
-}
-\end{lstlisting}
+Le server de bloc fonctionne bien également et passe tous les tests mais est assez sensible à un client qui ne respecterait pas le protocole.\\
 
 
-\section{Exécution et tests unitaires}
 
-Pour tester le fonctionnement\\
-
-
-Où avec l'utilisation de strace
-
-\begin{lstlisting}[language=bash,caption={lancer le server}]
-
-	$ cp ./filesystems/minixfs\_lab1.img.org ./filesystems/minixfs\_lab1.img
-	$ ./server 1234 ./filesystems/minixfs\_lab1.img
-	
-	$ strace ./server 1234 ./filesystems/minixfs\_lab1.img
-
-	$ make run
-	$ make run_debug
-\end{lstlisting}
-
-on peut enfin lancer le client\\
-\begin{lstlisting}[language=bash,caption={lancer le client}]
-	
-	$ python2 tester_server.py
-  
-INFO:remote file system opened successfully
-INFO:socket closed
-INFO:remote file system opened successfully
-(...)
-.
-----------------------------------------------------------------------
-Ran 13 tests in 71.003s
-
-OK
-
-\end{lstlisting}
+%\begin{lstlisting}[language=C, caption=pseudo code del\_entry()]
+%struct timeval tv;
+%fd_set readfds;
+%int state;
+%
+%FD_ZERO(&readfds);
+%
+%tv.tv_sec = 5;
+%tv.tv_usec = 0;
+%
+%client = accept(s, (struct sockaddr *) &addr_client, (socklen_t *) &s_len);
+%
+%FD_SET(client, &readfds);
+%
+%boucle {
+%
+%	state = select(n, &readfds, NULL, NULL, &tv);
+%	
+%	if(FD_ISSET(client, &readfds))
+%		read_socket();
+%	else
+%		continue;
+%
+%...
+%
+%}
+%\end{lstlisting}
 
 
-\section{Annexes}
-
-\subsection*{ialloc()}
-
-\begin{lstlisting}[language=C, caption=pseudo code ialloc()()]
-ialloc(){
-
-	recherche premier libre dans inode_map
-	
-	si not trouve:
-		raise error plus aucun inode de libre
-	
-	inode trouve = occupe
-	del ancien inode
-	new inode
-	
-	return numero inode
-}
-\end{lstlisting}
-
-\subsection*{ifree(inode)}
-
-\begin{lstlisting}[language=C, caption=pseudo code ifree()()]
-ifree( inode ){
-
-	inode = libre
-	return est-ce que inode est libre?
-}
-\end{lstlisting}
-
-\subsection*{balloc()}
-
-\begin{lstlisting}[language=C, caption=pseudo code balloc()()]
-balloc( ){
-
-	recherche premier block dans block map
-	si non trouver:
-		raise error plus de place sur disk
-	
-	block = occuper
-
-	return numero de block
-}
-\end{lstlisting}
-
-\subsection*{bfree(blocknum)}
-
-\begin{lstlisting}[language=C, caption=pseudo code bfree()()]
-bfree( data block ){
-
-	data block = libre
-	return est-ce que data block est libre?
-}
-\end{lstlisting}
-
-\subsection*{bmap()}
-
-\begin{lstlisting}[language=C, caption=pseudo code bmap()()]
-bmap( numero inode, position relative block ){
-
-	si block < 7:
-		return position du nieme block direct
-		
-	block -= 7
-	si block < nombre inode par block:
-		return position du nieme block de indirect
-	
-	block -= nombre inode par block
-	si block < (nombre inode par block)^2:
-		adresse	data block = block / nombre inode par block
-		position block = block mod nombre inode par block
-		
-		return numero block a adresse.posistion
-		
-	sinon:
-		raise error depassement de capacite
-}
-\end{lstlisting}
-
-\subsection*{add\_entry()}
-
-\begin{lstlisting}[language=C, caption=pseudo code add\_entry()]
-add_entry(inode dossier, nom fichier a inserer, inode du nouveau fichier){
-	si nom de fichier non conforme;
-		raise error
-	si nom de fichier existe deja dans dossier:
-		raise error
-		
-	tant que not done:
-		prendre block dossier:
-			si place libre:
-				inserer inode et nom
-				changer taille dossier
-				done
-
-			sinon:
-				si not next block:
-					creer nouveau block
-					si plus possible creer:
-						break
-						
-	si done:
-		valider modification sur disk
-	sinon:
-		raise error plus de place
-}
-\end{lstlisting}
+%\section{Annexes}
+%
+%\subsection*{ialloc()}
+%
+%\begin{lstlisting}[language=C, caption=pseudo code ialloc()()]
+%ialloc(){
+%
+%	recherche premier libre dans inode_map
+%	
+%	si not trouve:
+%		raise error plus aucun inode de libre
+%	
+%	inode trouve = occupe
+%	del ancien inode
+%	new inode
+%	
+%	return numero inode
+%}
+%\end{lstlisting}
+%
+%\subsection*{ifree(inode)}
+%
+%\begin{lstlisting}[language=C, caption=pseudo code ifree()()]
+%ifree( inode ){
+%
+%	inode = libre
+%	return est-ce que inode est libre?
+%}
+%\end{lstlisting}
+%
+%\subsection*{balloc()}
+%
+%\begin{lstlisting}[language=C, caption=pseudo code balloc()()]
+%balloc( ){
+%
+%	recherche premier block dans block map
+%	si non trouver:
+%		raise error plus de place sur disk
+%	
+%	block = occuper
+%
+%	return numero de block
+%}
+%\end{lstlisting}
+%
+%\subsection*{bfree(blocknum)}
+%
+%\begin{lstlisting}[language=C, caption=pseudo code bfree()()]
+%bfree( data block ){
+%
+%	data block = libre
+%	return est-ce que data block est libre?
+%}
+%\end{lstlisting}
+%
+%\subsection*{bmap()}
+%
+%\begin{lstlisting}[language=C, caption=pseudo code bmap()()]
+%bmap( numero inode, position relative block ){
+%
+%	si block < 7:
+%		return position du nieme block direct
+%		
+%	block -= 7
+%	si block < nombre inode par block:
+%		return position du nieme block de indirect
+%	
+%	block -= nombre inode par block
+%	si block < (nombre inode par block)^2:
+%		adresse	data block = block / nombre inode par block
+%		position block = block mod nombre inode par block
+%		
+%		return numero block a adresse.posistion
+%		
+%	sinon:
+%		raise error depassement de capacite
+%}
+%\end{lstlisting}
+%
+%\subsection*{add\_entry()}
+%
+%\begin{lstlisting}[language=C, caption=pseudo code add\_entry()]
+%add_entry(inode dossier, nom fichier a inserer, inode du nouveau fichier){
+%	si nom de fichier non conforme;
+%		raise error
+%	si nom de fichier existe deja dans dossier:
+%		raise error
+%		
+%	tant que not done:
+%		prendre block dossier:
+%			si place libre:
+%				inserer inode et nom
+%				changer taille dossier
+%				done
+%
+%			sinon:
+%				si not next block:
+%					creer nouveau block
+%					si plus possible creer:
+%						break
+%						
+%	si done:
+%		valider modification sur disk
+%	sinon:
+%		raise error plus de place
+%}
+%\end{lstlisting}
+%
+%
+%\subsection*{del\_entry()}
+%
+%\begin{lstlisting}[language=C, caption=pseudo code del\_entry()]
+%del_entry(inode dossier, nom fichier a supprimer){
+%	rechercher_entree;
+%	si (non trouve)
+%		raise error;
+%
+%	tant que block dossier:
+%		rechercher entree dans block dossier
+%			trouver:
+%				si plusieurs liens: reduire
+%				sinon: effacer inode fichier
+%			
+%				enlever entree du block dossier;
+%				reduire taille dossier
+%				si dernier fichier du block dossier supprimer block inutile;
+%	
+%	valider modification sur disk;
+%}
+%\end{lstlisting}
 
 
 \end{document} 
